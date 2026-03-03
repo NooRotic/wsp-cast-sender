@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cast Button Test</title>
+    <script src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1"></script>
+</head>
+<body>
+    <h1>Cast Button Test</h1>
+    
+    <!-- Standard Google Cast button for comparison -->
+    <div>
+        <h2>Standard Google Cast Launcher</h2>
+        <google-cast-launcher></google-cast-launcher>
+    </div>
+    
+    <!-- Hidden launcher for testing -->
+    <google-cast-launcher style="position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0;"></google-cast-launcher>
+    
+    <!-- Custom Cast Button Test -->
+    <div>
+        <h2>Custom Cast Button Styling Test</h2>
+        <div class="custom-cast-container">
+            <button id="custom-cast-btn" class="cast-btn" disabled>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="cast-icon">
+                    <path d="M1 18v3h3c0-1.66-1.34-3-3-3zm0-4v2c2.76 0 5 2.24 5 5h2c0-3.87-3.13-7-7-7zm0-4v2c4.97 0 9 4.03 9 9h2c0-6.08-4.93-11-11-11zm20-7H3c-1.1 0-2 .9-2 2v3h2V5h18v14h-7v2h7c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/>
+                </svg>
+                <span class="cast-text">Cast</span>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Status display -->
+    <div id="status-display">
+        <h3>Cast Status</h3>
+        <p id="cast-status">Not connected</p>
+        <p id="receiver-status">No receiver</p>
+    </div>
+    
+    <!-- Test controls -->
+    <div id="test-controls">
+        <h3>Test Controls</h3>
+        <button onclick="testCastAvailability()">Test Cast Availability</button>
+        <button onclick="showCastDialog()">Show Cast Dialog</button>
+        <button onclick="checkCastState()">Check Cast State</button>
+    </div>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #1a1a1a;
+            color: white;
+        }
+        
+        .custom-cast-container {
+            margin: 20px 0;
+        }
+        
+        .cast-btn {
+            background-color: transparent;
+            border: 1px solid #666;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .cast-btn:hover:not(:disabled) {
+            background-color: #333;
+            border-color: #888;
+        }
+        
+        .cast-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .cast-icon {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+            margin-right: 8px;
+        }
+        
+        #status-display {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #333;
+            border-radius: 4px;
+        }
+        
+        #test-controls {
+            margin: 20px 0;
+        }
+        
+        #test-controls button {
+            margin: 5px;
+            padding: 10px 15px;
+            background-color: #007cba;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        #test-controls button:hover {
+            background-color: #005a8b;
+        }
+    </style>
+    
+    <script>
+        let castContext = null;
+        let remotePlayerController = null;
+        
+        // Initialize Cast API
+        function initializeCast() {
+            console.log('Initializing Cast API...');
+            
+            const context = cast.framework.CastContext.getInstance();
+            castContext = context;
+            
+            // Set Cast Receiver Application ID
+            context.setOptions({
+                receiverApplicationId: chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID,
+                autoJoinPolicy: chrome.cast.AutoJoinPolicy.ORIGIN_SCOPED
+            });
+            
+            // Listen for Cast state changes
+            context.addEventListener(
+                cast.framework.CastContextEventType.CAST_STATE_CHANGED,
+                onCastStateChanged
+            );
+            
+            // Set up custom cast button
+            const customCastBtn = document.getElementById('custom-cast-btn');
+            customCastBtn.addEventListener('click', () => {
+                if (context.getCastState() === cast.framework.CastState.NOT_CONNECTED) {
+                    context.requestSession();
+                } else {
+                    context.endCurrentSession(true);
+                }
+            });
+            
+            // Initial state check
+            updateCastButton();
+            updateStatus();
+        }
+        
+        function onCastStateChanged(event) {
+            console.log('Cast state changed:', event.castState);
+            updateCastButton();
+            updateStatus();
+        }
+        
+        function updateCastButton() {
+            const customBtn = document.getElementById('custom-cast-btn');
+            const castState = castContext.getCastState();
+            
+            switch (castState) {
+                case cast.framework.CastState.NO_DEVICES_AVAILABLE:
+                    customBtn.disabled = true;
+                    customBtn.querySelector('.cast-text').textContent = 'Cast (No devices)';
+                    break;
+                case cast.framework.CastState.NOT_CONNECTED:
+                    customBtn.disabled = false;
+                    customBtn.querySelector('.cast-text').textContent = 'Cast';
+                    break;
+                case cast.framework.CastState.CONNECTING:
+                    customBtn.disabled = true;
+                    customBtn.querySelector('.cast-text').textContent = 'Connecting...';
+                    break;
+                case cast.framework.CastState.CONNECTED:
+                    customBtn.disabled = false;
+                    customBtn.querySelector('.cast-text').textContent = 'Disconnect';
+                    break;
+            }
+        }
+        
+        function updateStatus() {
+            const castStatus = document.getElementById('cast-status');
+            const receiverStatus = document.getElementById('receiver-status');
+            const castState = castContext.getCastState();
+            
+            castStatus.textContent = castState;
+            
+            const session = castContext.getCurrentSession();
+            if (session) {
+                receiverStatus.textContent = session.getReceiver().friendlyName;
+            } else {
+                receiverStatus.textContent = 'No receiver';
+            }
+        }
+        
+        // Test functions
+        function testCastAvailability() {
+            const castState = castContext.getCastState();
+            console.log('Cast availability test:', castState);
+            alert(`Cast state: ${castState}`);
+        }
+        
+        function showCastDialog() {
+            castContext.requestSession().then(
+                () => console.log('Session request successful'),
+                error => console.log('Session request failed:', error)
+            );
+        }
+        
+        function checkCastState() {
+            const castState = castContext.getCastState();
+            const session = castContext.getCurrentSession();
+            console.log('Current cast state:', castState);
+            console.log('Current session:', session);
+            alert(`State: ${castState}\nSession: ${session ? session.getReceiver().friendlyName : 'None'}`);
+        }
+        
+        // Initialize when Cast framework is ready
+        window.addEventListener('load', () => {
+            if (typeof cast !== 'undefined') {
+                initializeCast();
+            } else {
+                console.error('Cast framework not loaded');
+            }
+        });
+    </script>
+</body>
+</html>
