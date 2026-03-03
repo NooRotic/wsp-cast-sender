@@ -1,0 +1,166 @@
+WALTER  S. POLLARD JR
+Senior Video Software Engineer
+
+walter@pollardjr.com
+https://www.linkedin.com/in/walterpollardjr/
+Greater Philadelphia Area
+
+Experience
+======
+Sr Software Engineer 4
+Comcast Technology and Product Xperience
+06/2012 - Ongoing
+www.xfinity.com/stream
+Greater Philadelphia Area
+Video Player Expertise on desktop and Chromecast devices
+ - Over 15 years, SME on HD video player playback
+ - Lead SME Engineer for Xfinity Stream Chromecast Product
+ - Created video player ad solutions for VOD, SVOD, DAI serving millions of ads
+ - Created extensive debugging tools for multiple products serving millions
+ - Extensive experience working with designers and backend engineers
+ - Delivered seamless video player ad solutions serving millions of ads for VOD, SVOD, Linear and DAI by creating robust integration systems
+ - Enabled multipartner support for 5 Comcast cable partners
+ - Created Chromecast debugging tools similar to google's CACTool
+ - Xfinity Stream debugging tools for HD video player playback for desktop and Chromecast products
+
+Senior Front End Web Developer
+PA Fidelity National Information Services - (formerly Sungard) - Comcast – CIM
+2012 - 2014
+ - Began consulting at Comcast Interactive Media - CIM
+ - Position led to full-time employment in a Sr Software Engineer 4
+ - JavaScript front end development
+ - Google Polymer Framework
+ - Flash (ActionScript 3) : Adobe Primetime player - PSDK Project supports 5+ million views per month
+
+Freelance Flash Developer
+Sierra Star Studio
+07/2009 - 06/2012
+Freelance Web Development - full stack services provided
+
+Freelance Senior Flash Developer
+Constellation.tv
+08/2011 - 12/2011
+New York City, NY
+ - Senior Flash Developer for HD Video and live web camera services
+ - Akamai technologies – RTMP, HDN1, HDN2, SecureHD services, Akamai beta program developer
+ - Developed and supported Live Web Video and Camera player app based on OSMF and Akamai plugins
+ - Live group movie watching with web camera support
+ - review of constellation and features https://www.shortfilm.de/en/constellation-tv/
+
+Senior Flash Developer
+Empathy Lab
+09/2010 - 11/2011
+https://www.empathylab.com/
+Conshohocken, PA
+ - Developed client-facing projects using AS2, AS3, and FLEX frameworks
+ - 
+**Rogers OnDemand** - Enhanced OVP-based video framework with feature additions, refactoring, and ongoing support
+• Implemented Akamai CDN integration using HDCore architecture
+• Built Android 2.2+ compatible video player application
+ - **Sprout Online & Ultraviolet (UVVU)** - Delivered interactive user modules and video player solutions
+ - http://www.sproutonline.com
+ - Ultraviolet – http://www.uvvu.com/ - UVVU
+
+Senior Flash Developer 
+Razorfish Health
+12/2009 - 03/2011
+Greater Philadelphia Area
+ - AS3 - development Server side interactions (to pull data feeds)
+ - Contractor position
+
+Flash Developer
+Comcast Entertainment Group (E! eonline.com)
+12/2008 - 08/2009
+Los Angeles, United States
+
+Senior Flash Developer / Technology Leader
+FEARnet, Comcast Entertainment Group
+09/2007 - 01/2009
+ - Provided the majority of front end services (CSS, HTML, Flash)
+ - Led front-end development delivering CSS, HTML, and Flash applications for fearnet.com
+ - Orchestrated seamless site migration and infrastructure transition to Comcast Entertainment Group
+ - Developed advanced AS3 solutions: Bright cove video integration, Omniture analytics, and DoubleClick DART advertising
+
+Flash Developer
+Vantage Inc
+05/2004 - 01/2006
+New Hope, United States
+
+Web Developer - Systems Test Engineer
+Unisys
+09/1999 - 12/2002
+Malvern, United States
+
+
+Education
+======
+Network Systems Professional
+Cittone Institute
+01/2001 - 12/2002
+
+Electrical Engineering - Computer Science
+Drexel University
+01/1997 - 12/2001
+
+
+Summary
+======
+Over 30 years of software development, with focus being on HD Video products. With a passion for JavaScript and Chromecast development, I've created video player solutions serving video, ads and content to millions worldwide.
+
+
+Achievements
+======
+Decades of experience
+From ActionScript to JavaScript to Typescript, I've been writing code since 1997 and on. Over 25 years development experience
+
+Chromecast Development
+Team leader in creating Chromecast MVPs at Comcast, worked with Google's Chromecast development team, built several casting debugging apps for development and QA tasks
+
+Comcast Video Playback Leadership
+SME in video playback, I led multiple teams at Comcast; Creating video, ad, and telemetry solutions supporting millions of views worldwide
+
+HD Video Implementation
+Implemented HD video services, resulting in 40% increase in user engagement.
+
+
+HOBBIES
+======
+ - Rug Tufting
+ - Reading
+ - Daughter's Field Hockey
+ - Gardening
+ - 3D Printing
+ - Dog foster and training
+ - Video Gaming (since Atari2600!)
+ - Twitch streaming
+ - Fishing
+
+
+LANGUAGES AND SKILLS
+======
+American Sign Language
+
+DevOps - Webpack - Etc
+
+Javascript
+
+Google Chromecast SDK
+
+CSS - Tailwinds
+
+Git - NPM - Yarn
+
+Google Polymer
+
+Typescript
+
+ReactJS
+
+NextJS
+
+Lit Element
+
+Actionscript
+
+Flex Builder
+

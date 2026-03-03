@@ -1,0 +1,207 @@
+{
+  "projects": [
+    {
+      "id": "xfinity-stream-platform",
+      "title": "Senior Video Software Engineer - Xfinity Stream Video Platform",
+      "duration": "13+ Years",
+      "type": "text+images",
+      "company": "Comcast Technology and Product Xperience",
+      "techStack": ["JavaScript", "Polymer", "TypeScript", "HTML/CSS", "Chromecast SDK"],
+      "imageUrls": [
+        "/icons/xfinity-stream.png",
+        "/assets/xfinity/xfinity_stream_debug_player.png",
+        "/assets/xfinity/xfinity_stream_debug_streamcast.png",
+        "/assets/xfinity/xtv_notcustomer_multiple.png"
+      ],
+      "achievements": [
+        "Created debug panels and tools for Chromecast playback",
+        "Over 15 years SME on HD video player playback",
+        "Created video player ad solutions for VOD, SVOD, DAI serving millions of ads",
+        "Enabled multipartner support for 5 Comcast cable partners",
+        "Delivered seamless video player ad solutions for VOD, SVOD, Linear and DAI"
+      ],
+      "metrics": {
+        "experience": "15+ years",
+        "partners": "5 cable partners",
+        "telemetry": "Created device detection allowing Comcast to detect Chromecast devices",
+        "debugging": "Created debugging tools similar to Google's CACTool",
+        "scale": "millions of ads served"
+      },
+      "description": "SME Video Playback engineer on Comcast's flagship streaming platform, specializing in HD video playback on desktop and Chromecast devices. Created comprehensive debugging tools and ad integration systems serving millions worldwide.",
+      "demoUrl": "https://www.xfinity.com/stream",
+      "githubUrl": ""
+    },
+    {
+      "id": "xfinity-streamcast",
+      "title": "Senior Video Software Engineer - Xfinity Streamcast Chromecast Platform",
+      "duration": "5+ Years",
+      "type": "text+images",
+      "company": "Comcast Technology and Product Xperience",
+      "techStack": ["JavaScript", "Lit Element", "Polymer", "TypeScript", "HTML/CSS", "Chromecast SDK"],
+      "imageUrls": [
+        "/icons/xfinity-stream.png",
+        "/assets/xfinity/xfinity_streamCAC_1.png",
+        "/assets/xfinity/xfinity_streamcac_device.jpg",
+        "/assets/xfinity/xfinity_streamcac_device_1.png"
+      ],
+      "achievements": [
+        "Wrote code supporting migrating from Hypermedia API to OPENAPI-Swagger backend",
+        "Lead SME Engineer for Xfinity Stream Chromecast Product",
+        "Created Chromecast debugging tools similar to Google's CACTool",
+        "Delivered seamless video player ad solutions for VOD, SVOD, Linear and DAI"
+      ],
+      "metrics": {
+        "experience": "5+ years",
+        "partners": "5 cable partners",
+        "telemetry": "Created device detection allowing Comcast to detect Chromecast devices",
+        "scale": "millions of ads served"
+      },
+      "description": "Lead engineer on Comcast's flagship streaming platform, specializing in HD video playback on desktop and Chromecast devices. Created comprehensive debugging tools and ad integration systems serving millions worldwide.",
+      "demoUrl": "https://edge.stream-receiver-prod-active.xcr.comcast.net/",
+      "githubUrl": ""
+    },
+    {
+      "id": "empathy-rogers",
+      "title": "Sr. Flash Developer - EmpathyLabs - Rogers Video Platform",
+      "duration": "13 months",
+      "type": "text",
+      "company": "Empathy Lab",
+      "techStack": ["ActionScript 3", "FLEX", "Akamai CDN", "HDCore", "Android"],
+      "achievements": [
+        "Enhanced OVP-based video framework with feature additions and refactoring",
+        "Implemented Akamai CDN integration using HDCore architecture",
+        "Built Android 2.2+ compatible video player application",
+        "Delivered ongoing support and maintenance"
+      ],
+      "metrics": {
+        "platform": "Android 2.2+",
+        "cdn": "Akamai HDCore",
+        "framework": "OVP-based"
+      },
+      "description": "Enhanced and maintained Rogers Cable's on-demand video platform, implementing Akamai CDN integration and cross-platform compatibility for mobile devices.",
+      "demoUrl": "https://www.rogers.com",
+      "githubUrl": ""
+    },
+    {
+      "id": "constellation-live-streaming",
+      "title": "Sr. Flash Developer - Constellation.tv Live Streaming Platform",
+      "duration": "4 months",
+      "type": "interactive",
+      "company": "Constellation.tv",
+      "techStack": ["ActionScript 3", "OSMF", "Akamai", "RTMP", "HDN1", "HDN2", "SecureHD"],
+      "achievements": [
+        "Sr Flash Developer for HD Video and live web camera services",
+        "Developed Live Web Video and Camera player app based on OSMF and Akamai plugins",
+        "Implemented live group movie watching with web camera support",
+        "Participated in Akamai beta program development"
+      ],
+      "metrics": {
+        "streaming": "HD Video + Live Camera",
+        "technology": "OSMF + Akamai",
+        "features": "Group watching"
+      },
+      "description": "Built innovative live streaming platform enabling group movie watching experiences with integrated web camera support and real-time HD video streaming.",
+      "demoUrl": "https://www.shortfilm.de/en/constellation-tv/",
+      "githubUrl": ""
+    },
+    {
+      "id": "empathy-sprout-ultraviolet",
+      "title": "Sprout Online & Ultraviolet Interactive Modules",
+      "duration": "13 months",
+      "type": "text+images",
+      "company": "Empathy Lab",
+      "techStack": ["ActionScript 2", "ActionScript 3", "FLEX", "Video Players"],
+      "achievements": [
+        "Delivered interactive user modules and video player solutions",
+        "Developed client-facing projects using AS2, AS3, and FLEX frameworks",
+        "Created educational and entertainment video experiences",
+        "Implemented user interaction systems",
+        "Enhanced OVP-based video framework with feature additions and refactoring",
+        "Implemented Akamai CDN integration using HDCore architecture",
+        "Built Android 2.2+ compatible video player application"
+      ],
+      "metrics": {
+        "platforms": "Multiple projects: Sprout - Rogers - Ultraviolet",
+        "frameworks": "AS2/AS3/FLEX",
+        "focus": "Interactive modules - HD Video ",
+        "cdn": "Akamai HDCore",
+        "framework": "OVP-based"
+      },
+      "description": "Enhanced and maintained Rogers Cable's on-demand video platform, implementing Akamai CDN integration and cross-platform compatibility for mobile devices.\\nDeveloped interactive educational and entertainment video modules for Sprout Online and Ultraviolet platforms, focusing on user engagement and video player innovation.",
+      "demoUrl": "http://www.sproutonline.com",
+      "githubUrl": ""
+    },
+    {
+      "id": "comcast-fearnet-entertainment",
+      "title":  "Sr. Flash Developer - Comcast - FEARnet Entertainment Platform",
+      "duration": "16 months",
+      "type": "text+video",
+      "company": "FEARnet, Comcast Entertainment Group",
+      "techStack": ["ActionScript 3", "CSS", "HTML", "Brightcove", "Omniture", "DoubleClick DART"],
+      "achievements": [
+        "Led front-end development delivering CSS, HTML, and Flash applications",
+        "Orchestrated seamless site migration to Comcast Entertainment Group",
+        "Developed Brightcove video integration solutions. Implemented Omniture analytics and DoubleClick DART advertising",
+        "Provided majority of front-end services across the platform"
+      ],
+      "imageUrls": [
+        "/assets/fearnet_logo.png"
+      ],
+      "metrics": {
+        "role": "Technology Leader",
+        "migration": "Seamless transition",
+        "integrations": "Video + Analytics + Ads"
+      },
+      "description": "Technology leader for FEARnet's entertainment platform, managing front-end development and successful migration to Comcast Entertainment Group infrastructure.",
+      "demoUrl": "",
+      "githubUrl": ""
+    },
+    {
+      "id": "e-comcast-entertainment",
+      "title": "E! Online - Comcast Entertainment Group",
+      "duration": "10 months",
+      "type": "text+video",
+      "company": "E!, Comcast Entertainment Group",
+      "techStack": ["ActionScript 3", "CSS", "HTML", "Brightcove", "Omniture", "DoubleClick DART"],
+      "achievements": [
+        "Led migration of FearNet platform to integrate with E! Entertainment",
+        "Implemented numerous front-end features and enhancements",
+        "Transitioned from FearNet to E! providing flash based video player solutions"
+      ],
+      "imageUrls": [
+        "/assets/e-tv-logo.png",
+        "/assets/e_online_front_page.jpg"
+      ],
+      "metrics": {
+        "role": "Technology Leader",
+        "migration": "Seamless transition",
+        "integrations": "Video + Analytics + Ads"
+      },
+      "description": "Technology leader for FEARnet's entertainment platform, managing front-end development and successful migration to Comcast Entertainment Group infrastructure.",
+      "demoUrl": "",
+      "githubUrl": ""
+    },
+    {
+      "id": "comcast-primetime-psdk",
+      "title": "Comcast Interactive Media - XTV - Adobe Primetime PSDK Implementation",
+      "duration": "2 years",
+      "type": "text+video",
+      "company": "Sungard (Comcast CIM Consulting)",
+      "techStack": ["JavaScript", "Google Polymer", "ActionScript 3", "Adobe Primetime", "Flash"],
+      "achievements": [
+        "JavaScript front-end development for Comcast Interactive Media",
+        "Adobe Primetime player PSDK Project supporting 5+ million views per month",
+        "Google Polymer Framework implementation",
+        "Transitioned from consulting to full-time Sr Software Engineer 4 role"
+      ],
+      "metrics": {
+        "scale": "5+ million views/month",
+        "transition": "Consultant to FTE",
+        "framework": "Polymer, backbone, ngnix"
+      },
+      "description": "Implemented Adobe Primetime video player solutions supporting millions of monthly views, leading to permanent employment at Comcast as Senior Software Engineer.",
+      "demoUrl": "",
+      "githubUrl": ""
+    }
+  ]
+}

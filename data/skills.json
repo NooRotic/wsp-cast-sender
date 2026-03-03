@@ -1,0 +1,52 @@
+{
+  "skills": [
+    {
+      "category": "Frontend Development",
+      "items": [
+        { "name": "JavaScript/TypeScript", "level": 95, "years": 20 },
+        { "name": "LitElement", "level": 85, "years": 6 },
+        { "name": "Google Polymer", "level": 90, "years": 10 },
+        { "name": "HTML/CSS", "level": 90, "years": 25 },
+        { "name": "Chromecast SDK", "level": 92, "years": 5 },
+        { "name": "React/Next.js", "level": 80, "years": 4 },
+        { "name": "ActionScript 3", "level": 95, "years": 25 },
+        { "name": "Node.js", "level": 84, "years": 3 }
+      ]
+    },
+    {
+      "category": "Streaming & Media",
+      "items": [
+        { "name": "Live Linear/VOD/OTT", "level": 93, "years": 18 },
+        { "name": "Web Video", "level": 95, "years": 24 },
+        { "name": "RTMP/RTMPE/HLS/DASH", "level": 89, "years": 18 },
+        { "name": "Media Server APIs", "level": 96, "years": 25 },
+        { "name": "Video Player SDKs", "level": 92, "years": 20 },
+        { "name": "Ad Integration", "level": 91, "years": 12 },
+        { "name": "Chromecast", "level": 90, "years": 7 }
+      ]
+    },
+    {
+      "category": "Architecture, Design & DevOps",
+      "items": [
+        { "name": "System Design", "level": 92, "years": 12 },
+        { "name": "Microservices", "level": 89, "years": 16 },
+        { "name": "Performance Optimization", "level": 94, "years": 20 },
+        { "name": "CI/CD", "level": 85, "years": 15 },
+        { "name": "Monitoring - Telemetry", "level": 93, "years": 20 },
+        { "name": "API Design", "level": 90, "years": 10 }
+      ]
+    },
+    {
+      "category": "Version Control & Collaboration",
+      "items": [
+        { "name": "Git", "level": 95, "years": 15 },
+        { "name": "GitHub/GitLab", "level": 90, "years": 10 },
+        { "name": "Agile Methodologies", "level": 92, "years": 20 },
+        { "name": "Code Review Practices", "level": 88, "years": 15 },
+         { "name": "Unit Testing", "level": 90, "years": 15 },
+        { "name": "Integration Testing", "level": 85, "years": 10 },
+        { "name": "End-to-End Testing", "level": 80, "years": 8 }
+      ]
+    }
+  ]
+}
