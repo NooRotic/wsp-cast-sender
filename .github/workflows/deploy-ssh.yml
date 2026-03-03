@@ -1,0 +1,127 @@
+name: Deploy to Production
+
+on:
+  workflow_dispatch: # Manual trigger only — never auto-deploys on push
+
+# Allow only one concurrent production deployment
+concurrency:
+  group: "ssh-deploy"
+  cancel-in-progress: false
+
+jobs:
+  test:
+    name: Lint · Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Write .env from secret
+        env:
+          ENV_FILE: ${{ secrets.ENV_FILE }}
+        run: printf '%s' "$ENV_FILE" > .env
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Test
+        run: npm test -- --passWithNoTests --ci
+
+  build-and-deploy:
+    name: Build · Deploy Production
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Write .env from secret
+        env:
+          ENV_FILE: ${{ secrets.ENV_FILE }}
+        run: printf '%s' "$ENV_FILE" > .env
+
+      - name: Build static export (production)
+        run: npm run deploy:build
+        env:
+          NEXT_PUBLIC_BASE_URL: https://walter.pollardjr.com
+
+      - name: Verify build output
+        run: |
+          echo "Build completed. Checking output directory..."
+          ls -la out/
+          echo "Total files built:"
+          find out/ -type f | wc -l
+          echo "Sample HTML files:"
+          find out/ -name "*.html" -type f | head -5
+
+      - name: Create backup and prepare target directory
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            echo "Creating backup of current deployment..."
+            if [ -d "${{ secrets.DEPLOY_PATH }}/senderApp" ]; then
+              mv "${{ secrets.DEPLOY_PATH }}/senderApp" "${{ secrets.DEPLOY_PATH }}/senderApp-backup-$(date +%Y%m%d_%H%M%S)" || echo "Backup failed, continuing..."
+            fi
+            mkdir -p "${{ secrets.DEPLOY_PATH }}/senderApp"
+
+      - name: Upload files via SCP
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: ${{ secrets.SSH_PORT }}
+          source: "out/*"
+          target: "${{ secrets.DEPLOY_PATH }}/senderApp/"
+          strip_components: 1
+          rm: false
+
+      - name: Set permissions and report
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            echo "Setting proper permissions..."
+            find "${{ secrets.DEPLOY_PATH }}/senderApp" -type f -exec chmod 644 {} \;
+            find "${{ secrets.DEPLOY_PATH }}/senderApp" -type d -exec chmod 755 {} \;
+            echo "✅ Production deployment complete!"
+            echo "Files deployed to: ${{ secrets.DEPLOY_PATH }}/senderApp"
+            find "${{ secrets.DEPLOY_PATH }}/senderApp" -type f | wc -l
+
+      - name: Clean up old backups (keep last 3)
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            echo "Cleaning up old backups..."
+            cd "${{ secrets.DEPLOY_PATH }}"
+            ls -t senderApp-backup-* 2>/dev/null | tail -n +4 | xargs rm -rf || echo "No old backups to clean"
