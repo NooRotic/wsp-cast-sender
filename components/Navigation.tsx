@@ -64,6 +64,7 @@ export default function Navigation() {
   ];
 
   const demoPages = [
+    { label: "Timeline", href: "/timeline" },
     { label: "Cast Demo", href: "/cast-demo" },
     { label: "Media Demo", href: "/media-demo" },
   ];
