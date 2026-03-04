@@ -94,7 +94,7 @@ export default function UnifiedPlayer({
   autoPlay = false,
   controls = true,
   width = '100%',
-  height = '360px',
+  height,
   className = '',
   onReady,
   onPlay,
@@ -195,7 +195,7 @@ export default function UnifiedPlayer({
 
     const playerStyle = {
       width: typeof width === 'number' ? `${width}px` : width,
-      height: typeof height === 'number' ? `${height}px` : height,
+      height: height ? (typeof height === 'number' ? `${height}px` : height) : '100%',
     };
 
     try {
@@ -390,12 +390,12 @@ export default function UnifiedPlayer({
         </div>
       )}
 
-      {/* Player Container */}
+      {/* Player Container — aspect-video (16:9) unless an explicit height is passed */}
       <div
-        className="relative bg-black rounded-lg overflow-hidden"
+        className={`relative bg-black rounded-lg overflow-hidden ${!height ? 'aspect-video' : ''}`}
         style={{
           width: typeof width === 'number' ? `${width}px` : width,
-          height: typeof height === 'number' ? `${height}px` : height,
+          ...(height ? { height: typeof height === 'number' ? `${height}px` : height } : {}),
         }}
       >
         {renderPlayer()}
