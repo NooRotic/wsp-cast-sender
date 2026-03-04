@@ -102,7 +102,7 @@ const VideoLibrary: React.FC<VideoLibraryProps> = ({
                 currentVideo={currentVideo}
                 onVideoSelect={onVideoSelect}
                 isGrid={isGrid}
-                colors={{ border: 'border-blue-500/40', textColor: 'text-blue-300', bg: 'bg-blue-500/10', indicator: 'bg-blue-500' }}
+                colors={{ border: 'rgba(59,130,246,0.4)', textColor: '#93c5fd', bg: 'rgba(59,130,246,0.1)', indicator: '#3b82f6' }}
                 categorizeMedia={() => ({ type: 'HLS' as const, contentType: 'mixed' as const, streamType: 'vod' as const, hasEncryption: false, features: [] })}
                 getProtocolType={() => 'HLS'}
               />
