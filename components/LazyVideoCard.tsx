@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useRef, useCallback } from 'react';
-import Image from 'next/image';
 import { Play, Clock } from 'lucide-react';
 
 export interface VideoCardColors {
@@ -66,11 +65,8 @@ const LazyVideoCard: React.FC<LazyVideoCardProps> = ({
     return (
       <div
         ref={cardRef}
-        className={`
-          relative group cursor-pointer transition-all duration-300 rounded-lg overflow-hidden
-          border border-gray-600/50 bg-gray-800/30
-          ${isGrid ? 'h-[180px]' : 'h-[160px]'}
-        `}
+        className="relative group cursor-pointer transition-all duration-300 rounded-lg overflow-hidden border border-gray-600/50 bg-gray-800/30"
+        style={{ height: isGrid ? '180px' : '160px' }}
       >
         <div className="w-full h-full bg-gray-800/50 flex items-center justify-center">
           <div className="w-8 h-8 border-2 border-gray-600/50 border-t-gray-400 rounded-full animate-spin" />
@@ -98,24 +94,23 @@ const LazyVideoCard: React.FC<LazyVideoCardProps> = ({
         <div className={`w-full h-full ${colors.indicator} opacity-90`} />
       </div>
 
-      {/* Thumbnail — explicit height so next/image fill has a guaranteed container size */}
-      <div className={`
-        relative rounded-t-lg overflow-hidden
-        ${isGrid ? 'h-[120px]' : 'h-[110px]'}
-        ${colors.bg}
-      `}>
+      {/* Thumbnail — inline style height so next/image fill always has a guaranteed container */}
+      <div
+        className={`relative rounded-t-lg overflow-hidden ${colors.bg}`}
+        style={{ height: isGrid ? '120px' : '110px' }}
+      >
         {posterUrl ? (
           <>
             {!imageLoaded && (
-              <div className="w-full h-full bg-gray-800/50 flex items-center justify-center">
+              <div className="absolute inset-0 bg-gray-800/50 flex items-center justify-center">
                 <div className="w-6 h-6 border-2 border-gray-500/50 border-t-gray-300 rounded-full animate-spin" />
               </div>
             )}
-            <Image
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
               src={posterUrl}
               alt={video.title}
-              fill
-              className={`object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+              className={`w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
               onLoad={() => setImageLoaded(true)}
               onError={() => setImageLoaded(true)}
             />

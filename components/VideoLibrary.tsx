@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
-import Image from 'next/image';
 import { Play, Clock, Video as VideoIcon } from 'lucide-react';
 import LazyVideoCard from './LazyVideoCard';
 
@@ -127,14 +126,14 @@ const VideoLibrary: React.FC<VideoLibraryProps> = ({
                 <div className="absolute top-0 left-0 right-0 h-1 z-20 rounded-t-lg overflow-hidden">
                   <div className="w-full h-full bg-gradient-to-r from-blue-500 to-blue-600 opacity-90"></div>
                 </div>
-                <div className="relative rounded-t-lg overflow-hidden transition-all duration-300 aspect-video bg-gradient-to-br from-blue-500/25 to-blue-600/15">
+                <div className="relative rounded-t-lg overflow-hidden transition-all duration-300 bg-gradient-to-br from-blue-500/25 to-blue-600/15" style={{ height: '108px' }}>
                   {video.poster ? (
                     <>
-                      <Image
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
                         src={video.poster}
                         alt={video.title}
-                        fill
-                        className="object-cover"
+                        className="w-full h-full object-cover"
                       />
                       <div className="absolute bottom-1 right-1 bg-black/80 text-white px-1.5 py-0.5 rounded flex items-center gap-1 text-xs">
                         <Clock size={12} />
