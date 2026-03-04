@@ -35,9 +35,17 @@ interface TNode {
   tags: string[];
 }
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
+// ─── Constants ────────────────────────────────────────────────────────────────
 
 const MONTH_LABELS = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+// "normal" spacing = 48px → 100%. Default compact = 24px → 50%.
+const SPACING_NORMAL = 48;
+const SPACING_MIN    = 12;
+const SPACING_MAX    = 96;
+const SPACING_STEP   = 8;
+const SPACING_DEFAULT = 24;
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function formatDate(dateStr: string): string {
   const [year, month] = dateStr.split('-');
@@ -50,7 +58,17 @@ function getEraForDate(dateStr: string, eras: TEra[]): TEra | undefined {
   return eras.find(e => year >= e.startYear && year <= e.endYear);
 }
 
-// ─── Sub-components ──────────────────────────────────────────────────────────
+/** Replace the last numeric group before ')' in an rgba() string */
+function eraAlpha(color: string, alpha: number): string {
+  return color.replace(/[\d.]+\)$/, `${alpha})`);
+}
+
+/** Strip alpha from rgba to get solid color */
+function eraRgb(color: string): string {
+  return color.replace('rgba', 'rgb').replace(/,\s*[\d.]+\)/, ')');
+}
+
+// ─── StarfieldCanvas — continuous drift, not scroll-only ─────────────────────
 
 function StarfieldCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -61,68 +79,130 @@ function StarfieldCanvas() {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    let animFrame: number;
+    let raf: number;
     let scrollY = 0;
     let frame = 0;
+    let W = window.innerWidth;
+    let H = window.innerHeight;
 
     const resize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      W = window.innerWidth;
+      H = window.innerHeight;
+      canvas.width = W;
+      canvas.height = H;
     };
     resize();
 
-    const stars = Array.from({ length: 220 }, () => ({
-      x: Math.random() * window.innerWidth,
-      y: Math.random() * window.innerHeight,
-      r: Math.random() * 1.4 + 0.3,
-      alpha: Math.random() * 0.55 + 0.15,
-      speed: Math.random() * 0.25 + 0.08,
-      twinkleOffset: Math.random() * Math.PI * 2,
+    // Stars — normalized coords (0-1) + velocity for continuous drift
+    type Star = { nx: number; ny: number; vx: number; vy: number; r: number; alpha: number; parallax: number; twinkle: number };
+    const stars: Star[] = Array.from({ length: 260 }, () => ({
+      nx: Math.random(),
+      ny: Math.random(),
+      // Very slow drift — gives a "floating adrift in space" feel
+      vx: (Math.random() - 0.5) * 0.00011,
+      vy: (Math.random() - 0.5) * 0.000075,
+      r: Math.random() * 1.5 + 0.25,
+      alpha: Math.random() * 0.55 + 0.12,
+      parallax: Math.random() * 0.22 + 0.04, // scroll parallax depth
+      twinkle: Math.random() * Math.PI * 2,
     }));
 
-    const nebulae = [
-      { x: 0.15, y: 0.25, r: 260, hue: 280, alpha: 0.055 },
-      { x: 0.75, y: 0.55, r: 200, hue: 200, alpha: 0.045 },
-      { x: 0.45, y: 0.80, r: 180, hue: 150, alpha: 0.040 },
-      { x: 0.85, y: 0.15, r: 220, hue: 320, alpha: 0.050 },
-      { x: 0.30, y: 0.60, r: 170, hue: 180, alpha: 0.035 },
+    // A handful of large "hero" stars — brighter, slower
+    const heroStars: Star[] = Array.from({ length: 18 }, () => ({
+      nx: Math.random(),
+      ny: Math.random(),
+      vx: (Math.random() - 0.5) * 0.00004,
+      vy: (Math.random() - 0.5) * 0.000025,
+      r: Math.random() * 1.8 + 1.2,
+      alpha: Math.random() * 0.4 + 0.35,
+      parallax: Math.random() * 0.06 + 0.01,
+      twinkle: Math.random() * Math.PI * 2,
+    }));
+
+    // Nebulae — slow drift + pulse
+    type Nebula = { nx: number; ny: number; vx: number; vy: number; baseR: number; hue: number; alpha: number; pulseOffset: number };
+    const nebulae: Nebula[] = [
+      { nx: 0.12, ny: 0.28, vx:  0.000028, vy:  0.000018, baseR: 290, hue: 275, alpha: 0.052, pulseOffset: 0.0 },
+      { nx: 0.78, ny: 0.52, vx: -0.000020, vy:  0.000012, baseR: 220, hue: 205, alpha: 0.042, pulseOffset: 1.2 },
+      { nx: 0.42, ny: 0.82, vx:  0.000015, vy: -0.000022, baseR: 195, hue: 155, alpha: 0.038, pulseOffset: 2.5 },
+      { nx: 0.88, ny: 0.14, vx: -0.000018, vy:  0.000030, baseR: 240, hue: 320, alpha: 0.048, pulseOffset: 3.8 },
+      { nx: 0.28, ny: 0.62, vx:  0.000022, vy: -0.000015, baseR: 180, hue: 185, alpha: 0.033, pulseOffset: 5.1 },
+      { nx: 0.55, ny: 0.35, vx: -0.000010, vy:  0.000008, baseR: 160, hue: 240, alpha: 0.028, pulseOffset: 0.7 },
     ];
 
-    const draw = () => {
+    const drawAll = () => {
       frame++;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.clearRect(0, 0, W, H);
 
+      // Nebulae — drift + breathe
       nebulae.forEach(b => {
-        const cx = b.x * canvas.width;
-        const cy = ((b.y * canvas.height - scrollY * b.alpha * 8) % canvas.height + canvas.height) % canvas.height;
-        const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, b.r);
-        grad.addColorStop(0, `hsla(${b.hue}, 55%, 38%, ${b.alpha})`);
+        b.nx = (b.nx + b.vx + 1) % 1;
+        b.ny = (b.ny + b.vy + 1) % 1;
+        const pulse = 1 + 0.07 * Math.sin(b.pulseOffset + frame * 0.0025);
+        const cx = b.nx * W;
+        const cy = b.ny * H;
+        const r  = b.baseR * pulse;
+        const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+        grad.addColorStop(0, `hsla(${b.hue}, 55%, 38%, ${b.alpha * pulse})`);
+        grad.addColorStop(0.5, `hsla(${b.hue}, 45%, 25%, ${b.alpha * 0.4})`);
         grad.addColorStop(1, 'transparent');
         ctx.fillStyle = grad;
         ctx.beginPath();
-        ctx.arc(cx, cy, b.r, 0, Math.PI * 2);
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
         ctx.fill();
       });
 
-      stars.forEach(s => {
-        const cy = ((s.y - scrollY * s.speed * 0.18) % canvas.height + canvas.height) % canvas.height;
-        const twinkle = s.alpha * (0.72 + 0.28 * Math.sin(s.twinkleOffset + frame * 0.018 * s.speed));
+      // Render both star layers
+      const renderStars = (layer: Star[]) => {
+        layer.forEach(s => {
+          s.nx = (s.nx + s.vx + 1) % 1;
+          s.ny = (s.ny + s.vy + 1) % 1;
+          const scrollOffset = (scrollY * s.parallax * 0.00018) % 1;
+          const drawX = s.nx * W;
+          const drawY = ((s.ny - scrollOffset + 1) % 1) * H;
+          const tw = s.alpha * (0.7 + 0.3 * Math.sin(s.twinkle + frame * 0.016));
+          ctx.beginPath();
+          ctx.arc(drawX, drawY, s.r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255,255,255,${tw})`;
+          ctx.fill();
+        });
+      };
+
+      renderStars(stars);
+
+      // Hero stars get a subtle glow
+      heroStars.forEach(s => {
+        s.nx = (s.nx + s.vx + 1) % 1;
+        s.ny = (s.ny + s.vy + 1) % 1;
+        const scrollOffset = (scrollY * s.parallax * 0.00018) % 1;
+        const drawX = s.nx * W;
+        const drawY = ((s.ny - scrollOffset + 1) % 1) * H;
+        const tw = s.alpha * (0.75 + 0.25 * Math.sin(s.twinkle + frame * 0.009));
+        // Glow halo
+        const glow = ctx.createRadialGradient(drawX, drawY, 0, drawX, drawY, s.r * 4);
+        glow.addColorStop(0, `rgba(200,220,255,${tw * 0.25})`);
+        glow.addColorStop(1, 'transparent');
+        ctx.fillStyle = glow;
         ctx.beginPath();
-        ctx.arc(s.x, cy, s.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255,255,255,${twinkle})`;
+        ctx.arc(drawX, drawY, s.r * 4, 0, Math.PI * 2);
+        ctx.fill();
+        // Core
+        ctx.beginPath();
+        ctx.arc(drawX, drawY, s.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(240,248,255,${tw})`;
         ctx.fill();
       });
 
-      animFrame = requestAnimationFrame(draw);
+      raf = requestAnimationFrame(drawAll);
     };
 
     const onScroll = () => { scrollY = window.scrollY; };
     window.addEventListener('resize', resize);
     window.addEventListener('scroll', onScroll, { passive: true });
-    draw();
+    drawAll();
 
     return () => {
-      cancelAnimationFrame(animFrame);
+      cancelAnimationFrame(raf);
       window.removeEventListener('resize', resize);
       window.removeEventListener('scroll', onScroll);
     };
@@ -138,11 +218,10 @@ function StarfieldCanvas() {
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+// ─── Floating Quotes ─────────────────────────────────────────────────────────
 
 function FloatingQuotes({ quotes }: { quotes: { text: string; author: string }[] }) {
   const [visibleIdx, setVisibleIdx] = useState(0);
-
   useEffect(() => {
     const id = setInterval(() => setVisibleIdx(i => (i + 1) % quotes.length), 9000);
     return () => clearInterval(id);
@@ -153,27 +232,27 @@ function FloatingQuotes({ quotes }: { quotes: { text: string; author: string }[]
       {quotes.map((q, i) => (
         <div
           key={i}
-          className="absolute italic text-sm leading-relaxed max-w-[280px]"
+          className="absolute italic text-sm leading-relaxed max-w-[260px]"
           style={{
-            opacity: visibleIdx === i ? 0.18 : 0,
+            opacity: visibleIdx === i ? 0.16 : 0,
             color: '#8899aa',
-            left: `${12 + (i * 19) % 55}%`,
-            top: `${18 + (i * 13) % 62}%`,
+            left: `${10 + (i * 17) % 52}%`,
+            top: `${20 + (i * 11) % 58}%`,
             transform: `rotate(${-4 + (i % 3) * 3}deg)`,
-            transition: 'opacity 2.5s ease-in-out',
+            transition: 'opacity 2.8s ease-in-out',
           }}
         >
           &ldquo;{q.text}&rdquo;
-          <div className="text-xs mt-1 not-italic opacity-70">— {q.author}</div>
+          <div className="text-xs mt-1 not-italic opacity-60">— {q.author}</div>
         </div>
       ))}
     </div>
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+// ─── Sticky Filter Bar ────────────────────────────────────────────────────────
 
-function CategoryLegend({
+function StickyFilterBar({
   categories,
   active,
   onToggle,
@@ -184,44 +263,52 @@ function CategoryLegend({
 }) {
   return (
     <div
-      className="fixed top-20 right-4 rounded-xl p-3 border"
+      className="sticky flex items-center justify-center gap-1.5 flex-wrap px-4 py-2"
       style={{
-        zIndex: 30,
-        background: 'rgba(0,0,0,0.75)',
-        backdropFilter: 'blur(10px)',
-        borderColor: 'rgba(255,255,255,0.08)',
-        minWidth: 140,
+        top: 64, // below fixed nav (h-16)
+        zIndex: 25,
+        background: 'rgba(0,0,0,0.82)',
+        backdropFilter: 'blur(14px)',
+        borderBottom: '1px solid rgba(57,255,20,0.08)',
       }}
     >
-      <div className="text-xs font-semibold text-gray-500 mb-2 tracking-widest uppercase">Legend</div>
       {categories.map(c => (
         <button
           key={c.id}
           onClick={() => onToggle(c.id)}
-          className="flex items-center gap-2 w-full text-left mb-1.5 hover:opacity-100 transition-opacity"
-          style={{ opacity: active.has(c.id) ? 1 : 0.35 }}
+          className="px-2.5 py-0.5 rounded-full text-xs font-semibold border transition-all duration-200 whitespace-nowrap"
+          style={{
+            borderColor: c.color,
+            color: active.has(c.id) ? '#000' : c.color,
+            background: active.has(c.id) ? c.color : 'transparent',
+            opacity: active.has(c.id) ? 1 : 0.55,
+          }}
           title={c.description}
         >
-          <span
-            className="w-2.5 h-2.5 rounded-full flex-shrink-0"
-            style={{ background: c.color, boxShadow: active.has(c.id) ? `0 0 6px ${c.color}` : 'none' }}
-          />
-          <span className="text-xs" style={{ color: active.has(c.id) ? '#ddd' : '#666' }}>
-            {c.label}
-          </span>
+          {c.label}
         </button>
       ))}
     </div>
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+// ─── Right Panel — Legend + Scale + Minimap ───────────────────────────────────
 
-function Minimap({
+function RightPanel({
+  categories,
+  active,
+  nodeSpacing,
+  onZoomIn,
+  onZoomOut,
   nodes,
   progress,
   categoryMap,
 }: {
+  categories: TCategory[];
+  active: Set<string>;
+  nodeSpacing: number;
+  onZoomIn: () => void;
+  onZoomOut: () => void;
   nodes: TNode[];
   progress: number;
   categoryMap: Record<string, TCategory>;
@@ -231,119 +318,217 @@ function Minimap({
     els[idx]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   };
 
+  const scalePercent = Math.round((nodeSpacing / SPACING_NORMAL) * 100);
+
   return (
     <div
-      className="fixed right-4 top-1/2 -translate-y-1/2 flex flex-col items-center"
-      style={{ zIndex: 30, height: '55vh' }}
+      className="fixed top-20 right-2 flex flex-col gap-2"
+      style={{ zIndex: 30, width: 148, bottom: 16 }}
     >
-      <div className="relative w-0.5 h-full rounded-full" style={{ background: 'rgba(255,255,255,0.08)' }}>
-        {/* Progress fill */}
+      {/* Legend + Scale controls */}
+      <div
+        className="rounded-xl border flex-shrink-0"
+        style={{
+          background: 'rgba(0,0,0,0.78)',
+          backdropFilter: 'blur(12px)',
+          borderColor: 'rgba(255,255,255,0.07)',
+        }}
+      >
+        {/* Legend */}
+        <div className="px-3 pt-3 pb-2">
+          <div className="text-xs font-semibold tracking-widest uppercase mb-2" style={{ color: '#4a5568' }}>
+            Legend
+          </div>
+          {categories.map(c => (
+            <div
+              key={c.id}
+              className="flex items-center gap-2 mb-1.5"
+              style={{ opacity: active.has(c.id) ? 1 : 0.28 }}
+            >
+              <span
+                className="w-2 h-2 rounded-full flex-shrink-0"
+                style={{
+                  background: c.color,
+                  boxShadow: active.has(c.id) ? `0 0 5px ${c.color}` : 'none',
+                }}
+              />
+              <span className="text-xs truncate" style={{ color: active.has(c.id) ? '#ccc' : '#555' }}>
+                {c.label}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        {/* Scale controls */}
         <div
-          className="absolute top-0 left-0 w-full rounded-full transition-all duration-150"
-          style={{ height: `${progress * 100}%`, background: 'rgba(57,255,20,0.5)' }}
-        />
-        {/* Node dots */}
-        {nodes.map((n, i) => {
-          const cat = categoryMap[n.category];
-          const pct = (i / Math.max(nodes.length - 1, 1)) * 100;
-          return (
+          className="px-3 pb-3 pt-2"
+          style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}
+        >
+          <div className="text-xs font-semibold tracking-widest uppercase mb-2" style={{ color: '#4a5568' }}>
+            Scale
+          </div>
+          <div className="flex items-center gap-1.5">
             <button
-              key={n.id}
-              onClick={() => scrollToNode(i)}
-              className="absolute rounded-full transition-transform hover:scale-[2] focus:outline-none"
-              style={{
-                width: n.isHighlight ? 6 : 4,
-                height: n.isHighlight ? 6 : 4,
-                top: `${pct}%`,
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                background: cat?.color ?? '#fff',
-                boxShadow: n.isHighlight ? `0 0 4px ${cat?.color}` : 'none',
-              }}
-              title={n.shortTitle}
-            />
-          );
-        })}
+              onClick={onZoomOut}
+              disabled={nodeSpacing <= SPACING_MIN}
+              className="w-6 h-6 rounded flex items-center justify-center text-sm font-bold transition-all hover:opacity-80 disabled:opacity-25"
+              style={{ background: 'rgba(57,255,20,0.12)', color: '#39FF14', border: '1px solid rgba(57,255,20,0.25)' }}
+              aria-label="Zoom out"
+            >
+              −
+            </button>
+            <span className="flex-1 text-center text-xs font-mono" style={{ color: '#39FF14' }}>
+              {scalePercent}%
+            </span>
+            <button
+              onClick={onZoomIn}
+              disabled={nodeSpacing >= SPACING_MAX}
+              className="w-6 h-6 rounded flex items-center justify-center text-sm font-bold transition-all hover:opacity-80 disabled:opacity-25"
+              style={{ background: 'rgba(57,255,20,0.12)', color: '#39FF14', border: '1px solid rgba(57,255,20,0.25)' }}
+              aria-label="Zoom in"
+            >
+              +
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Minimap — fills remaining vertical space */}
+      <div className="flex-1 min-h-0 flex justify-center py-1">
+        <div className="relative w-0.5 h-full rounded-full" style={{ background: 'rgba(255,255,255,0.07)' }}>
+          {/* Progress fill */}
+          <div
+            className="absolute top-0 left-0 w-full rounded-full transition-all duration-100"
+            style={{ height: `${progress * 100}%`, background: 'rgba(57,255,20,0.45)' }}
+          />
+          {/* Node dots */}
+          {nodes.map((n, i) => {
+            const cat = categoryMap[n.category];
+            const pct = (i / Math.max(nodes.length - 1, 1)) * 100;
+            return (
+              <button
+                key={n.id}
+                onClick={() => scrollToNode(i)}
+                className="absolute rounded-full focus:outline-none transition-transform hover:scale-[2.5]"
+                style={{
+                  width: n.isHighlight ? 6 : 3,
+                  height: n.isHighlight ? 6 : 3,
+                  top: `${pct}%`,
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  background: cat?.color ?? '#888',
+                  boxShadow: n.isHighlight ? `0 0 3px ${cat?.color}` : 'none',
+                }}
+                title={n.shortTitle}
+              />
+            );
+          })}
+        </div>
       </div>
     </div>
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+// ─── Era Banner ───────────────────────────────────────────────────────────────
 
 function EraBanner({ era }: { era: TEra }) {
+  const lineColor  = eraAlpha(era.color, 0.35);
+  const textColor  = eraRgb(era.color);
+  const borderColor = eraAlpha(era.color, 0.38);
+  const bgColor    = eraAlpha(era.color, 0.07);
+
   return (
-    <div
-      className="relative z-10 flex items-center gap-4 my-8 select-none"
-      data-era={era.id}
-    >
-      <div className="flex-1 h-px" style={{ background: era.color.replace('0.12', '0.35') }} />
+    <div className="relative flex items-center gap-3 my-6 select-none">
+      <div className="flex-1 h-px" style={{ background: lineColor }} />
       <div
-        className="text-xs font-bold tracking-widest uppercase px-4 py-1 rounded-full border"
-        style={{
-          color: era.color.replace('0.12', '1').replace('rgba', 'rgb').replace(', 0.12)', ')'),
-          borderColor: era.color.replace('0.12', '0.4'),
-          background: era.color.replace('0.12', '0.08'),
-          letterSpacing: '0.15em',
-        }}
+        className="text-xs font-bold tracking-widest uppercase px-3 py-1 rounded-full border whitespace-nowrap"
+        style={{ color: textColor, borderColor, background: bgColor, letterSpacing: '0.14em' }}
       >
         {era.label}
       </div>
-      <div className="flex-1 h-px" style={{ background: era.color.replace('0.12', '0.35') }} />
+      <div className="flex-1 h-px" style={{ background: lineColor }} />
     </div>
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+// ─── Timeline Node ────────────────────────────────────────────────────────────
 
 function TimelineNode({
   node,
   side,
   category,
   isExpanded,
+  nodeSpacing,
   onToggle,
 }: {
   node: TNode;
   side: 'left' | 'right';
   category: TCategory;
   isExpanded: boolean;
+  nodeSpacing: number;
   onToggle: () => void;
 }) {
-  const isYAH = node.id === 'you-are-here';
+  const isYAH     = node.id === 'you-are-here';
+  const isCompact = nodeSpacing < SPACING_NORMAL;
+  const dotSize   = node.isHighlight ? (isCompact ? 14 : 18) : (isCompact ? 8 : 11);
+  const cardPad   = isCompact ? 'p-2' : 'p-4';
 
   return (
     <div
-      className="relative flex items-start mb-12 md:mb-16"
+      className="relative flex items-start"
       data-timeline-node={node.id}
+      style={{ marginBottom: nodeSpacing }}
     >
-      {/* Content card — left side */}
+      {/* Connecting line — spans from card box edge to spine dot center.
+          Card is w-5/12 (41.667%) with pr-8/pl-8 (2rem) padding inside it.
+          Card box edge = 41.667% - 2rem from each side.
+          Spine dot center = 50%. Line fills the gap between them. */}
       <div
-        className={`w-5/12 ${side === 'left' ? 'pr-6 md:pr-10' : 'pl-6 md:pl-10 order-last'}`}
-      >
+        className="absolute h-px pointer-events-none"
+        style={{
+          top: 10 + Math.round(dotSize / 2),
+          ...(side === 'left'
+            ? { left: 'calc(41.667% - 2rem)', right: 'calc(50% + 1px)' }
+            : { left: 'calc(50% + 1px)',       right: 'calc(41.667% - 2rem)' }
+          ),
+          background: `${category.color}55`,
+        }}
+      />
+
+      {/* Content card */}
+      <div className={`w-5/12 ${side === 'left' ? 'pr-8' : 'pl-8 order-last'}`}>
         <div
           onClick={onToggle}
-          className="rounded-xl p-4 cursor-pointer border transition-all duration-300"
+          className={`rounded-xl ${cardPad} cursor-pointer border transition-all duration-300`}
           style={{
-            borderColor: isExpanded ? category.color : `${category.color}35`,
-            background: isExpanded ? `${category.color}10` : 'rgba(5,5,10,0.65)',
-            boxShadow: isExpanded ? `0 0 24px ${category.color}25` : 'none',
+            borderColor: isExpanded ? category.color : `${category.color}30`,
+            background: isExpanded ? `${category.color}0e` : 'rgba(4,4,8,0.68)',
+            boxShadow: isExpanded ? `0 0 22px ${category.color}22` : 'none',
             textAlign: side === 'left' ? 'right' : 'left',
           }}
         >
-          <div className="text-xs font-mono mb-1" style={{ color: category.color }}>
+          <div
+            className="font-mono mb-0.5"
+            style={{ fontSize: isCompact ? 9 : 11, color: category.color, opacity: 0.9 }}
+          >
             {formatDate(node.date)}
-            {node.endDate && ` – ${formatDate(node.endDate)}`}
+            {node.endDate && !isCompact && ` – ${formatDate(node.endDate)}`}
           </div>
 
           <div
-            className={`font-semibold text-white leading-snug ${node.isHighlight ? 'text-base' : 'text-sm'}`}
+            className="font-semibold text-white leading-snug"
+            style={{ fontSize: isCompact ? (node.isHighlight ? 11 : 10) : (node.isHighlight ? 15 : 13) }}
           >
             {node.title}
           </div>
 
-          {/* Expandable details */}
           {isExpanded && (
             <div className="mt-3 space-y-2">
+              {node.endDate && (
+                <div className="text-xs font-mono" style={{ color: category.color, opacity: 0.75 }}>
+                  → {formatDate(node.endDate)}
+                </div>
+              )}
               <p className="text-xs text-gray-300 leading-relaxed">{node.description}</p>
               {node.tags.length > 0 && (
                 <div
@@ -354,7 +539,7 @@ function TimelineNode({
                     <span
                       key={t}
                       className="text-xs px-2 py-0.5 rounded-full"
-                      style={{ background: 'rgba(255,255,255,0.07)', color: '#888' }}
+                      style={{ background: 'rgba(255,255,255,0.06)', color: '#777' }}
                     >
                       {t}
                     </span>
@@ -366,38 +551,30 @@ function TimelineNode({
         </div>
       </div>
 
-      {/* Spine connector dot — always centered */}
-      <div className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center" style={{ top: 14 }}>
-        {/* Connecting line to spine */}
-        <div
-          className={`absolute top-1/2 h-px -translate-y-1/2 ${side === 'left' ? 'right-full' : 'left-full'}`}
-          style={{
-            width: '24px',
-            background: `${category.color}60`,
-          }}
-        />
-        {/* Node dot */}
+      {/* Spine dot */}
+      <div className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center" style={{ top: 10 }}>
         <div
           className="rounded-full border-2 transition-all duration-300"
           style={{
-            width: node.isHighlight ? 18 : 10,
-            height: node.isHighlight ? 18 : 10,
+            width: dotSize,
+            height: dotSize,
             borderColor: category.color,
             background: isExpanded || isYAH ? category.color : '#000',
             boxShadow: isYAH
-              ? `0 0 0 5px ${category.color}30, 0 0 0 10px ${category.color}15, 0 0 20px ${category.color}50`
+              ? `0 0 0 4px ${category.color}28, 0 0 0 8px ${category.color}12, 0 0 16px ${category.color}50`
               : isExpanded
-              ? `0 0 14px ${category.color}80`
+              ? `0 0 12px ${category.color}80`
               : 'none',
           }}
         />
         {isYAH && (
           <div
-            className="mt-2 text-xs font-bold px-2 py-0.5 rounded whitespace-nowrap animate-pulse"
+            className="mt-1.5 text-xs font-bold px-2 py-0.5 rounded whitespace-nowrap animate-pulse"
             style={{
               color: category.color,
               border: `1px solid ${category.color}`,
-              background: `${category.color}15`,
+              background: `${category.color}12`,
+              fontSize: 9,
             }}
           >
             YOU ARE HERE
@@ -405,12 +582,19 @@ function TimelineNode({
         )}
       </div>
 
-      {/* Year label — opposite side (desktop hint) */}
+      {/* Year hint — opposite side */}
       <div
-        className={`hidden md:flex w-5/12 items-start ${side === 'left' ? 'pl-6 md:pl-10' : 'pr-6 md:pr-10 justify-end order-first'}`}
-        style={{ paddingTop: 18 }}
+        className={`hidden md:flex w-5/12 items-start ${
+          side === 'left' ? 'pl-6 md:pl-10' : 'pr-6 md:pr-10 justify-end order-first'
+        }`}
+        style={{ paddingTop: 12 }}
       >
-        <span className="text-xs font-mono text-gray-700">{node.date.split('-')[0]}</span>
+        <span
+          className="font-mono"
+          style={{ fontSize: isCompact ? 9 : 11, color: '#3a3a3a' }}
+        >
+          {node.date.split('-')[0]}
+        </span>
       </div>
     </div>
   );
@@ -419,10 +603,11 @@ function TimelineNode({
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 export default function TimelineView() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const spineRef = useRef<HTMLDivElement>(null);
-  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const containerRef  = useRef<HTMLDivElement>(null);
+  const spineRef      = useRef<HTMLDivElement>(null);
+  const [expandedId, setExpandedId]       = useState<string | null>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [nodeSpacing, setNodeSpacing]     = useState(SPACING_DEFAULT);
   const [activeCategories, setActiveCategories] = useState<Set<string>>(
     () => new Set(timelineData.meta.categories.map(c => c.id))
   );
@@ -445,7 +630,6 @@ export default function TimelineView() {
     [sortedNodes, activeCategories]
   );
 
-  // Build era-annotated node list (era banners inserted before first node of each era)
   const annotatedNodes = useMemo(() => {
     let lastEraId = '';
     const result: Array<{ type: 'era'; era: TEra } | { type: 'node'; node: TNode; index: number }> = [];
@@ -461,11 +645,10 @@ export default function TimelineView() {
     return result;
   }, [filteredNodes]);
 
-  // GSAP spine draw
+  // GSAP spine scroll-draw
   useEffect(() => {
     if (!spineRef.current || !containerRef.current) return;
     gsap.registerPlugin(ScrollTrigger);
-
     const st = ScrollTrigger.create({
       trigger: containerRef.current,
       start: 'top top',
@@ -478,30 +661,31 @@ export default function TimelineView() {
         }
       },
     });
-
     return () => st.kill();
   }, []);
 
-  // IntersectionObserver for node reveal animations
+  // IntersectionObserver — node reveal
   useEffect(() => {
-    const nodes = document.querySelectorAll('[data-timeline-node]');
+    const nodeEls = document.querySelectorAll('[data-timeline-node]');
     const observer = new IntersectionObserver(
       entries => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
-            (entry.target as HTMLElement).style.opacity = '1';
-            (entry.target as HTMLElement).style.transform = 'translateX(0)';
+            const el = entry.target as HTMLElement;
+            el.style.opacity = '1';
+            el.style.transform = 'translateX(0)';
           }
         });
       },
-      { threshold: 0.15, rootMargin: '0px 0px -60px 0px' }
+      { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
     );
 
-    nodes.forEach((el, i) => {
+    nodeEls.forEach((el, i) => {
       const isLeft = i % 2 === 0;
-      (el as HTMLElement).style.opacity = '0';
-      (el as HTMLElement).style.transform = `translateX(${isLeft ? -32 : 32}px)`;
-      (el as HTMLElement).style.transition = 'opacity 0.55s ease, transform 0.55s ease';
+      const e = el as HTMLElement;
+      e.style.opacity = '0';
+      e.style.transform = `translateX(${isLeft ? -28 : 28}px)`;
+      e.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
       observer.observe(el);
     });
 
@@ -516,84 +700,85 @@ export default function TimelineView() {
     });
   };
 
+  const zoomIn  = () => setNodeSpacing(s => Math.min(s + SPACING_STEP, SPACING_MAX));
+  const zoomOut = () => setNodeSpacing(s => Math.max(s - SPACING_STEP, SPACING_MIN));
+
   return (
     <div className="relative min-h-screen bg-black overflow-x-hidden">
-      {/* Layer 0: starfield canvas */}
+      {/* Z-0: starfield */}
       <StarfieldCanvas />
 
-      {/* Layer 1: floating background quotes */}
+      {/* Z-1: floating quotes */}
       <FloatingQuotes quotes={timelineData.meta.quotes} />
 
-      {/* Fixed UI overlays */}
-      <CategoryLegend
+      {/* Z-30: fixed right panel (legend + scale + minimap) */}
+      <RightPanel
+        categories={timelineData.meta.categories as TCategory[]}
+        active={activeCategories}
+        nodeSpacing={nodeSpacing}
+        onZoomIn={zoomIn}
+        onZoomOut={zoomOut}
+        nodes={filteredNodes}
+        progress={scrollProgress}
+        categoryMap={categoryMap}
+      />
+
+      {/* ── Page content ─────────────────────────── */}
+
+      {/* Hero */}
+      <div className="relative pt-24 pb-8 px-4 text-center" style={{ zIndex: 10 }}>
+        <p className="text-sm font-mono tracking-[0.28em] text-gray-500 mb-1 uppercase">
+          Walter Steve Pollard Jr
+        </p>
+        <p className="text-base font-mono tracking-[0.22em] text-gray-400 mb-6 uppercase">
+          Software Engineer&nbsp;·&nbsp;Video&nbsp;·&nbsp;Chromecast&nbsp;·&nbsp;AI
+        </p>
+        <h1 className="text-4xl md:text-6xl font-bold text-white leading-tight mb-2">
+          <span style={{ color: '#39FF14' }}>25 Years</span> in the Making
+        </h1>
+        <div className="mt-5 text-gray-600 text-xs animate-bounce">↓ scroll to explore</div>
+      </div>
+
+      {/* Sticky filter bar — sticks just below nav (top: 64px) */}
+      <StickyFilterBar
         categories={timelineData.meta.categories as TCategory[]}
         active={activeCategories}
         onToggle={toggleCategory}
       />
-      <Minimap nodes={filteredNodes} progress={scrollProgress} categoryMap={categoryMap} />
 
-      {/* Page hero */}
-      <div className="relative pt-24 pb-16 px-4 text-center" style={{ zIndex: 10 }}>
-        <p className="text-xs font-mono tracking-[0.3em] text-gray-500 mb-4 uppercase">
-          Software Engineer · Video · Chromecast · AI
-        </p>
-        <h1 className="text-4xl md:text-6xl font-bold text-white mb-5 leading-tight">
-          <span style={{ color: '#39FF14' }}>25 Years</span> in the Making
-        </h1>
-        <p className="text-gray-400 max-w-xl mx-auto text-base leading-relaxed">
-          My career woven through the living history of the web — from ActionScript to AI,
-          from Atari to Chromecast.
-        </p>
-        <div className="mt-8 flex flex-wrap gap-2 justify-center">
-          {timelineData.meta.categories.map(c => (
-            <button
-              key={c.id}
-              onClick={() => toggleCategory(c.id)}
-              className="px-3 py-1 rounded-full text-xs font-semibold border transition-all duration-200"
-              style={{
-                borderColor: c.color,
-                color: activeCategories.has(c.id) ? '#000' : c.color,
-                background: activeCategories.has(c.id) ? c.color : 'transparent',
-              }}
-            >
-              {c.label}
-            </button>
-          ))}
-        </div>
-        <div className="mt-6 text-gray-600 text-xs animate-bounce">↓ scroll to explore</div>
-      </div>
-
-      {/* Timeline container */}
+      {/* Timeline */}
       <div
         ref={containerRef}
-        className="relative mx-auto px-4 pb-48"
-        style={{ maxWidth: 900, zIndex: 10 }}
+        className="relative mx-auto px-4 pt-8 pb-48"
+        style={{ maxWidth: 860, zIndex: 10 }}
       >
         {/* Spine rail */}
         <div
           className="absolute top-0 bottom-0 pointer-events-none"
-          style={{ left: '50%', transform: 'translateX(-50%)', width: 2, background: 'rgba(57,255,20,0.08)' }}
+          style={{ left: '50%', transform: 'translateX(-50%)', width: 2, background: 'rgba(57,255,20,0.07)' }}
         >
-          {/* Animated fill */}
           <div
             ref={spineRef}
             style={{
               width: '100%',
               height: '100%',
-              background: 'linear-gradient(to bottom, transparent 0%, rgba(57,255,20,0.55) 20%, rgba(57,255,20,0.55) 80%, transparent 100%)',
+              background:
+                'linear-gradient(to bottom, transparent 0%, rgba(57,255,20,0.5) 15%, rgba(57,255,20,0.5) 85%, transparent 100%)',
               transformOrigin: 'top center',
               transform: 'scaleY(0)',
             }}
           />
         </div>
 
-        {/* Nodes and era banners */}
-        {annotatedNodes.map((item, i) => {
+        {/* Nodes + era banners */}
+        {annotatedNodes.map(item => {
           if (item.type === 'era') {
             return <EraBanner key={`era-${item.era.id}`} era={item.era} />;
           }
           const { node, index } = item;
-          const cat = categoryMap[node.category] ?? { color: '#888', label: 'Unknown', id: node.category, description: '' };
+          const cat = categoryMap[node.category] ?? {
+            color: '#888', label: 'Unknown', id: node.category, description: '',
+          };
           return (
             <TimelineNode
               key={node.id}
@@ -601,18 +786,19 @@ export default function TimelineView() {
               side={index % 2 === 0 ? 'left' : 'right'}
               category={cat}
               isExpanded={expandedId === node.id}
+              nodeSpacing={nodeSpacing}
               onToggle={() => setExpandedId(expandedId === node.id ? null : node.id)}
             />
           );
         })}
 
         {/* End cap */}
-        <div className="flex flex-col items-center mt-16 gap-3 text-center">
+        <div className="flex flex-col items-center mt-14 gap-3">
           <div
-            className="w-6 h-6 rounded-full border-2 animate-pulse"
-            style={{ borderColor: '#39FF14', background: 'rgba(57,255,20,0.15)' }}
+            className="w-5 h-5 rounded-full border-2 animate-pulse"
+            style={{ borderColor: '#39FF14', background: 'rgba(57,255,20,0.12)' }}
           />
-          <p className="text-gray-500 text-sm italic">The story continues…</p>
+          <p className="text-gray-600 text-xs italic">The story continues…</p>
         </div>
       </div>
     </div>
