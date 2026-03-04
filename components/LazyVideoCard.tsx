@@ -31,6 +31,7 @@ const LazyVideoCard: React.FC<LazyVideoCardProps> = ({
 }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageError, setImageError] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
   // Intersection Observer for lazy loading
@@ -57,7 +58,8 @@ const LazyVideoCard: React.FC<LazyVideoCardProps> = ({
     onVideoSelect(video);
   }, [video, onVideoSelect]);
 
-  const posterUrl = video.poster || video.m3uData?.logo;
+  const rawPoster = video.poster || video.m3uData?.logo;
+  const posterUrl = rawPoster && rawPoster !== 'undefined' ? rawPoster : null;
   const isSelected = !!(currentVideo && currentVideo.id === video.id);
 
   // Placeholder skeleton until the card scrolls into view
@@ -99,7 +101,7 @@ const LazyVideoCard: React.FC<LazyVideoCardProps> = ({
         className={`relative rounded-t-lg overflow-hidden ${colors.bg}`}
         style={{ height: isGrid ? '120px' : '110px' }}
       >
-        {posterUrl ? (
+        {posterUrl && !imageError ? (
           <>
             {!imageLoaded && (
               <div className="absolute inset-0 bg-gray-800/50 flex items-center justify-center">
@@ -112,7 +114,7 @@ const LazyVideoCard: React.FC<LazyVideoCardProps> = ({
               alt={video.title}
               className={`w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
               onLoad={() => setImageLoaded(true)}
-              onError={() => setImageLoaded(true)}
+              onError={() => setImageError(true)}
             />
             <div className={`absolute bottom-1 right-1 bg-black/80 text-white px-1.5 py-0.5 rounded flex items-center gap-1 ${isGrid ? 'text-[10px]' : 'text-xs'}`}>
               <Clock size={isGrid ? 10 : 12} />
