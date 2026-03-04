@@ -1,54 +1,95 @@
 {
   "meta": {
     "categories": [
-      { "id": "personal",     "label": "Personal",      "color": "#FF6B6B", "description": "Life milestones & hobbies" },
-      { "id": "career",       "label": "Career",         "color": "#39FF14", "description": "WSP professional journey" },
-      { "id": "education",    "label": "Education",      "color": "#60A5FA", "description": "Academic milestones" },
-      { "id": "tech-release", "label": "Tech Release",   "color": "#4ECDC4", "description": "Software & platform launches" },
-      { "id": "gaming",       "label": "Gaming",         "color": "#FFD700", "description": "Game & console releases" },
-      { "id": "ai-llm",       "label": "AI / LLM",       "color": "#FF8C00", "description": "Artificial Intelligence milestones" },
-      { "id": "world-event",  "label": "World Event",    "color": "#A855F7", "description": "Major industry moments" }
+      {
+        "id": "personal",
+        "label": "Personal",
+        "color": "#FF6B6B",
+        "description": "Life milestones & hobbies"
+      },
+      {
+        "id": "career",
+        "label": "Career",
+        "color": "#39FF14",
+        "description": "WSP professional journey"
+      },
+      {
+        "id": "education",
+        "label": "Education",
+        "color": "#60A5FA",
+        "description": "Academic milestones"
+      },
+      {
+        "id": "tech-release",
+        "label": "Tech Release",
+        "color": "#4ECDC4",
+        "description": "Software & platform launches"
+      },
+      {
+        "id": "gaming",
+        "label": "Gaming",
+        "color": "#FFD700",
+        "description": "Game & console releases"
+      },
+      {
+        "id": "ai-llm",
+        "label": "AI / LLM",
+        "color": "#FF8C00",
+        "description": "Artificial Intelligence milestones"
+      },
+      {
+        "id": "world-event",
+        "label": "World Event",
+        "color": "#A855F7",
+        "description": "Major industry moments"
+      }
     ],
     "eras": [
       {
         "id": "dawn-of-computing",
         "label": "Dawn of Computing",
-        "startYear": 1960, "endYear": 1978,
+        "startYear": 1960,
+        "endYear": 1978,
         "color": "rgba(120, 60, 220, 0.12)",
         "description": "Mainframes, ARPANET, and the birth of the personal computer"
       },
       {
         "id": "pc-revolution",
         "label": "Personal Computer Revolution",
-        "startYear": 1979, "endYear": 1994,
+        "startYear": 1979,
+        "endYear": 1994,
         "color": "rgba(50, 100, 220, 0.12)",
         "description": "Home computers, game consoles, and the graphical OS"
       },
       {
         "id": "web-takes-over",
         "label": "The Web Takes Over",
-        "startYear": 1995, "endYear": 2006,
+        "startYear": 1995,
+        "endYear": 2006,
         "color": "rgba(0, 160, 120, 0.12)",
         "description": "Browsers, dot-com, Flash, ActionScript, and the open web"
       },
       {
         "id": "mobile-flash-decline",
         "label": "Mobile Revolution & Flash Twilight",
-        "startYear": 2007, "endYear": 2012,
+        "startYear": 2007,
+        "endYear": 2012,
         "color": "rgba(255, 120, 0, 0.12)",
         "description": "iPhone changes everything; HTML5 rises as Flash fades"
       },
       {
         "id": "javascript-renaissance",
         "label": "The JavaScript Renaissance",
-        "startYear": 2013, "endYear": 2019,
+        "startYear": 2013,
+        "endYear": 2019,
         "color": "rgba(200, 200, 0, 0.10)",
         "description": "React, Node, Polymer, TypeScript — JS rules the stack"
       },
       {
         "id": "ai-age",
         "label": "The AI Age",
-        "startYear": 2020, "endYear": 2027,
+        "startYear": 2020,
+        "endYear": 2027,
         "color": "rgba(255, 150, 0, 0.12)",
         "description": "LLMs, AI coding assistants, and the next frontier"
       }
@@ -106,7 +147,11 @@
       "shortTitle": "ARPANet",
       "description": "The precursor to the internet — the first message sent between UCLA and Stanford. The seed of everything that follows.",
       "isHighlight": false,
-      "tags": ["internet", "history", "networking"]
+      "tags": [
+        "internet",
+        "history",
+        "networking"
+      ]
     },
     {
       "id": "c-language",
@@ -116,7 +161,11 @@
       "shortTitle": "C Language",
       "description": "Dennis Ritchie releases C at Bell Labs. Nearly every language and OS that follows is built on top of it.",
       "isHighlight": false,
-      "tags": ["programming", "language", "history"]
+      "tags": [
+        "programming",
+        "language",
+        "history"
+      ]
     },
     {
       "id": "pong",
@@ -126,7 +175,12 @@
       "shortTitle": "Pong",
       "description": "Atari's Pong debuts in arcades. The video game industry is born.",
       "isHighlight": false,
-      "tags": ["atari", "arcade", "gaming-history"]
+      "tags": [
+        "atari",
+        "arcade",
+        "gaming-history"
+      ],
+      "logo": "/assets/timeline/logos/atari.svg"
     },
     {
       "id": "microsoft-founded",
@@ -136,7 +190,12 @@
       "shortTitle": "Microsoft",
       "description": "Bill Gates and Paul Allen found Microsoft in Albuquerque, NM. The personal computing era begins.",
       "isHighlight": false,
-      "tags": ["microsoft", "history", "company"]
+      "tags": [
+        "microsoft",
+        "history",
+        "company"
+      ],
+      "logo": "/assets/timeline/logos/microsoft.svg"
     },
     {
       "id": "apple-founded",
@@ -146,7 +205,12 @@
       "shortTitle": "Apple Founded",
       "description": "Steve Jobs, Steve Wozniak, and Ronald Wayne found Apple. The Apple I is their first product.",
       "isHighlight": false,
-      "tags": ["apple", "history", "company"]
+      "tags": [
+        "apple",
+        "history",
+        "company"
+      ],
+      "logo": "/assets/timeline/logos/apple.svg"
     },
     {
       "id": "atari-2600",
@@ -156,7 +220,12 @@
       "shortTitle": "Atari 2600",
       "description": "The Atari 2600 brings programmable cartridge gaming to living rooms everywhere. A future WSP obsession.",
       "isHighlight": true,
-      "tags": ["atari", "console", "gaming-history"]
+      "tags": [
+        "atari",
+        "console",
+        "gaming-history"
+      ],
+      "logo": "/assets/timeline/logos/atari-classic.svg"
     },
     {
       "id": "wsp-born",
@@ -166,7 +235,11 @@
       "shortTitle": "Born",
       "description": "Walter S. Pollard Jr. is born in October 1978. The journey begins.",
       "isHighlight": true,
-      "tags": ["personal", "origin", "milestone"]
+      "tags": [
+        "personal",
+        "origin",
+        "milestone"
+      ]
     },
     {
       "id": "ibm-pc",
@@ -176,7 +249,13 @@
       "shortTitle": "IBM PC",
       "description": "The IBM Personal Computer launches, legitimizing the home computer market and setting the PC standard for decades.",
       "isHighlight": false,
-      "tags": ["ibm", "pc", "history", "hardware"]
+      "tags": [
+        "ibm",
+        "pc",
+        "history",
+        "hardware"
+      ],
+      "logo": "/assets/timeline/logos/ibm.svg"
     },
     {
       "id": "wsp-atari",
@@ -186,7 +265,12 @@
       "shortTitle": "Atari Gaming",
       "description": "Young WSP is deep into Atari gaming — the spark that ignites a lifelong love of technology and interactive media.",
       "isHighlight": true,
-      "tags": ["personal", "gaming", "atari"]
+      "tags": [
+        "personal",
+        "gaming",
+        "atari"
+      ],
+      "logo": "/assets/timeline/logos/atari-classic.svg"
     },
     {
       "id": "commodore64",
@@ -196,7 +280,11 @@
       "shortTitle": "Commodore 64",
       "description": "The best-selling personal computer of all time ships. 8-bit computing enters millions of homes.",
       "isHighlight": false,
-      "tags": ["commodore", "hardware", "gaming-history"]
+      "tags": [
+        "commodore",
+        "hardware",
+        "gaming-history"
+      ]
     },
     {
       "id": "nes-usa",
@@ -206,7 +294,12 @@
       "shortTitle": "NES Launches",
       "description": "Nintendo revives the video game market after the 1983 crash. Super Mario Bros. becomes a cultural phenomenon.",
       "isHighlight": false,
-      "tags": ["nintendo", "console", "mario"]
+      "tags": [
+        "nintendo",
+        "console",
+        "mario"
+      ],
+      "logo": "/assets/timeline/logos/nintendo.svg"
     },
     {
       "id": "windows-1",
@@ -216,7 +309,12 @@
       "shortTitle": "Windows 1.0",
       "description": "Microsoft ships the first version of Windows. The graphical OS era begins.",
       "isHighlight": false,
-      "tags": ["microsoft", "windows", "os"]
+      "tags": [
+        "microsoft",
+        "windows",
+        "os"
+      ],
+      "logo": "/assets/timeline/logos/microsoft.svg"
     },
     {
       "id": "world-wide-web",
@@ -226,7 +324,12 @@
       "shortTitle": "WWW Invented",
       "description": "Tim Berners-Lee proposes the World Wide Web at CERN. HTTP, HTML, and the browser are about to change everything.",
       "isHighlight": true,
-      "tags": ["internet", "web", "history", "milestone"]
+      "tags": [
+        "internet",
+        "web",
+        "history",
+        "milestone"
+      ]
     },
     {
       "id": "game-boy",
@@ -236,7 +339,12 @@
       "shortTitle": "Game Boy",
       "description": "Nintendo's portable console ships in Japan — gaming goes wherever you go.",
       "isHighlight": false,
-      "tags": ["nintendo", "handheld", "gaming"]
+      "tags": [
+        "nintendo",
+        "handheld",
+        "gaming"
+      ],
+      "logo": "/assets/timeline/logos/nintendo.svg"
     },
     {
       "id": "linux-kernel",
@@ -246,7 +354,12 @@
       "shortTitle": "Linux",
       "description": "Linus Torvalds posts the Linux kernel. Open source OS begins its march to power the internet.",
       "isHighlight": false,
-      "tags": ["linux", "open-source", "os"]
+      "tags": [
+        "linux",
+        "open-source",
+        "os"
+      ],
+      "logo": "/assets/timeline/logos/linux.svg"
     },
     {
       "id": "snes",
@@ -256,7 +369,12 @@
       "shortTitle": "SNES",
       "description": "The 16-bit era peaks with the Super Nintendo — Mode 7, Street Fighter II, and an era-defining library.",
       "isHighlight": false,
-      "tags": ["nintendo", "console", "16bit"]
+      "tags": [
+        "nintendo",
+        "console",
+        "16bit"
+      ],
+      "logo": "/assets/timeline/logos/nintendo.svg"
     },
     {
       "id": "mosaic",
@@ -266,7 +384,11 @@
       "shortTitle": "Mosaic",
       "description": "The first graphical web browser — images alongside text. The web becomes visually accessible to the world.",
       "isHighlight": false,
-      "tags": ["browser", "web", "internet"]
+      "tags": [
+        "browser",
+        "web",
+        "internet"
+      ]
     },
     {
       "id": "doom",
@@ -276,7 +398,11 @@
       "shortTitle": "Doom",
       "description": "id Software's Doom defines first-person shooters and PC gaming culture. Shareware distribution model disrupts everything.",
       "isHighlight": false,
-      "tags": ["fps", "id-software", "pc-gaming"]
+      "tags": [
+        "fps",
+        "id-software",
+        "pc-gaming"
+      ]
     },
     {
       "id": "playstation-1",
@@ -286,7 +412,13 @@
       "shortTitle": "PlayStation",
       "description": "Sony enters the console market with the PS1, introducing CD-ROM gaming and 3D graphics at scale.",
       "isHighlight": false,
-      "tags": ["sony", "playstation", "console", "3d"]
+      "tags": [
+        "sony",
+        "playstation",
+        "console",
+        "3d"
+      ],
+      "logo": "/assets/timeline/logos/playstation.svg"
     },
     {
       "id": "javascript-created",
@@ -296,7 +428,12 @@
       "shortTitle": "JavaScript",
       "description": "Brendan Eich creates JavaScript at Netscape in 10 days. Initially called Mocha, then LiveScript. The language that defines WSP's career is born.",
       "isHighlight": true,
-      "tags": ["javascript", "web", "language", "netscape"]
+      "tags": [
+        "javascript",
+        "web",
+        "language",
+        "netscape"
+      ]
     },
     {
       "id": "java-1",
@@ -306,7 +443,11 @@
       "shortTitle": "Java 1.0",
       "description": "Sun Microsystems releases Java. \"Write once, run anywhere\" — the promise that heralds platform-independent computing.",
       "isHighlight": false,
-      "tags": ["java", "language", "sun"]
+      "tags": [
+        "java",
+        "language",
+        "sun"
+      ]
     },
     {
       "id": "windows-95",
@@ -316,7 +457,12 @@
       "shortTitle": "Windows 95",
       "description": "Start menu, taskbar, 32-bit support. Windows 95 puts 90 million new users on the PC and eventually the internet.",
       "isHighlight": false,
-      "tags": ["microsoft", "windows", "os"]
+      "tags": [
+        "microsoft",
+        "windows",
+        "os"
+      ],
+      "logo": "/assets/timeline/logos/microsoft.svg"
     },
     {
       "id": "flash-1",
@@ -326,7 +472,13 @@
       "shortTitle": "Flash 1.0",
       "description": "FutureWave Software releases SmartSketch as FutureSplash Animator — soon acquired by Macromedia and rebranded Flash. A technology WSP will master and ride for 15+ years.",
       "isHighlight": true,
-      "tags": ["flash", "macromedia", "animation", "web"]
+      "tags": [
+        "flash",
+        "macromedia",
+        "animation",
+        "web"
+      ],
+      "logo": "/assets/timeline/logos/macromedia.svg"
     },
     {
       "id": "css1",
@@ -336,7 +488,12 @@
       "shortTitle": "CSS1",
       "description": "The W3C standardizes CSS1, separating presentation from content. Web design enters a new era.",
       "isHighlight": false,
-      "tags": ["css", "web", "w3c", "design"]
+      "tags": [
+        "css",
+        "web",
+        "w3c",
+        "design"
+      ]
     },
     {
       "id": "n64",
@@ -346,7 +503,13 @@
       "shortTitle": "Nintendo 64",
       "description": "The Nintendo 64 ushers in true 3D gaming. Super Mario 64 and Ocarina of Time redefine what games can be.",
       "isHighlight": false,
-      "tags": ["nintendo", "console", "3d", "mario"]
+      "tags": [
+        "nintendo",
+        "console",
+        "3d",
+        "mario"
+      ],
+      "logo": "/assets/timeline/logos/nintendo.svg"
     },
     {
       "id": "wsp-drexel",
@@ -356,7 +519,11 @@
       "shortTitle": "Drexel",
       "description": "WSP enrolls at Drexel University studying Electrical Engineering and Computer Science. Begins writing code seriously.",
       "isHighlight": true,
-      "tags": ["education", "university", "milestone"]
+      "tags": [
+        "education",
+        "university",
+        "milestone"
+      ]
     },
     {
       "id": "ecmascript-1",
@@ -366,7 +533,11 @@
       "shortTitle": "ECMAScript 1",
       "description": "JavaScript gets an official spec. Ecma International publishes ECMA-262, the foundation of modern JS.",
       "isHighlight": false,
-      "tags": ["javascript", "ecma", "standard"]
+      "tags": [
+        "javascript",
+        "ecma",
+        "standard"
+      ]
     },
     {
       "id": "deep-blue",
@@ -376,7 +547,13 @@
       "shortTitle": "Deep Blue",
       "description": "IBM's Deep Blue defeats world chess champion Garry Kasparov in a rematch. Machines demonstrate superhuman performance on a cognitive task for the first time.",
       "isHighlight": false,
-      "tags": ["ai", "ibm", "chess", "machine-learning"]
+      "tags": [
+        "ai",
+        "ibm",
+        "chess",
+        "machine-learning"
+      ],
+      "logo": "/assets/timeline/logos/ibm.svg"
     },
     {
       "id": "google-founded",
@@ -386,7 +563,13 @@
       "shortTitle": "Google Founded",
       "description": "Larry Page and Sergey Brin incorporate Google Inc. PageRank changes how people discover content on the web.",
       "isHighlight": false,
-      "tags": ["google", "search", "company", "history"]
+      "tags": [
+        "google",
+        "search",
+        "company",
+        "history"
+      ],
+      "logo": "/assets/timeline/logos/google.svg"
     },
     {
       "id": "ocarina",
@@ -396,7 +579,13 @@
       "shortTitle": "Ocarina of Time",
       "description": "Widely considered the greatest game ever made at release. 3D adventure gameplay sets a new bar.",
       "isHighlight": false,
-      "tags": ["nintendo", "zelda", "n64", "gaming"]
+      "tags": [
+        "nintendo",
+        "zelda",
+        "n64",
+        "gaming"
+      ],
+      "logo": "/assets/timeline/logos/nintendo.svg"
     },
     {
       "id": "wsp-unisys",
@@ -407,7 +596,13 @@
       "description": "WSP joins Unisys in Malvern, PA as a Web Developer and Systems Test Engineer. The career begins — while still finishing his Drexel degree.",
       "endDate": "2002-12",
       "isHighlight": true,
-      "tags": ["career", "first-job", "web-development", "milestone"]
+      "tags": [
+        "career",
+        "first-job",
+        "web-development",
+        "milestone"
+      ],
+      "logo": "/assets/timeline/logos/unisys.svg"
     },
     {
       "id": "flash-4-actionscript",
@@ -417,7 +612,13 @@
       "shortTitle": "Flash 4",
       "description": "Macromedia Flash 4 introduces primitive ActionScript. Scripted web interactivity begins. WSP enters the Flash ecosystem at exactly the right moment.",
       "isHighlight": false,
-      "tags": ["flash", "macromedia", "actionscript", "web"]
+      "tags": [
+        "flash",
+        "macromedia",
+        "actionscript",
+        "web"
+      ],
+      "logo": "/assets/timeline/logos/macromedia-flash.svg"
     },
     {
       "id": "flash-5-as1",
@@ -427,7 +628,13 @@
       "shortTitle": "ActionScript 1.0",
       "description": "Macromedia Flash 5 ships with ActionScript 1.0 — a proper scripting language. WSP begins writing AS. The Flash golden age begins.",
       "isHighlight": true,
-      "tags": ["flash", "actionscript", "macromedia", "web"]
+      "tags": [
+        "flash",
+        "actionscript",
+        "macromedia",
+        "web"
+      ],
+      "logo": "/assets/timeline/logos/macromedia-flash.svg"
     },
     {
       "id": "dotcom-bust",
@@ -437,7 +644,11 @@
       "shortTitle": "Dot-Com Crash",
       "description": "NASDAQ peaks and crashes. $5 trillion in market value evaporates. The industry consolidates — only the serious survive.",
       "isHighlight": false,
-      "tags": ["economy", "internet", "history"]
+      "tags": [
+        "economy",
+        "internet",
+        "history"
+      ]
     },
     {
       "id": "wikipedia",
@@ -447,7 +658,11 @@
       "shortTitle": "Wikipedia",
       "description": "Jimmy Wales and Larry Sanger launch Wikipedia. Collaborative, open-source knowledge at scale.",
       "isHighlight": false,
-      "tags": ["wikipedia", "open-source", "web"]
+      "tags": [
+        "wikipedia",
+        "open-source",
+        "web"
+      ]
     },
     {
       "id": "wsp-drexel-grad",
@@ -457,7 +672,11 @@
       "shortTitle": "Drexel Grad",
       "description": "WSP graduates from Drexel University with a degree in Electrical Engineering / Computer Science.",
       "isHighlight": true,
-      "tags": ["education", "graduation", "milestone"]
+      "tags": [
+        "education",
+        "graduation",
+        "milestone"
+      ]
     },
     {
       "id": "xbox-first",
@@ -467,7 +686,12 @@
       "shortTitle": "Xbox",
       "description": "Microsoft enters the console wars with the original Xbox. Halo: Combat Evolved ships at launch and becomes a phenomenon.",
       "isHighlight": false,
-      "tags": ["microsoft", "xbox", "console", "halo"]
+      "tags": [
+        "microsoft",
+        "xbox",
+        "console",
+        "halo"
+      ]
     },
     {
       "id": "flash-mx-as2",
@@ -477,7 +701,13 @@
       "shortTitle": "ActionScript 2.0",
       "description": "Macromedia Flash MX introduces ActionScript 2.0 with classes and OOP. Professional Flash development becomes serious engineering.",
       "isHighlight": false,
-      "tags": ["flash", "actionscript", "macromedia", "oop"]
+      "tags": [
+        "flash",
+        "actionscript",
+        "macromedia",
+        "oop"
+      ],
+      "logo": "/assets/timeline/logos/macromedia-flash.svg"
     },
     {
       "id": "wsp-cittone",
@@ -488,7 +718,11 @@
       "description": "WSP completes a Network Systems Professional certification at Cittone Institute alongside his work at Unisys.",
       "endDate": "2002-12",
       "isHighlight": false,
-      "tags": ["education", "certification", "networking"]
+      "tags": [
+        "education",
+        "certification",
+        "networking"
+      ]
     },
     {
       "id": "facebook-launched",
@@ -498,7 +732,12 @@
       "shortTitle": "Facebook",
       "description": "Mark Zuckerberg launches \"The Facebook\" from his Harvard dorm. The social media era begins in earnest.",
       "isHighlight": false,
-      "tags": ["facebook", "social-media", "history"]
+      "tags": [
+        "facebook",
+        "social-media",
+        "history"
+      ],
+      "logo": "/assets/timeline/logos/facebook.svg"
     },
     {
       "id": "firefox-1",
@@ -508,7 +747,12 @@
       "shortTitle": "Firefox 1.0",
       "description": "Mozilla's Firefox launches, challenging IE6's dominance. The browser wars heat up — and web standards start to matter.",
       "isHighlight": false,
-      "tags": ["firefox", "browser", "mozilla"]
+      "tags": [
+        "firefox",
+        "browser",
+        "mozilla"
+      ],
+      "logo": "/assets/timeline/logos/firefox.svg"
     },
     {
       "id": "wsp-vantage",
@@ -519,7 +763,11 @@
       "description": "WSP joins Vantage Inc in New Hope, PA as a Flash Developer. ActionScript is now the core of his craft.",
       "endDate": "2006-01",
       "isHighlight": false,
-      "tags": ["career", "flash", "developer"]
+      "tags": [
+        "career",
+        "flash",
+        "developer"
+      ]
     },
     {
       "id": "wow",
@@ -529,7 +777,12 @@
       "shortTitle": "WoW",
       "description": "Blizzard's World of Warcraft launches and defines the MMORPG genre. At peak it had 12 million subscribers.",
       "isHighlight": false,
-      "tags": ["blizzard", "mmorpg", "gaming"]
+      "tags": [
+        "blizzard",
+        "mmorpg",
+        "gaming"
+      ],
+      "logo": "/assets/timeline/logos/blizzard.svg"
     },
     {
       "id": "youtube",
@@ -539,7 +792,13 @@
       "shortTitle": "YouTube",
       "description": "Three former PayPal employees launch YouTube. Online video explodes — Flash video players are now everywhere.",
       "isHighlight": true,
-      "tags": ["youtube", "video", "web", "history"]
+      "tags": [
+        "youtube",
+        "video",
+        "web",
+        "history"
+      ],
+      "logo": "/assets/timeline/logos/youtube.svg"
     },
     {
       "id": "ajax-coined",
@@ -549,7 +808,12 @@
       "shortTitle": "Ajax",
       "description": "Jesse James Garrett coins \"Ajax\" (Asynchronous JavaScript and XML). Dynamic web apps without full page reloads — this changes everything.",
       "isHighlight": false,
-      "tags": ["ajax", "javascript", "web", "dynamic"]
+      "tags": [
+        "ajax",
+        "javascript",
+        "web",
+        "dynamic"
+      ]
     },
     {
       "id": "flash-9-as3",
@@ -559,7 +823,13 @@
       "shortTitle": "ActionScript 3.0",
       "description": "Adobe (now owning Macromedia) ships Flash 9 with ActionScript 3.0 — a strongly typed, class-based language. WSP masters AS3 and rides it to the top of his career.",
       "isHighlight": true,
-      "tags": ["flash", "actionscript", "adobe", "as3"]
+      "tags": [
+        "flash",
+        "actionscript",
+        "adobe",
+        "as3"
+      ],
+      "logo": "/assets/timeline/logos/flash.svg"
     },
     {
       "id": "jquery-1",
@@ -569,7 +839,13 @@
       "shortTitle": "jQuery",
       "description": "John Resig releases jQuery. Cross-browser DOM manipulation in one library — it becomes the most widely used JS library in history.",
       "isHighlight": false,
-      "tags": ["jquery", "javascript", "library", "dom"]
+      "tags": [
+        "jquery",
+        "javascript",
+        "library",
+        "dom"
+      ],
+      "logo": "/assets/timeline/logos/jquery.svg"
     },
     {
       "id": "iphone",
@@ -579,7 +855,14 @@
       "shortTitle": "iPhone",
       "description": "Steve Jobs unveils the original iPhone. \"An iPod, a phone, and an internet communicator.\" Mobile computing changes forever — and Flash has no place on it.",
       "isHighlight": true,
-      "tags": ["apple", "iphone", "mobile", "history", "milestone"]
+      "tags": [
+        "apple",
+        "iphone",
+        "mobile",
+        "history",
+        "milestone"
+      ],
+      "logo": "/assets/timeline/logos/apple.svg"
     },
     {
       "id": "wsp-fearnet",
@@ -590,7 +873,14 @@
       "description": "WSP joins FEARnet at Comcast Entertainment Group as Senior Flash Developer and Technology Leader. Leads front-end development across CSS, HTML, and Flash — Brightcove video, Omniture analytics, and DoubleClick DART ads.",
       "endDate": "2009-01",
       "isHighlight": true,
-      "tags": ["career", "flash", "comcast", "video", "as3"]
+      "tags": [
+        "career",
+        "flash",
+        "comcast",
+        "video",
+        "as3"
+      ],
+      "logo": "/assets/timeline/logos/comcast.svg"
     },
     {
       "id": "android-1",
@@ -600,7 +890,12 @@
       "shortTitle": "Android 1.0",
       "description": "Google ships Android 1.0 on the HTC Dream. The mobile OS wars begin — iOS vs Android will define the next decade.",
       "isHighlight": false,
-      "tags": ["android", "google", "mobile", "os"]
+      "tags": [
+        "android",
+        "google",
+        "mobile",
+        "os"
+      ]
     },
     {
       "id": "chrome-v8",
@@ -610,7 +905,14 @@
       "shortTitle": "Chrome / V8",
       "description": "Google launches Chrome with the V8 JavaScript engine. JS performance leaps forward — the stage is set for server-side JS.",
       "isHighlight": false,
-      "tags": ["chrome", "google", "v8", "javascript", "browser"]
+      "tags": [
+        "chrome",
+        "google",
+        "v8",
+        "javascript",
+        "browser"
+      ],
+      "logo": "/assets/timeline/logos/chrome.svg"
     },
     {
       "id": "wsp-e-online",
@@ -621,7 +923,14 @@
       "description": "WSP transitions from FEARnet to E! Online within Comcast Entertainment Group in Los Angeles, bringing Flash video and advertising expertise to the E! Entertainment platform.",
       "endDate": "2009-08",
       "isHighlight": false,
-      "tags": ["career", "flash", "comcast", "entertainment", "la"]
+      "tags": [
+        "career",
+        "flash",
+        "comcast",
+        "entertainment",
+        "la"
+      ],
+      "logo": "/assets/timeline/logos/comcast.svg"
     },
     {
       "id": "node-js",
@@ -631,7 +940,13 @@
       "shortTitle": "Node.js",
       "description": "Ryan Dahl creates Node.js, bringing JavaScript to the server. The full-stack JS era begins.",
       "isHighlight": false,
-      "tags": ["nodejs", "javascript", "server", "backend"]
+      "tags": [
+        "nodejs",
+        "javascript",
+        "server",
+        "backend"
+      ],
+      "logo": "/assets/timeline/logos/nodejs.svg"
     },
     {
       "id": "wsp-razorfish",
@@ -642,7 +957,12 @@
       "description": "WSP joins Razorfish Health in the Philadelphia area as a Senior Flash Developer. AS3 server-side data feed integration and healthcare client applications.",
       "endDate": "2011-03",
       "isHighlight": false,
-      "tags": ["career", "flash", "healthcare", "as3"]
+      "tags": [
+        "career",
+        "flash",
+        "healthcare",
+        "as3"
+      ]
     },
     {
       "id": "wsp-sierra-star",
@@ -653,7 +973,11 @@
       "description": "WSP runs Sierra Star Studio — a freelance full-stack web development practice alongside his contracted roles. Running parallel through multiple positions.",
       "endDate": "2012-06",
       "isHighlight": false,
-      "tags": ["career", "freelance", "fullstack"]
+      "tags": [
+        "career",
+        "freelance",
+        "fullstack"
+      ]
     },
     {
       "id": "ipad-no-flash",
@@ -663,7 +987,14 @@
       "shortTitle": "iPad / No Flash",
       "description": "Steve Jobs publishes 'Thoughts on Flash' — Apple will never support Flash. The device that completes Flash's death sentence. HTML5 video rises to fill the void.",
       "isHighlight": true,
-      "tags": ["apple", "ipad", "flash", "html5", "milestone"]
+      "tags": [
+        "apple",
+        "ipad",
+        "flash",
+        "html5",
+        "milestone"
+      ],
+      "logo": "/assets/timeline/logos/apple.svg"
     },
     {
       "id": "angular-1",
@@ -673,7 +1004,14 @@
       "shortTitle": "AngularJS",
       "description": "Google's AngularJS introduces two-way data binding and MVC patterns for web apps. The JavaScript framework wars begin.",
       "isHighlight": false,
-      "tags": ["angular", "google", "javascript", "framework", "spa"]
+      "tags": [
+        "angular",
+        "google",
+        "javascript",
+        "framework",
+        "spa"
+      ],
+      "logo": "/assets/timeline/logos/angular.svg"
     },
     {
       "id": "wsp-empathy-lab",
@@ -684,7 +1022,13 @@
       "description": "WSP joins Empathy Lab in Conshohocken, PA. Leads AS2/AS3/FLEX development for major clients including Rogers OnDemand (Akamai CDN + HDCore), Sprout Online, and UltraViolet (UVVU). Builds Android 2.2+ video player.",
       "endDate": "2011-11",
       "isHighlight": true,
-      "tags": ["career", "flash", "akamai", "video", "android"]
+      "tags": [
+        "career",
+        "flash",
+        "akamai",
+        "video",
+        "android"
+      ]
     },
     {
       "id": "watson-jeopardy",
@@ -694,7 +1038,13 @@
       "shortTitle": "Watson / Jeopardy",
       "description": "IBM's Watson AI defeats Jeopardy! champions Ken Jennings and Brad Rutter. Natural language understanding at superhuman scale makes headlines worldwide.",
       "isHighlight": false,
-      "tags": ["ai", "ibm", "nlp", "watson"]
+      "tags": [
+        "ai",
+        "ibm",
+        "nlp",
+        "watson"
+      ],
+      "logo": "/assets/timeline/logos/ibm.svg"
     },
     {
       "id": "bootstrap-1",
@@ -704,7 +1054,13 @@
       "shortTitle": "Bootstrap",
       "description": "Twitter open-sources Bootstrap. CSS grids and responsive design go mainstream overnight.",
       "isHighlight": false,
-      "tags": ["bootstrap", "css", "responsive", "twitter"]
+      "tags": [
+        "bootstrap",
+        "css",
+        "responsive",
+        "twitter"
+      ],
+      "logo": "/assets/timeline/logos/bootstrap.svg"
     },
     {
       "id": "wsp-constellation",
@@ -715,7 +1071,14 @@
       "description": "WSP works as a freelance Senior Flash Developer for Constellation.tv in New York City. Builds live HD video + web camera player using OSMF and Akamai (RTMP, HDN1, HDN2, SecureHD). Live group movie watching with camera support.",
       "endDate": "2011-12",
       "isHighlight": false,
-      "tags": ["career", "flash", "akamai", "rtmp", "live-streaming", "nyc"]
+      "tags": [
+        "career",
+        "flash",
+        "akamai",
+        "rtmp",
+        "live-streaming",
+        "nyc"
+      ]
     },
     {
       "id": "wsp-sungard-comcast",
@@ -726,7 +1089,14 @@
       "description": "WSP joins PA Fidelity National Information Services (formerly Sungard) consulting at Comcast Interactive Media (CIM). JavaScript front-end work, Google Polymer framework, and Adobe Primetime player PSDK — 5+ million views/month. Leads directly to full-time hire.",
       "endDate": "2017-10",
       "isHighlight": true,
-      "tags": ["career", "comcast", "polymer", "primetime", "consulting"]
+      "tags": [
+        "career",
+        "comcast",
+        "polymer",
+        "primetime",
+        "consulting"
+      ],
+      "logo": "/assets/timeline/logos/comcast.svg"
     },
     {
       "id": "wsp-comcast-fulltime",
@@ -737,7 +1107,15 @@
       "description": "WSP joins Comcast Technology and Product Xperience full-time as Senior Software Engineer 4. 13-year tenure begins. Specializes in HD video player playback on desktop and Chromecast. Becomes SME for Xfinity Stream and builds debugging tools, ad integrations (VOD, SVOD, DAI), and Chromecast solutions serving millions.",
       "endDate": "2025-06",
       "isHighlight": true,
-      "tags": ["career", "comcast", "xfinity", "chromecast", "video", "milestone"]
+      "tags": [
+        "career",
+        "comcast",
+        "xfinity",
+        "chromecast",
+        "video",
+        "milestone"
+      ],
+      "logo": "/assets/timeline/logos/xfinity.svg"
     },
     {
       "id": "facebook-ipo",
@@ -747,7 +1125,12 @@
       "shortTitle": "Facebook IPO",
       "description": "Facebook goes public at a $104 billion valuation — the largest tech IPO at the time. Social media is now a global utility.",
       "isHighlight": false,
-      "tags": ["facebook", "ipo", "social-media"]
+      "tags": [
+        "facebook",
+        "ipo",
+        "social-media"
+      ],
+      "logo": "/assets/timeline/logos/facebook.svg"
     },
     {
       "id": "alexnet",
@@ -757,7 +1140,12 @@
       "shortTitle": "AlexNet",
       "description": "AlexNet wins ImageNet with a 10.8% error rate drop over the previous best. The deep learning era begins in earnest. GPUs, neural nets, and big data converge.",
       "isHighlight": false,
-      "tags": ["ai", "deep-learning", "neural-network", "imagenet"]
+      "tags": [
+        "ai",
+        "deep-learning",
+        "neural-network",
+        "imagenet"
+      ]
     },
     {
       "id": "react-released",
@@ -767,7 +1155,14 @@
       "shortTitle": "React.js",
       "description": "Jordan Walke at Facebook releases React.js. Virtual DOM, component model, JSX — the JavaScript UI paradigm shifts fundamentally.",
       "isHighlight": true,
-      "tags": ["react", "facebook", "javascript", "framework", "ui"]
+      "tags": [
+        "react",
+        "facebook",
+        "javascript",
+        "framework",
+        "ui"
+      ],
+      "logo": "/assets/timeline/logos/react.svg"
     },
     {
       "id": "polymer",
@@ -777,7 +1172,13 @@
       "shortTitle": "Polymer",
       "description": "Google introduces Polymer and the Web Components spec. WSP adopts it at Comcast — building component-based TV UIs years before the mainstream catches on.",
       "isHighlight": true,
-      "tags": ["polymer", "google", "web-components", "comcast"]
+      "tags": [
+        "polymer",
+        "google",
+        "web-components",
+        "comcast"
+      ],
+      "logo": "/assets/timeline/logos/google.svg"
     },
     {
       "id": "google-deepmind",
@@ -787,7 +1188,13 @@
       "shortTitle": "DeepMind",
       "description": "Google acquires DeepMind for ~$500M. The AI arms race between tech giants officially begins.",
       "isHighlight": false,
-      "tags": ["ai", "google", "deepmind", "acquisition"]
+      "tags": [
+        "ai",
+        "google",
+        "deepmind",
+        "acquisition"
+      ],
+      "logo": "/assets/timeline/logos/google.svg"
     },
     {
       "id": "flash-eol-announced",
@@ -797,7 +1204,13 @@
       "shortTitle": "Flash EOL",
       "description": "Adobe officially announces Flash Player will be discontinued by December 2020. WSP had already pivoted to JS/TypeScript years earlier. An era ends.",
       "isHighlight": true,
-      "tags": ["flash", "adobe", "eol", "history"]
+      "tags": [
+        "flash",
+        "adobe",
+        "eol",
+        "history"
+      ],
+      "logo": "/assets/timeline/logos/adobe.svg"
     },
     {
       "id": "alphago",
@@ -807,7 +1220,13 @@
       "shortTitle": "AlphaGo",
       "description": "DeepMind's AlphaGo defeats world Go champion Lee Sedol 4-1. Go was thought to be beyond AI for another decade. The world takes notice.",
       "isHighlight": false,
-      "tags": ["ai", "deepmind", "reinforcement-learning", "go"]
+      "tags": [
+        "ai",
+        "deepmind",
+        "reinforcement-learning",
+        "go"
+      ],
+      "logo": "/assets/timeline/logos/google.svg"
     },
     {
       "id": "pokemon-go",
@@ -817,7 +1236,12 @@
       "shortTitle": "Pokémon GO",
       "description": "Niantic releases Pokémon GO — the first truly mass-scale AR game. 500M downloads in the first month. The real world becomes the game board.",
       "isHighlight": false,
-      "tags": ["niantic", "ar", "mobile", "pokemon"]
+      "tags": [
+        "niantic",
+        "ar",
+        "mobile",
+        "pokemon"
+      ]
     },
     {
       "id": "transformers-paper",
@@ -827,7 +1251,14 @@
       "shortTitle": "Transformers",
       "description": "Google Brain's landmark paper introduces the Transformer architecture. Every major LLM — GPT, BERT, Claude — is built on this foundation.",
       "isHighlight": true,
-      "tags": ["ai", "transformer", "attention", "nlp", "research"]
+      "tags": [
+        "ai",
+        "transformer",
+        "attention",
+        "nlp",
+        "research"
+      ],
+      "logo": "/assets/timeline/logos/google.svg"
     },
     {
       "id": "nintendo-switch",
@@ -837,7 +1268,13 @@
       "shortTitle": "Nintendo Switch",
       "description": "The Nintendo Switch ships — a hybrid home/handheld console. Zelda: Breath of the Wild at launch is a masterpiece. Nintendo proves innovation over power.",
       "isHighlight": false,
-      "tags": ["nintendo", "switch", "console", "zelda"]
+      "tags": [
+        "nintendo",
+        "switch",
+        "console",
+        "zelda"
+      ],
+      "logo": "/assets/timeline/logos/nintendo.svg"
     },
     {
       "id": "flash-officially-dead",
@@ -847,7 +1284,14 @@
       "shortTitle": "Flash Is Dead",
       "description": "Adobe Flash Player reaches end-of-life on December 31, 2020. An era that powered the early web — and WSP's early career — is officially over. Long live JavaScript.",
       "isHighlight": true,
-      "tags": ["flash", "adobe", "eol", "history", "milestone"]
+      "tags": [
+        "flash",
+        "adobe",
+        "eol",
+        "history",
+        "milestone"
+      ],
+      "logo": "/assets/timeline/logos/adobe.svg"
     },
     {
       "id": "bert",
@@ -857,7 +1301,14 @@
       "shortTitle": "BERT",
       "description": "Google's BERT (Bidirectional Encoder Representations from Transformers) sets a new bar for natural language understanding. Pre-trained models become the new paradigm.",
       "isHighlight": false,
-      "tags": ["ai", "google", "bert", "nlp", "language-model"]
+      "tags": [
+        "ai",
+        "google",
+        "bert",
+        "nlp",
+        "language-model"
+      ],
+      "logo": "/assets/timeline/logos/google.svg"
     },
     {
       "id": "gpt2",
@@ -867,7 +1318,13 @@
       "shortTitle": "GPT-2",
       "description": "OpenAI releases GPT-2 — initially withholding the full model due to concerns about misuse. The quality of generated text shocks the research community.",
       "isHighlight": false,
-      "tags": ["ai", "openai", "gpt", "language-model"]
+      "tags": [
+        "ai",
+        "openai",
+        "gpt",
+        "language-model"
+      ],
+      "logo": "/assets/timeline/logos/openai.svg"
     },
     {
       "id": "covid-remote",
@@ -877,7 +1334,11 @@
       "shortTitle": "COVID / Remote",
       "description": "The global pandemic forces the tech industry fully remote overnight. Zoom, Slack, and cloud tools reach critical mass. The way software is built changes permanently.",
       "isHighlight": false,
-      "tags": ["covid", "remote-work", "pandemic"]
+      "tags": [
+        "covid",
+        "remote-work",
+        "pandemic"
+      ]
     },
     {
       "id": "gpt3",
@@ -887,7 +1348,13 @@
       "shortTitle": "GPT-3",
       "description": "OpenAI's GPT-3 with 175 billion parameters produces eerily coherent text, code, and reasoning. The AI conversation shifts from research to product.",
       "isHighlight": false,
-      "tags": ["ai", "openai", "gpt3", "language-model"]
+      "tags": [
+        "ai",
+        "openai",
+        "gpt3",
+        "language-model"
+      ],
+      "logo": "/assets/timeline/logos/openai.svg"
     },
     {
       "id": "ps5-xbox-series",
@@ -897,7 +1364,14 @@
       "shortTitle": "PS5 / Xbox Series X",
       "description": "Sony and Microsoft launch their next-gen consoles amid a global chip shortage. SSD speeds and ray tracing redefine the generation.",
       "isHighlight": false,
-      "tags": ["sony", "playstation5", "microsoft", "xbox", "console"]
+      "tags": [
+        "sony",
+        "playstation5",
+        "microsoft",
+        "xbox",
+        "console"
+      ],
+      "logo": "/assets/timeline/logos/playstation.svg"
     },
     {
       "id": "github-copilot-preview",
@@ -907,7 +1381,14 @@
       "shortTitle": "Copilot Preview",
       "description": "GitHub and OpenAI launch Copilot, an AI pair programmer trained on public code. Writing code will never feel the same. WSP adopts AI tooling as standard practice.",
       "isHighlight": true,
-      "tags": ["ai", "github", "copilot", "code-generation", "openai"]
+      "tags": [
+        "ai",
+        "github",
+        "copilot",
+        "code-generation",
+        "openai"
+      ],
+      "logo": "/assets/timeline/logos/github.svg"
     },
     {
       "id": "dalle2",
@@ -917,7 +1398,13 @@
       "shortTitle": "DALL-E 2",
       "description": "OpenAI's DALL-E 2 generates photorealistic images from text prompts. Generative AI goes visual. Creative industries are disrupted overnight.",
       "isHighlight": false,
-      "tags": ["ai", "openai", "image-generation", "generative-ai"]
+      "tags": [
+        "ai",
+        "openai",
+        "image-generation",
+        "generative-ai"
+      ],
+      "logo": "/assets/timeline/logos/openai.svg"
     },
     {
       "id": "elden-ring",
@@ -927,7 +1414,12 @@
       "shortTitle": "Elden Ring",
       "description": "FromSoftware and George R.R. Martin create Elden Ring. Universal critical acclaim. Open-world design and punishing gameplay redefine difficulty.",
       "isHighlight": false,
-      "tags": ["fromsoftware", "soulslike", "open-world", "gaming"]
+      "tags": [
+        "fromsoftware",
+        "soulslike",
+        "open-world",
+        "gaming"
+      ]
     },
     {
       "id": "chatgpt",
@@ -937,7 +1429,14 @@
       "shortTitle": "ChatGPT",
       "description": "OpenAI releases ChatGPT to the public. One million users in 5 days. One hundred million in two months. The AI revolution becomes impossible to ignore. The world changes.",
       "isHighlight": true,
-      "tags": ["ai", "openai", "chatgpt", "llm", "milestone"]
+      "tags": [
+        "ai",
+        "openai",
+        "chatgpt",
+        "llm",
+        "milestone"
+      ],
+      "logo": "/assets/timeline/logos/openai.svg"
     },
     {
       "id": "gpt4",
@@ -947,7 +1446,14 @@
       "shortTitle": "GPT-4",
       "description": "OpenAI's GPT-4 raises the bar again — multimodal, reasoning-capable, and able to pass bar exams. Every software team begins integrating LLMs.",
       "isHighlight": false,
-      "tags": ["ai", "openai", "gpt4", "multimodal", "llm"]
+      "tags": [
+        "ai",
+        "openai",
+        "gpt4",
+        "multimodal",
+        "llm"
+      ],
+      "logo": "/assets/timeline/logos/openai.svg"
     },
     {
       "id": "claude-1",
@@ -957,7 +1463,13 @@
       "shortTitle": "Claude 1.0",
       "description": "Anthropic releases Claude — a Constitutional AI assistant built with safety as a primary goal. The AI model powering this very portfolio's development.",
       "isHighlight": false,
-      "tags": ["ai", "anthropic", "claude", "llm"]
+      "tags": [
+        "ai",
+        "anthropic",
+        "claude",
+        "llm"
+      ],
+      "logo": "/assets/timeline/logos/anthropic.svg"
     },
     {
       "id": "zelda-totk",
@@ -967,7 +1479,13 @@
       "shortTitle": "Tears of the Kingdom",
       "description": "Sequel to Breath of the Wild adds a physics sandbox and sky islands. A landmark technical achievement on aging hardware.",
       "isHighlight": false,
-      "tags": ["nintendo", "zelda", "switch", "gaming"]
+      "tags": [
+        "nintendo",
+        "zelda",
+        "switch",
+        "gaming"
+      ],
+      "logo": "/assets/timeline/logos/nintendo.svg"
     },
     {
       "id": "llm-explosion",
@@ -977,7 +1495,15 @@
       "shortTitle": "LLM Explosion",
       "description": "Llama 2 (Meta), Gemini (Google), Mistral, Falcon — open and closed LLMs proliferate. Every company ships an AI product. AI-assisted coding becomes the norm.",
       "isHighlight": false,
-      "tags": ["ai", "meta", "llama", "google", "gemini", "llm"]
+      "tags": [
+        "ai",
+        "meta",
+        "llama",
+        "google",
+        "gemini",
+        "llm"
+      ],
+      "logo": "/assets/timeline/logos/anthropic.svg"
     },
     {
       "id": "wsp-leaves-comcast",
@@ -987,7 +1513,13 @@
       "shortTitle": "Comcast → Next Chapter",
       "description": "After 13 years as Senior Software Engineer 4 at Comcast Technology — delivering HD video, Chromecast, ad systems, and debugging tools at global scale — WSP closes this chapter. Millions of views served. The next chapter begins.",
       "isHighlight": true,
-      "tags": ["career", "comcast", "milestone", "transition"]
+      "tags": [
+        "career",
+        "comcast",
+        "milestone",
+        "transition"
+      ],
+      "logo": "/assets/timeline/logos/xfinity.svg"
     },
     {
       "id": "claude-3",
@@ -997,7 +1529,13 @@
       "shortTitle": "Claude 3",
       "description": "Anthropic releases Claude 3 with three tiers. Opus surpasses GPT-4 on key benchmarks. The model family powering today's AI-assisted software engineering.",
       "isHighlight": false,
-      "tags": ["ai", "anthropic", "claude3", "llm"]
+      "tags": [
+        "ai",
+        "anthropic",
+        "claude3",
+        "llm"
+      ],
+      "logo": "/assets/timeline/logos/anthropic.svg"
     },
     {
       "id": "ai-coding-mainstream",
@@ -1007,7 +1545,15 @@
       "shortTitle": "AI Dev Tools",
       "description": "Claude Code, Cursor, GitHub Copilot Enterprise, Devin — AI coding assistants become standard in professional workflows. The definition of 'developer' expands.",
       "isHighlight": false,
-      "tags": ["ai", "coding", "tools", "developer", "copilot", "cursor"]
+      "tags": [
+        "ai",
+        "coding",
+        "tools",
+        "developer",
+        "copilot",
+        "cursor"
+      ],
+      "logo": "/assets/timeline/logos/github.svg"
     },
     {
       "id": "wsp-portfolio-chromecast",
@@ -1017,7 +1563,14 @@
       "shortTitle": "This Portfolio",
       "description": "WSP builds this very website — a Next.js Chromecast Sender application showcasing 25+ years of software engineering experience. CI/CD, static export, Google Cast SDK, HLS/DASH streaming, and a nebula timeline. Built with Claude Code.",
       "isHighlight": true,
-      "tags": ["career", "portfolio", "chromecast", "nextjs", "personal-project"]
+      "tags": [
+        "career",
+        "portfolio",
+        "chromecast",
+        "nextjs",
+        "personal-project"
+      ],
+      "logo": "/assets/timeline/logos/chromecast.svg"
     },
     {
       "id": "claude-4",
@@ -1027,7 +1580,14 @@
       "shortTitle": "Claude 4.x",
       "description": "Anthropic releases Claude Opus 4.6 and Sonnet 4.6 — the model family driving Claude Code, the AI pair programmer used to build this portfolio.",
       "isHighlight": false,
-      "tags": ["ai", "anthropic", "claude4", "llm", "claude-code"]
+      "tags": [
+        "ai",
+        "anthropic",
+        "claude4",
+        "llm",
+        "claude-code"
+      ],
+      "logo": "/assets/timeline/logos/anthropic.svg"
     },
     {
       "id": "you-are-here",
@@ -1037,7 +1597,11 @@
       "shortTitle": "Now",
       "description": "March 2026. WSP is building the next chapter — open to new opportunities in video engineering, Chromecast, and AI-powered media experiences.",
       "isHighlight": true,
-      "tags": ["present", "milestone", "you-are-here"]
+      "tags": [
+        "present",
+        "milestone",
+        "you-are-here"
+      ]
     },
     {
       "id": "future-ai-agents",
@@ -1047,7 +1611,13 @@
       "shortTitle": "AI Agents",
       "description": "AI agents that plan, code, test, and deploy autonomously go from experimental to production-grade. Software engineering evolves again.",
       "isHighlight": false,
-      "tags": ["ai", "agents", "future", "predicted"]
+      "tags": [
+        "ai",
+        "agents",
+        "future",
+        "predicted"
+      ],
+      "logo": "/assets/timeline/logos/anthropic.svg"
     },
     {
       "id": "future-spatial-computing",
@@ -1057,7 +1627,15 @@
       "shortTitle": "Spatial Computing",
       "description": "Mixed reality, Vision Pro successors, and spatial web experiences become mainstream development targets. WSP continues building at the cutting edge.",
       "isHighlight": false,
-      "tags": ["ar", "vr", "xr", "spatial", "future", "predicted"]
+      "tags": [
+        "ar",
+        "vr",
+        "xr",
+        "spatial",
+        "future",
+        "predicted"
+      ],
+      "logo": "/assets/timeline/logos/apple.svg"
     }
   ]
 }
