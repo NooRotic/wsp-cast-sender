@@ -23,8 +23,8 @@ export default function VideoJSPlayer(props: any) {
 
     const player = videojs(videoElement, {
       controls: true,
-      responsive: true,
-      fluid: true,
+      fluid: false,
+      fill: true,
       autoplay: true,
       muted: !!muted,
       poster: poster || '',
