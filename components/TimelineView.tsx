@@ -33,6 +33,7 @@ interface TNode {
   description: string;
   isHighlight: boolean;
   tags: string[];
+  logo?: string;
 }
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -515,15 +516,68 @@ function TimelineNode({
             {node.endDate && !isCompact && ` – ${formatDate(node.endDate)}`}
           </div>
 
+          {/* Title row — with inline logo in collapsed state */}
           <div
-            className="font-semibold text-white leading-snug"
-            style={{ fontSize: isCompact ? (node.isHighlight ? 11 : 10) : (node.isHighlight ? 15 : 13) }}
+            className="flex items-center gap-1.5 leading-snug"
+            style={{
+              justifyContent: side === 'left' ? 'flex-end' : 'flex-start',
+              flexDirection: side === 'left' ? 'row-reverse' : 'row',
+            }}
           >
-            {node.title}
+            {node.logo && !isExpanded && (
+              <img
+                src={node.logo}
+                alt=""
+                aria-hidden="true"
+                style={{
+                  width: isCompact ? 14 : 16,
+                  height: isCompact ? 14 : 16,
+                  objectFit: 'contain',
+                  flexShrink: 0,
+                  filter: 'brightness(0) invert(1)',
+                  opacity: 0.55,
+                }}
+              />
+            )}
+            <span
+              className="font-semibold text-white"
+              style={{ fontSize: isCompact ? (node.isHighlight ? 11 : 10) : (node.isHighlight ? 15 : 13) }}
+            >
+              {node.title}
+            </span>
           </div>
 
           {isExpanded && (
             <div className="mt-3 space-y-2">
+              {/* Large logo in expanded state */}
+              {node.logo && (
+                <div
+                  className="flex mb-3"
+                  style={{ justifyContent: side === 'left' ? 'flex-end' : 'flex-start' }}
+                >
+                  <div
+                    className="rounded-lg p-2"
+                    style={{
+                      background: `${category.color}12`,
+                      border: `1px solid ${category.color}30`,
+                      boxShadow: `0 0 12px ${category.color}22`,
+                    }}
+                  >
+                    <img
+                      src={node.logo}
+                      alt=""
+                      aria-hidden="true"
+                      style={{
+                        width: 44,
+                        height: 44,
+                        objectFit: 'contain',
+                        filter: 'brightness(0) invert(1)',
+                        opacity: 0.85,
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
               {node.endDate && (
                 <div className="text-xs font-mono" style={{ color: category.color, opacity: 0.75 }}>
                   → {formatDate(node.endDate)}
