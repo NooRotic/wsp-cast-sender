@@ -29,7 +29,6 @@ const LazyVideoCard: React.FC<LazyVideoCardProps> = ({
   getProtocolType,
 }) => {
   const [isVisible, setIsVisible] = useState(false);
-  const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
@@ -99,17 +98,11 @@ const LazyVideoCard: React.FC<LazyVideoCardProps> = ({
       <div style={{ height: thumbH, position: 'relative', overflow: 'hidden', background: colors.bg }}>
         {posterUrl && !imageError ? (
           <>
-            {!imageLoaded && (
-              <div style={{ position: 'absolute', inset: 0, background: 'rgba(31,41,55,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <div className="w-6 h-6 border-2 border-gray-500/50 border-t-gray-300 rounded-full animate-spin" />
-              </div>
-            )}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={posterUrl}
               alt={video.title}
-              style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: imageLoaded ? 1 : 0, transition: 'opacity 0.3s' }}
-              onLoad={() => setImageLoaded(true)}
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               onError={() => setImageError(true)}
             />
             <div style={{ position: 'absolute', bottom: 4, right: 4, background: 'rgba(0,0,0,0.8)', color: 'white', padding: '2px 6px', borderRadius: 4, display: 'flex', alignItems: 'center', gap: 4, fontSize: isGrid ? 10 : 12 }}>
