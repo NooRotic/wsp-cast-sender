@@ -96,44 +96,35 @@ export default function HeroSection() {
             z: 0,
             rotateX: 0,
             stagger: 0.5,
-            duration: 2,
+            duration: 1.2,
             scale: 1,
             ease: "power1.inOut",
           }
         )
         // ── phase: title-cycle ──────────────────────────────────────────────
         .addLabel("title-cycle")
-        .to({}, { duration: 2.0 })
+        .to({}, { duration: 0.6 })
         .to(titleRef.current, {
-          text: 'Open Source LLM & AI Enthusiast',
-          duration: 1.8,
-          delay: 0.5,
+          text: 'From Flash & ActionScript to Streaming Web Video to Local LLMs and Agentic workflows',
+          duration: 4.3,
           scale: 1,
-          ease: "power1.inOut",
+          ease: "none",
         })
-        .to({}, { duration: 0.5 })
-        .to(titleRef.current, {
-          text: 'Since ActionScript 1.0',
-          duration: 1.8,
-          delay: 0,
-          ease: "power1.inOut",
-        })
-        .to({}, { duration: 0.5 })
+        .to({}, { duration: 1.5 })
         .to(titleRef.current, {
           text: 'Chromecast Development',
           duration: 1.5,
-          delay: 0,
-          ease: "power1.inOut",
+          ease: "none",
         })
-        .to({}, { duration: 0.4 })
+        .to({}, { duration: 1.2 })
         // ── phase: title-return ─────────────────────────────────────────────
         .addLabel("title-return")
         .to(titleRef.current, {
           text: developerName,
           rotateY: 0,
           rotateX: 0,
-          duration: 2.5,
-          delay: 0.5,
+          duration: 1.2,
+          delay: 0.2,
           ease: "power2.out",
         })
         // ── phase: subtitles ────────────────────────────────────────────────
@@ -192,7 +183,7 @@ export default function HeroSection() {
             if (subtitle3Ref.current) {
               (subtitle3Ref.current as HTMLElement).classList.remove("hero-initial-hidden");
               (subtitle3Ref.current as HTMLElement).style.opacity = "1";
-              
+
               // Use split-type to split subtitle3 into words only
               const split3 = new SplitType(subtitle3Ref.current!, { types: 'words' });
               gsap.fromTo(
@@ -213,10 +204,9 @@ export default function HeroSection() {
                   },
                 }
               );
-// Note: split-type automatically adds spans for words/chars. No need to manually clean up unless you want to revert the split on unmount.
             }
           },
-          "+=2.0"
+          "+=0.4"
         )
         // ── phase: skills ───────────────────────────────────────────────────
         .addLabel("skills")
@@ -231,14 +221,14 @@ export default function HeroSection() {
             opacity: 1,
             y: 0,
             z: 10,
-            duration: 2.8,
+            duration: 1.8,
             ease: "back.out(1.7)",
             onComplete: () => {
               // All main hero animations are complete
               setHeroAnimationsComplete(true);
             }
            },
-          "+=4.3"
+          "+=1.2"
         );
 
       if (expertiseHeaderRef.current) {
@@ -358,9 +348,9 @@ export default function HeroSection() {
           </p>
         </div> 
         <div>
-          <p 
+          <p
             ref={subtitle3Ref}
-            className="hero-skills-3d text-lg md:text-2xl m-1 leading-loose tracking-wide font-bold hero-initial-hidden"
+            className="hero-skills-3d text-lg md:text-2xl m-1 leading-loose tracking-wide font-bold hero-initial-hidden text-center"
           >
             I&apos;ve been building complex data-driven UIs since the early Flash days,<br />
             and I&apos;m excited to leverage AI to create the next generation of web experiences.
