@@ -59,7 +59,6 @@ const LazyVideoCard: React.FC<LazyVideoCardProps> = ({
   }, [video, onVideoSelect]);
 
   const posterUrl = video.poster || video.m3uData?.logo;
-  const hasCollapsedThumbnail = !posterUrl;
   const isSelected = !!(currentVideo && currentVideo.id === video.id);
 
   // Placeholder skeleton until the card scrolls into view
@@ -103,10 +102,7 @@ const LazyVideoCard: React.FC<LazyVideoCardProps> = ({
       {/* Thumbnail */}
       <div className={`
         relative rounded-t-lg overflow-hidden transition-all duration-300
-        ${hasCollapsedThumbnail
-          ? (isGrid ? 'h-[48px]' : 'h-[56px]')
-          : (isGrid ? 'aspect-video min-h-[90px]' : 'aspect-video min-h-[100px]')
-        }
+        ${isGrid ? 'aspect-video min-h-[90px]' : 'aspect-video min-h-[100px]'}
         ${colors.bg}
       `}>
         {posterUrl ? (
@@ -133,7 +129,7 @@ const LazyVideoCard: React.FC<LazyVideoCardProps> = ({
           <div className={`w-full h-full ${colors.bg} flex items-center justify-center relative`}>
             <div className="absolute inset-0 bg-gradient-to-br from-[#181c1f] to-[#23272b] opacity-80" />
             <Play
-              size={hasCollapsedThumbnail ? (isGrid ? 12 : 16) : (isGrid ? 16 : 28)}
+              size={isGrid ? 16 : 28}
               className={`${colors.textColor} fill-current drop-shadow-lg z-10 relative`}
             />
             {categorizeMedia(video).type === 'DASH' && (
@@ -154,26 +150,20 @@ const LazyVideoCard: React.FC<LazyVideoCardProps> = ({
       <div className={`p-3 ${colors.bg} relative z-10`}>
         <h3 className={`
           font-semibold text-white mb-1 leading-tight drop-shadow-sm
-          ${hasCollapsedThumbnail
-            ? (isGrid ? 'text-sm line-clamp-2' : 'text-base line-clamp-2')
-            : (isGrid ? 'text-xs line-clamp-3' : 'text-sm line-clamp-2')
-          }
+          ${isGrid ? 'text-xs line-clamp-3' : 'text-sm line-clamp-2'}
         `}>
           {video.title}
         </h3>
 
         <div className={`
           flex items-center justify-between text-gray-400
-          ${hasCollapsedThumbnail
-            ? (isGrid ? 'text-xs mt-3' : 'text-sm mt-3')
-            : (isGrid ? 'text-[10px] mt-1' : 'text-xs mt-2')
-          }
+          ${isGrid ? 'text-[10px] mt-1' : 'text-xs mt-2'}
         `}>
           {/* Protocol badge */}
           <span className={`
             font-bold ${colors.textColor} drop-shadow-sm px-2 py-1 rounded-md
             ${colors.bg} border ${colors.border} backdrop-blur-sm
-            ${hasCollapsedThumbnail ? 'text-xs' : isGrid ? 'text-[10px]' : 'text-xs'}
+            ${isGrid ? 'text-[10px]' : 'text-xs'}
           `}>
             {getProtocolType(video)}
           </span>
@@ -181,11 +171,9 @@ const LazyVideoCard: React.FC<LazyVideoCardProps> = ({
           {/* ID badge */}
           <span className={`
             px-2 py-1 rounded-md transition-colors duration-200 font-medium border backdrop-blur-sm
-            ${hasCollapsedThumbnail ? 'text-xs' : isGrid ? 'text-[10px]' : 'text-xs'}
+            ${isGrid ? 'text-[10px]' : 'text-xs'}
             ${isSelected
               ? 'bg-[#39FF14]/30 text-[#39FF14] border-[#39FF14]/50 shadow-lg'
-              : hasCollapsedThumbnail
-              ? 'bg-gray-700/90 text-gray-100 border-gray-500/80'
               : 'bg-gray-700/50 text-gray-400 border-gray-600/50'
             }
           `}>
