@@ -100,9 +100,9 @@ export default function Navigation() {
         <div className="flex justify-between items-center h-16 relative pt-2">
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center justify-between w-full">
-            {/* Left side - Navigation menu items with dynamic margin based on resume button state */}
+            {/* Left side - Navigation menu items — always clears the resume button icon */}
             <div className={`flex items-center space-x-3 transition-all duration-300 ease-in-out ${
-              isResumeExpanded ? 'ml-20' : '-ml-4'
+              isResumeExpanded ? 'ml-60' : 'ml-16'
             }`}>
               {menuItems.map((item) => (
                 <button
@@ -125,14 +125,14 @@ export default function Navigation() {
                 </button>
                 
                 {isDemoDropdownOpen && (
-                  <div className="absolute top-full left-0 mt-2 w-56 bg-gray-900/95 backdrop-blur-sm border border-purple-500/30 rounded-lg shadow-lg z-50">
+                  <div className="absolute top-full left-0 mt-2 w-56 bg-gray-900/95 backdrop-blur-sm border border-[#39FF14]/20 rounded-lg shadow-lg z-50">
                     <div className="py-2">
                       {demoPages.map((page) => (
                         <Link
                           key={page.href}
                           href={page.href}
                           onClick={() => setIsDemoDropdownOpen(false)}
-                          className="block px-4 py-2 text-sm text-gray-300 hover:text-purple-400 hover:bg-purple-500/10 transition-colors"
+                          className="block px-4 py-2 text-sm text-gray-300 hover:text-[#39FF14] hover:bg-[#39FF14]/10 transition-colors"
                         >
                           {page.label}
                         </Link>
@@ -204,21 +204,21 @@ export default function Navigation() {
               ))}
               
               {/* Demo Pages in Mobile Menu */}
-              <div className="border-t border-purple-500/30 pt-2 mt-2">
-                <div className="px-3 py-1 text-xs text-purple-400 font-semibold">Demo Pages</div>
+              <div className="border-t border-[#39FF14]/20 pt-2 mt-2">
+                <div className="px-3 py-1 text-xs text-[#39FF14] font-semibold">Demo Pages</div>
                 {demoPages.map((page) => (
                   <Link
                     key={page.href}
                     href={page.href}
                     onClick={() => setIsOpen(false)}
-                    className="block px-3 py-2 text-sm text-gray-300 hover:text-purple-400 hover:bg-purple-500/10 transition-colors rounded"
+                    className="block px-3 py-2 text-sm text-gray-300 hover:text-[#39FF14] hover:bg-[#39FF14]/10 transition-colors rounded"
                   >
                     {page.label}
                   </Link>
                 ))}
               </div>
               
-              <div className="border-t border-purple-500/30 pt-2 mt-2">
+              <div className="border-t border-[#39FF14]/20 pt-2 mt-2">
                 <div className="px-3 py-2">
                   <CastButton
                     variant="outline"

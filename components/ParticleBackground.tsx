@@ -3,15 +3,11 @@
 import { useEffect, useState, useRef } from 'react';
 
 const VIDEO_BACKGROUNDS = [
-  '/video/maxHeads.mp4',
-  '/video/blackGridLoop.mp4',
-  '/video/RAID.mp4',
-  '/video/RainCode_sm.mp4',
-  '/video/newMan_hallway.mp4'
-
-  // Add more video files here as you create them
-  // '/gifs/video2.mp4',
-  // '/gifs/video3.mp4',
+  '/bgs/maxHeads.mp4',
+  '/bgs/blackGridLoop.mp4',
+  '/bgs/RAID.mp4',
+  '/bgs/RainCode_sm.mp4',
+  '/bgs/newMan_hallway.mp4',
 ];
 
 export default function ParticleBackground() {
