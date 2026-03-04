@@ -69,9 +69,8 @@ const LazyVideoCard: React.FC<LazyVideoCardProps> = ({
         className={`
           relative group cursor-pointer transition-all duration-300 rounded-lg overflow-hidden
           border border-gray-600/50 bg-gray-800/30
-          ${isGrid ? 'aspect-[4/3]' : 'aspect-video'}
+          ${isGrid ? 'h-[180px]' : 'h-[160px]'}
         `}
-        style={{ minHeight: isGrid ? '200px' : '150px' }}
       >
         <div className="w-full h-full bg-gray-800/50 flex items-center justify-center">
           <div className="w-8 h-8 border-2 border-gray-600/50 border-t-gray-400 rounded-full animate-spin" />
@@ -99,10 +98,10 @@ const LazyVideoCard: React.FC<LazyVideoCardProps> = ({
         <div className={`w-full h-full ${colors.indicator} opacity-90`} />
       </div>
 
-      {/* Thumbnail */}
+      {/* Thumbnail — explicit height so next/image fill has a guaranteed container size */}
       <div className={`
-        relative rounded-t-lg overflow-hidden transition-all duration-300
-        ${isGrid ? 'aspect-video min-h-[90px]' : 'aspect-video min-h-[100px]'}
+        relative rounded-t-lg overflow-hidden
+        ${isGrid ? 'h-[120px]' : 'h-[110px]'}
         ${colors.bg}
       `}>
         {posterUrl ? (
