@@ -55,7 +55,7 @@ function parseTwitchInput(input: string): { type: 'channel' | 'clip' | null, url
 
 export default function TwitchPlayer() {
   const [url, setUrl] = useState('');
-  const [input, setInput] = useState('nooroticx');
+  const [input, setInput] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [playerType, setPlayerType] = useState<'channel' | 'clip' | null>(null);
@@ -72,9 +72,7 @@ export default function TwitchPlayer() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('[TwitchPlayer] Load button pressed. Input:', input);
     const parsed = parseTwitchInput(input);
-    console.log('[TwitchPlayer] Parsed input:', parsed);
     if (!parsed.url || !parsed.type) {
       setError('Please enter a valid Twitch channel name or URL.');
       setPlayerType(null);
@@ -84,11 +82,7 @@ export default function TwitchPlayer() {
     setPlayerType(parsed.type);
     setError('');
     setLoading(true);
-    console.log('[TwitchPlayer] Set url to', parsed.url, 'type:', parsed.type);
   };
-
-  // Render-time debug logging
-  console.log('[TwitchPlayer][render] url:', url, 'loading:', loading, 'error:', error);
   return (
   <div className="w-full max-w-7xl mx-auto py-8 px-2 sm:px-4 bg-black rounded-lg shadow-lg">
   <h1 className="text-2xl font-bold mb-4 text-gray-100">Twitch Player Demo</h1>
@@ -124,7 +118,8 @@ export default function TwitchPlayer() {
             frameBorder="0"
             allow="autoplay; fullscreen"
             title="Twitch Channel Player"
-            onLoad={() => { setLoading(false); console.log('[TwitchPlayer] Channel iframe loaded'); }}
+            onLoad={() => setLoading(false)}
+            onError={() => { setLoading(false); setError('Failed to load Twitch embed. The channel may be unavailable or region-locked.'); }}
           />
         )}
         {playerType === 'clip' && url && (
@@ -135,7 +130,8 @@ export default function TwitchPlayer() {
             frameBorder="0"
             allow="autoplay; fullscreen"
             title="Twitch Clip Player"
-            onLoad={() => { setLoading(false); console.log('[TwitchPlayer] Clip iframe loaded'); }}
+            onLoad={() => setLoading(false)}
+            onError={() => { setLoading(false); setError('Failed to load clip. It may have been deleted or is unavailable.'); }}
           />
         )}
     </div>

@@ -95,13 +95,9 @@ export default function MediaTwitchDashboard() {
   const [authed, setAuthed] = useState(false);
 
   useEffect(() => {
-    const { loginWithTwitch, handleTwitchRedirect } = require("../lib/twitchAuthClient");
+    const { handleTwitchRedirect } = require("../lib/twitchAuthClient");
     const token = handleTwitchRedirect() || localStorage.getItem('twitch_access_token');
     setAuthed(!!token);
-    if (!token) {
-      // Automatically trigger OAuth flow if not authenticated
-      loginWithTwitch();
-    }
   }, []);
 
   function login() {
@@ -115,6 +111,20 @@ export default function MediaTwitchDashboard() {
     setProfile(null);
     setClips([]);
     setVideos([]);
+  }
+
+  function handleExpiredToken() {
+    localStorage.removeItem('twitch_access_token');
+    setAuthed(false);
+    setError("Session expired — please log in again.");
+  }
+
+  function assertNotUnauthed(res: Response) {
+    if (res.status === 401) {
+      handleExpiredToken();
+      throw new Error("Session expired — please log in again.");
+    }
+    return res;
   }
 
   async function fetchAll(channelName: string) {
@@ -133,21 +143,21 @@ export default function MediaTwitchDashboard() {
       setProfile(user);
       const userId = user.id;
       // 2. Channel info
-      const channelRes = await fetch(`https://api.twitch.tv/helix/channels?broadcaster_id=${userId}`, {
+      const channelRes = assertNotUnauthed(await fetch(`https://api.twitch.tv/helix/channels?broadcaster_id=${userId}`, {
         headers: {
           "Client-ID": process.env.NEXT_PUBLIC_TWITCH_CLIENT_ID!,
           "Authorization": `Bearer ${localStorage.getItem('twitch_access_token')}`,
         },
-      });
+      }));
       const channelData = await channelRes.json();
       setChannel(channelData.data?.[0] || null);
       // 3. Stream info (live data)
-      const streamRes = await fetch(`https://api.twitch.tv/helix/streams?user_id=${userId}`, {
+      const streamRes = assertNotUnauthed(await fetch(`https://api.twitch.tv/helix/streams?user_id=${userId}`, {
         headers: {
           "Client-ID": process.env.NEXT_PUBLIC_TWITCH_CLIENT_ID!,
           "Authorization": `Bearer ${localStorage.getItem('twitch_access_token')}`,
         },
-      });
+      }));
       const streamData = await streamRes.json();
       setStream(streamData.data?.[0] || null);
       // 4. Clips
@@ -167,12 +177,12 @@ export default function MediaTwitchDashboard() {
       }
   setVideos((videosRes.data || []).slice(0, 50));
       // 6. Followers
-      const followersRes = await fetch(`https://api.twitch.tv/helix/users/follows?to_id=${userId}&first=10`, {
+      const followersRes = assertNotUnauthed(await fetch(`https://api.twitch.tv/helix/users/follows?to_id=${userId}&first=10`, {
         headers: {
           "Client-ID": process.env.NEXT_PUBLIC_TWITCH_CLIENT_ID!,
           "Authorization": `Bearer ${localStorage.getItem('twitch_access_token')}`,
         },
-      });
+      }));
       const followersData = await followersRes.json();
       setFollowers(followersData.data || []);
       // 7. Game info (if available)
@@ -561,63 +571,6 @@ export default function MediaTwitchDashboard() {
               </div>
             )}
           </div>
-
-          {/* Advanced Clip Stats Section */}
-          {clipStats && (
-            <div className="w-full max-w-4xl bg-black border-2 border-purple-700 rounded-lg shadow-lg p-4 font-mono text-green-300 mb-8">
-              <h2 className="text-lg text-purple-400 mb-2 font-bold">Clipper & Clip Stats</h2>
-              {/* Top 10 chatters by clips made */}
-              <div className="mb-4">
-                <div className="font-bold text-purple-300 mb-1">Top 10 Chatters by Clips Made</div>
-                <ol className="list-decimal pl-6">
-                  {clipStats.topChatters.map(([user, count]) => (
-                    <li key={user}>{user} <span className="text-gray-400">({count} clips)</span></li>
-                  ))}
-                </ol>
-              </div>
-              {/* Total time clipped per user */}
-              <div className="mb-4">
-                <div className="font-bold text-purple-300 mb-1">Total Time Clipped by User (seconds)</div>
-                <ol className="list-decimal pl-6">
-                  {clipStats.timeBar.map(([user, time]) => (
-                    <li key={user}>{user} <span className="text-gray-400">({Math.round(time)}s)</span></li>
-                  ))}
-                </ol>
-              </div>
-              {/* Total view_count per creator (bar chart) */}
-              <div className="mb-4">
-                <div className="font-bold text-purple-300 mb-1">Total View Count by Clipper</div>
-                <div className="flex flex-col gap-1">
-                  {clipStats.viewBar.map(([user, views]) => (
-                    <div key={user} className="flex items-center gap-2">
-                      <span className="w-32 truncate">{user}</span>
-                      <div className="bg-purple-700 h-3 rounded" style={{width: Math.max(views/2, 10)}}></div>
-                      <span className="text-xs text-gray-400">{views} views</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              {/* Most featured clips by chatter */}
-              <div className="mb-4">
-                <div className="font-bold text-purple-300 mb-1">Most Featured Clips (Top 10)</div>
-                <ol className="list-decimal pl-6">
-                  {clipStats.topFeatured.map(([user, count]) => (
-                    <li key={user}>{user} <span className="text-gray-400">({count} featured)</span></li>
-                  ))}
-                </ol>
-              </div>
-              {/* Oldest and latest clip by chatter */}
-              <div className="mb-4">
-                <div className="font-bold text-purple-300 mb-1">Oldest and Latest Clipper</div>
-                {clipStats.oldestClip && (
-                  <div className="text-xs mb-1">Oldest: <span className="text-green-400">{clipStats.oldestClipper}</span> <span className="text-gray-400">({clipStats.oldestClip.created_at})</span></div>
-                )}
-                {clipStats.latestClip && (
-                  <div className="text-xs">Latest: <span className="text-green-400">{clipStats.latestClipper}</span> <span className="text-gray-400">({clipStats.latestClip.created_at})</span></div>
-                )}
-              </div>
-            </div>
-          )}
 
           {/* Terminal-style output for all API data (user, channel, etc.) */}
           <div className="w-full max-w-4xl bg-black border-2 border-purple-700 rounded-lg shadow-lg p-4 font-mono text-green-300 mb-8">
