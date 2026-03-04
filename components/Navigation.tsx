@@ -66,8 +66,6 @@ export default function Navigation() {
   const demoPages = [
     { label: "Cast Demo", href: "/cast-demo" },
     { label: "Media Demo", href: "/media-demo" },
-    { label: "Media Twitch Support", href: "/media-twitch-support" },
-    { label: "Twitch Glazer", href: "/twitch-glazer" },
   ];
 
   const scrollToSection = (href: string) => {
