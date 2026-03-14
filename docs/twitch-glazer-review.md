@@ -1,7 +1,7 @@
 # Twitch Glazer — Page Review
 
-**Branch:** `feature/demo-pages-audit-and-new-page`
-**Date:** 2026-03-04
+**Branch:** `feature/demo-pages-audit-and-new-page` → fixes landed in `feature/twitch-dashboard-fixes`
+**Date:** 2026-03-04 (updated 2026-03-13)
 **Pages in scope:** `/twitch-glazer`, `/media-twitch-support`
 **Components in scope:** `MediaTwitchDashboard`, `TwitchPlayer`, `lib/twitchApi.ts`, `lib/urlDetection.ts` (Twitch paths)
 
@@ -31,14 +31,14 @@ Auth uses Twitch's **Implicit Grant Flow** (correct for static exports — no ba
 
 ## Bugs
 
-| # | Location | Issue |
-|---|----------|-------|
-| 1 | `MediaTwitchDashboard.tsx` | **Auto-login on mount** — `loginWithTwitch()` fires immediately if no token exists, redirecting the user away before they can interact. This is the "bad Twitch login attempt" causing the nav link to be hidden. |
-| 2 | `MediaTwitchDashboard.tsx` | **Clip stats rendered twice** — the stats block appears once in the 3-column grid and again at full width below it. Duplicate data, wasted space. |
-| 3 | `MediaTwitchDashboard.tsx` | **Bar chart inconsistency** — grid stats use `Math.round((views / maxViews) * 100)` for width %; the second render uses a hardcoded `/2` divisor. Different bars, same data. |
-| 4 | `MediaTwitchDashboard.tsx` | **No token expiry handling** — Implicit Grant tokens expire (~60 days). Expired tokens cause silent 401 failures on every API call with no user feedback. |
-| 5 | `TwitchPlayer.tsx` | **No iframe `onError` handler** — if the embed fails (private channel, region lock, embed disabled), the user sees a blank area with no message. |
-| 6 | `MediaTwitchDashboard.tsx` | **Possible `clip.duration` crash** — `clipStats` sums `clip.duration` with no null check; undefined duration breaks the accumulator silently. |
+| # | Location | Issue | Status |
+|---|----------|-------|--------|
+| 1 | `MediaTwitchDashboard.tsx` | **Auto-login on mount** — `loginWithTwitch()` fires immediately if no token exists, redirecting the user away before they can interact. | ✅ Fixed in PR #3 |
+| 2 | `MediaTwitchDashboard.tsx` | **Clip stats rendered twice** — the stats block appears once in the 3-column grid and again at full width below it. Duplicate data, wasted space. | ✅ Fixed in PR #3 |
+| 3 | `MediaTwitchDashboard.tsx` | **Bar chart inconsistency** — grid stats use `Math.round((views / maxViews) * 100)` for width %; the second render uses a hardcoded `/2` divisor. Different bars, same data. | ✅ Fixed in PR #3 (duplicate block removed) |
+| 4 | `MediaTwitchDashboard.tsx` | **No token expiry handling** — Implicit Grant tokens expire (~60 days). Expired tokens cause silent 401 failures on every API call with no user feedback. | ✅ Fixed in PR #3 (`assertNotUnauthed` + `handleExpiredToken`) |
+| 5 | `TwitchPlayer.tsx` | **No iframe `onError` handler** — if the embed fails (private channel, region lock, embed disabled), the user sees a blank area with no message. | ✅ Fixed in PR #3 |
+| 6 | `MediaTwitchDashboard.tsx` | **Possible `clip.duration` crash** — `clipStats` sums `clip.duration` with no null check; undefined duration breaks the accumulator silently. | ✅ Guarded via `if (clip.duration)` check in `useMemo` |
 
 ---
 
@@ -65,8 +65,11 @@ Auth uses Twitch's **Implicit Grant Flow** (correct for static exports — no ba
 - Color contrast on the terminal-style output sections should be verified against WCAG AA.
 
 ### Code Quality
-- `TwitchPlayer` default channel is hardcoded to `'nooroticx'` — should default to empty string.
-- `fetchAll()` makes 6 sequential API calls; parallelising with `Promise.all` where possible would reduce load time.
+- ~~`TwitchPlayer` default channel is hardcoded to `'nooroticx'`~~ ✅ Fixed in PR #3
+- ~~`fetchAll()` makes 6 sequential API calls~~ ✅ Fixed in `feature/twitch-dashboard-fixes` — calls 2–6 now run in parallel via `Promise.all`
+- ~~`require()` inside `useEffect` and `login()`~~ ✅ Fixed in `feature/twitch-dashboard-fixes` — converted to top-level imports
+- ~~`assertNotUnauthed` only handles 401, not 403/429~~ ✅ Fixed in `feature/twitch-dashboard-fixes` — `!res.ok` guard added
+- ~~`catch` block could overwrite session-expired error~~ ✅ Fixed in `feature/twitch-dashboard-fixes` — `SessionExpiredError` class used; catch skips re-setting on session errors
 - `twitchApi.ts` silently swallows error bodies — should at minimum `console.warn` the raw response.
 
 ---
