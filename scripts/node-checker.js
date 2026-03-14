@@ -443,6 +443,7 @@ function isStreamableContent(contentType, url) {
     'application/dash+xml',
     'video/mp4',
     'video/mp2t',
+    'video/webm',
     'video/x-msvideo',
     'video/quicktime',
     'application/octet-stream'
@@ -450,7 +451,7 @@ function isStreamableContent(contentType, url) {
 
   const lowerContentType = contentType.toLowerCase();
   const hasStreamableType = streamableTypes.some(type => lowerContentType.includes(type));
-  const hasStreamExtension = /\.(m3u8|mpd|ts|mp4|avi|mkv|mov)(\?.*)?$/i.test(url);
+  const hasStreamExtension = /\.(m3u8|mpd|ts|mp4|webm|avi|mkv|mov)(\?.*)?$/i.test(url);
 
   return hasStreamableType || hasStreamExtension;
 }
@@ -488,24 +489,28 @@ async function testManifest(url) {
 
       const req = httpModule.request(options, (res) => {
         let data = '';
-        
+        let resolved = false;
+
+        const finish = () => {
+          if (resolved) return;
+          resolved = true;
+          if (res.statusCode !== 200) {
+            resolve({ valid: false, reason: `HTTP ${res.statusCode}` });
+            return;
+          }
+          resolve(validateManifestContent(data, url));
+        };
+
         res.on('data', chunk => {
           data += chunk;
-          // Limit data to prevent memory issues
+          // Limit data to prevent memory issues; validate what we have so far
           if (data.length > 50000) {
             res.destroy();
           }
         });
 
-        res.on('end', () => {
-          if (res.statusCode !== 200) {
-            resolve({ valid: false, reason: `HTTP ${res.statusCode}` });
-            return;
-          }
-
-          const manifestResult = validateManifestContent(data, url);
-          resolve(manifestResult);
-        });
+        res.on('end', finish);
+        res.on('close', finish); // fires after destroy()
       });
 
       req.on('timeout', () => {
@@ -653,6 +658,12 @@ function getUrlContent(url) {
         }
 
         let data = '';
+        let resolved = false;
+
+        const finish = () => {
+          if (!resolved) { resolved = true; resolve(data); }
+        };
+
         res.on('data', chunk => {
           data += chunk;
           if (data.length > 50000) {
@@ -660,7 +671,8 @@ function getUrlContent(url) {
           }
         });
 
-        res.on('end', () => resolve(data));
+        res.on('end', finish);
+        res.on('close', finish);
       });
 
       req.on('timeout', () => {
@@ -685,7 +697,7 @@ function extractFirstSegment(manifestContent, baseUrl) {
   for (const line of lines) {
     if (line.match(/^https?:\/\//)) {
       return line;
-    } else if (line.endsWith('.ts') || line.endsWith('.m4s')) {
+    } else if (line.endsWith('.ts') || line.endsWith('.m4s') || line.endsWith('.fmp4')) {
       // Relative URL - construct absolute URL
       try {
         const base = new URL(baseUrl);

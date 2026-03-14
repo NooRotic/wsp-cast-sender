@@ -185,29 +185,16 @@ export default function MediaDemoPage() {
       // Try to pause the actual video element if available
       const videoElements = document.querySelectorAll('video');
       videoElements.forEach(video => {
-        try {
-          video.pause();
-          console.log('🎬 Local video element paused due to cast connection');
-        } catch (error) {
-          console.warn('⚠️ Failed to pause video element:', error);
-        }
+        try { video.pause(); } catch {}
       });
-      
+
       // Auto-load current video to receiver after cast connection with delay (only once per session)
       if (currentVideo && castContext.sendMessage && !hasAutoLoaded) {
-        console.log('🎬 Media-demo: Cast connected - will load current video to receiver:', currentVideo.title);
         setHasAutoLoaded(true); // Set flag immediately to prevent multiple calls
-        
+
         // Wait 3 seconds after connection confirmation to ensure receiver is ready
         setTimeout(() => {
           if (castContext.isConnected && currentVideo) {
-            console.log('🎬 Media-demo: Sending LOAD_MEDIA to receiver:', {
-              mediaUrl: currentVideo.src,
-              title: currentVideo.title,
-              poster: currentVideo.poster,
-              contentType: currentVideo.mimetype || 'video/mp4'
-            });
-            
             castContext.sendMessage({
               type: 'LOAD_MEDIA',
               payload: {
@@ -223,16 +210,12 @@ export default function MediaDemoPage() {
                 }
               }
             }).then(() => {
-              console.log('🎬 Media-demo: LOAD_MEDIA message sent successfully');
               setShowCastOverlay(true);
-            }).catch((error) => {
-              console.error('❌ Media-demo: Failed to send LOAD_MEDIA message:', error);
-            });
+            }).catch(() => {});
           }
         }, 3000); // 3 second delay
       }
       
-      console.log('🎬 Media-demo: Local player paused due to cast connection');
     }
   }, [castContext?.isConnected, castContext, currentVideo, hasAutoLoaded]);
 
@@ -271,24 +254,19 @@ export default function MediaDemoPage() {
   useEffect(() => {
     // Skip worker initialization only during Jest testing
     if (typeof window !== 'undefined' && (process.env.NODE_ENV === 'test' || process.env.JEST_WORKER_ID)) {
-      console.log('🧪 Skipping web worker initialization in test environment');
       return;
     }
     
     // Pre-initialize the web worker to be ready when needed
     if (M3UParserWorkerManager.isWebWorkerSupported()) {
-      console.log('🚀 Pre-initializing M3U parser web worker...');
       addDebugLog('🚀 Pre-initializing web worker for M3U parsing');
       try {
-        const workerManager = getM3UParserWorker();
-        console.log('✅ Web worker pre-initialized successfully');
+        getM3UParserWorker();
         addDebugLog('✅ Web worker ready for M3U parsing');
       } catch (error) {
-        console.warn('⚠️ Web worker pre-initialization failed:', error);
         addDebugLog('⚠️ Web worker pre-init failed, will use main thread');
       }
     } else {
-      console.log('❌ Web Workers not supported, will use main thread');
       addDebugLog('❌ Web Workers not supported');
     }
   }, []); // Run once on mount
@@ -297,7 +275,6 @@ export default function MediaDemoPage() {
   useEffect(() => {
     // Fallback function for main thread M3U parsing
     const fallbackM3UParsing = async (content: string, allSources: Video[]) => {
-      console.log('🔄 Starting fallback M3U parsing on main thread...');
       addDebugLog('🔄 Starting fallback parsing...');
       const groupsSet = new Set<string>();
       
@@ -308,7 +285,6 @@ export default function MediaDemoPage() {
       
       while (!chunk.done) {
         const chunkData = chunk.value;
-        console.log(`📦 Processing chunk: ${chunkData.entries.length} entries, hasMore: ${chunkData.hasMore}`);
         addDebugLog(`📦 Chunk: ${chunkData.entries.length} entries`);
         
         const chunkVideos = convertM3UToVideos(chunkData.entries);
@@ -643,8 +619,6 @@ export default function MediaDemoPage() {
   };
 
   const handleVideoSelect = (video: Video) => {
-    console.log('🎬 Video selected:', video.title, video.src);
-    
     // Log video selection to debug panel
     logVideoConnectionStart(video.src, video.title);
     
@@ -679,41 +653,6 @@ export default function MediaDemoPage() {
       setTimeout(() => {
         setIsPlaying(true);
       }, 100); // Small delay to ensure video element is ready
-    }
-    
-    // If cast is connected, send the video to the receiver
-    if (castContext?.isConnected && castContext?.sendMessage) {
-      console.log('📱 Cast connected - sending video to receiver:', video.title);
-      
-      castContext.sendMessage({
-        type: 'LOAD_VIDEO',
-        payload: {
-          videoUrl: video.src,
-          title: video.title,
-          poster: video.poster || video.m3uData?.logo,
-          mimetype: video.mimetype,
-          autoPlay: true, // Auto-play when cast
-          // Include M3U metadata if available
-          metadata: video.m3uData ? {
-            tvgId: video.m3uData.tvgId,
-            group: video.m3uData.group,
-            logo: video.m3uData.logo,
-            userAgent: video.m3uData.userAgent,
-            referrer: video.m3uData.referrer,
-            ...video.m3uData.metadata
-          } : undefined,
-          // Include feature flags
-          features: video.features || [],
-          // Include DRM info if available
-          keySystems: video.keySystems
-        }
-      }).then((messageId) => {
-        console.log('✅ Video sent to receiver successfully, messageId:', messageId);
-        addDebugLog(`✅ Cast: Video sent to receiver - ${video.title}`);
-      }).catch((error) => {
-        console.error('❌ Failed to send video to receiver:', error);
-        addDebugLog(`❌ Cast: Failed to send video - ${error.message || error}`);
-      });
     }
     
     setIsMediaSelected(true);
@@ -767,14 +706,6 @@ export default function MediaDemoPage() {
         navigator.vibrate(50);
       }
       
-      // Log the scroll action for debugging
-      console.log('📺 Scrolling to video player for:', video.title, {
-        isMobile: window.innerWidth < 768,
-        targetScrollTop,
-        headerOffset
-      });
-    } else if (castContext?.isConnected) {
-      console.log('📱 Skipping scroll to video player - casting is active');
     }
   };
 
@@ -813,17 +744,11 @@ export default function MediaDemoPage() {
 
     try {
       if (castContext.isConnected) {
-        // If already connected, disconnect
         castContext.endSession();
-        console.log('🔌 Disconnected from cast device');
       } else {
-        // If not connected, request session (opens device selection)
         await castContext.requestSession();
-        console.log('🎯 Cast session requested - device selection opened');
       }
-    } catch (error) {
-      console.error('Cast operation failed:', error);
-    }
+    } catch {}
   };
 
   // Filter videos based on current filters
@@ -853,18 +778,6 @@ export default function MediaDemoPage() {
 
   return (
     <main className="relative z-10 pt-20 pb-12">
-      {/* Resume overlay disabled for now */}
-      {false && showResumeOverlay && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60">
-          <div className="bg-white text-black rounded-lg shadow-lg p-6 flex flex-col items-center">
-            <div className="mb-4 text-lg font-semibold">Resume previous content?</div>
-            <div className="flex gap-4">
-              <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" onClick={handleResume}>Resume</button>
-              <button className="px-4 py-2 bg-gray-300 text-black rounded hover:bg-gray-400" onClick={handleDismissResume}>Dismiss</button>
-            </div>
-          </div>
-        </div>
-      )}
   {/* Top group category links moved into Media Filter Controls */}
   <div className="min-h-screen relative">
         <ParticleBackground />
@@ -877,14 +790,14 @@ export default function MediaDemoPage() {
               ref={titleRef}
               className="text-2xl md:text-4xl font-bold text-gradient-active-green mb-3 leading-relaxed pb-1"
             >
-              Video.js Media Demo
+              Adaptive Media Player
             </h1>
             <p
               ref={subtitleRef}
               className="text-base md:text-lg text-gray-300 mb-4 max-w-3xl mx-auto hero-subtitle-hidden"
             >
-              Advanced video player with Video.js - featuring customizable controls, cast integration, 
-              and professional playback capabilities.
+              HLS, MPEG-DASH, and live IPTV streams — powered by Video.js and Dash.js with
+              Chromecast support, multi-source playlists, and real-time debug tooling.
             </p>
             
             {/* Accessibility shortcuts hint */}
@@ -1083,24 +996,6 @@ export default function MediaDemoPage() {
               )}
             </div>
 
-            {/* Debug info and Media Library Title - Separate row */}
-            {false && (
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-2 mt-4 pt-4 border-t border-[#39FF14]/20">
-                {/* Debug info - left on desktop, center on mobile */}
-                <div className="text-xs text-gray-500 order-2 sm:order-1">
-                  Sources: {sourcesLoaded ? '✓' : '✗'} | Groups: {m3uGroups.length}
-                </div>
-                
-                {/* Media Library Title - center */}
-                <h3 className="text-lg font-semibold text-gradient-active-green flex items-center gap-2 order-1 sm:order-2">
-                  <List size={20} />
-                  Media Library ({videos.length} sources)
-                </h3>
-                
-                {/* Spacer for balance on larger screens */}
-                <div className="hidden sm:block order-3 w-20"></div>
-              </div>
-            )}
           </section>
 
           {/* Main Video Player Section */}
@@ -1267,25 +1162,25 @@ https://test.example.com/stream.m3u8`;
           {/* Features Section */}
           <div className="mt-16 glass-morphism-large neon-glow-enhanced p-8">
             <h2 className="text-xl font-bold text-center text-gradient-active mb-8">
-              Advanced Video.js Player Features
+              Under the Hood
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[
                 {
                   icon: Video,
-                  title: "Video.js Framework",
-                  description: "Professional video player with HTML5 technology, plugin system, and advanced controls",
+                  title: "HLS & MPEG-DASH Adaptive",
+                  description: "Video.js + Dash.js handle adaptive bitrate streams — live and on-demand — with quality-level switching and buffer metrics.",
                 },
                 {
-                  icon: Monitor,
-                  title: "Flexible Controls",
-                  description: "Outside, inside, overlay, or side-mounted controls with customizable layouts",
+                  icon: List,
+                  title: "Multi-Source M3U Playlists",
+                  description: "Chunked M3U parser with optional Web Worker offloading keeps the UI responsive while loading thousands of IPTV channels.",
                 },
                 {
                   icon: Cast,
-                  title: "Cast Integration",
-                  description: "Timeline scrubber, volume control, fullscreen, settings menu, and cast support",
+                  title: "Chromecast Integration",
+                  description: "Cast SDK sends the active stream to any Google Cast device. Remote playback state, timeline sync, and auto-load on connect.",
                 },
               ].map((feature, index) => {
                 const IconComponent = feature.icon;
@@ -1314,7 +1209,7 @@ https://test.example.com/stream.m3u8`;
             <div className="bg-gradient-to-br from-[#0f1419]/80 to-[#1a1f24]/80 border border-[#39FF14]/20 rounded-xl p-6">
               <h3 className="text-lg font-semibold text-[#39FF14] mb-4 flex items-center">
                 <Monitor className="w-5 h-5 mr-2" />
-                Video.js Player Features Overview
+                Player Capabilities
               </h3>
               <div className="mb-4 text-xs text-gray-400">
                 IPTV channel data powered by <a href="https://github.com/iptv-org/iptv" target="_blank" rel="noopener noreferrer" className="underline text-[#39FF14]">iptv-org/iptv</a>.
@@ -1347,7 +1242,7 @@ https://test.example.com/stream.m3u8`;
 
       <footer className="pt-10 text-center text-gray-400 relative z-10">
         <div className="max-w-4xl mx-auto px-4">
-          <p>&copy; 2025 WSP - Senior Software Engineer. All rights reserved.</p>
+          <p>&copy; 2026 WSP - Senior Software Engineer. All rights reserved.</p>
           <p className="m-2 text-sm">
             Built with Next.js, TypeScript, GSAP, and Tailwind CSS
           </p>
