@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import Navigation from '@/components/Navigation';
+import TimelineCallout from '@/components/TimelineCallout';
 
 // Lazy-load heavier / background components to defer loading of videos and large bundles
 const ParticleBackground = dynamic(() => import('@/components/ParticleBackground'), { ssr: false, loading: () => null });
@@ -51,6 +52,7 @@ export default function Home() {
       {sections.map(({ id, Component }) => (
         <section id={id} key={id}>
           <Component />
+          {id === 'home' && <TimelineCallout />}
         </section>
       ))}
 
