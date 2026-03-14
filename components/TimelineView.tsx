@@ -454,6 +454,8 @@ function EraBanner({ era }: { era: TEra }) {
 
 // ─── Timeline Node ────────────────────────────────────────────────────────────
 
+const WSP_CATEGORIES = new Set(['personal', 'career', 'education']);
+
 function TimelineNode({
   node,
   side,
@@ -471,19 +473,19 @@ function TimelineNode({
 }) {
   const isYAH     = node.id === 'you-are-here';
   const isCompact = nodeSpacing < SPACING_NORMAL;
+  const isWsp     = WSP_CATEGORIES.has(node.category);
   const dotSize   = node.isHighlight ? (isCompact ? 14 : 18) : (isCompact ? 8 : 11);
-  const cardPad   = isCompact ? 'p-2' : 'p-4';
+  const cardPad   = isCompact ? 'p-2' : 'p-3';
 
   return (
     <div
-      className="relative flex items-start"
+      className="relative flex items-start justify-between"
       data-timeline-node={node.id}
       style={{ marginBottom: nodeSpacing }}
     >
-      {/* Connecting line — spans from card box edge to spine dot center.
-          Card is w-5/12 (41.667%) with pr-8/pl-8 (2rem) padding inside it.
-          Card box edge = 41.667% - 2rem from each side.
-          Spine dot center = 50%. Line fills the gap between them. */}
+      {/* Connecting line — card box edge to spine dot center.
+          With justify-between the two w-5/12 cards sit at 0–41.667% and 58.333–100%.
+          Spine dot center = 50%. Line fills the gap between card edge and spine. */}
       <div
         className="absolute h-px pointer-events-none"
         style={{
@@ -492,25 +494,35 @@ function TimelineNode({
             ? { left: 'calc(41.667% - 2rem)', right: 'calc(50% + 1px)' }
             : { left: 'calc(50% + 1px)',       right: 'calc(41.667% - 2rem)' }
           ),
-          background: `${category.color}55`,
+          background: `${category.color}66`,
         }}
       />
 
       {/* Content card */}
-      <div className={`w-5/12 ${side === 'left' ? 'pr-8' : 'pl-8 order-last'}`}>
+      <div className={`w-5/12 ${side === 'right' ? 'pl-8 order-last' : 'pr-8'}`}>
         <div
           onClick={onToggle}
           className={`rounded-xl ${cardPad} cursor-pointer border transition-all duration-300`}
           style={{
-            borderColor: isExpanded ? category.color : `${category.color}30`,
-            background: isExpanded ? `${category.color}0e` : 'rgba(4,4,8,0.68)',
-            boxShadow: isExpanded ? `0 0 22px ${category.color}22` : 'none',
+            '--glow-color': category.color,
+            borderColor: isExpanded
+              ? category.color
+              : isWsp
+              ? `${category.color}70`
+              : `${category.color}30`,
+            background: isExpanded ? `${category.color}0e` : 'rgba(4,4,8,0.72)',
+            boxShadow: isExpanded
+              ? `0 0 22px ${category.color}44`
+              : isWsp
+              ? `0 0 10px ${category.color}33`
+              : 'none',
             textAlign: side === 'left' ? 'right' : 'left',
-          }}
+            animation: isWsp && !isExpanded ? 'wspGlow 3s ease-in-out infinite' : undefined,
+          } as React.CSSProperties}
         >
           <div
             className="font-mono mb-0.5"
-            style={{ fontSize: isCompact ? 9 : 11, color: category.color, opacity: 0.9 }}
+            style={{ fontSize: isCompact ? 10 : 12, color: category.color, opacity: 0.9 }}
           >
             {formatDate(node.date)}
             {node.endDate && !isCompact && ` – ${formatDate(node.endDate)}`}
@@ -525,6 +537,7 @@ function TimelineNode({
             }}
           >
             {node.logo && !isExpanded && (
+              // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={node.logo}
                 alt=""
@@ -540,8 +553,14 @@ function TimelineNode({
               />
             )}
             <span
-              className="font-semibold text-white"
-              style={{ fontSize: isCompact ? (node.isHighlight ? 11 : 10) : (node.isHighlight ? 15 : 13) }}
+              className="text-white"
+              style={{
+                fontSize: isCompact
+                  ? (node.isHighlight ? 13 : 11)
+                  : (node.isHighlight ? 17 : 14),
+                fontWeight: isWsp ? 700 : 600,
+                letterSpacing: isWsp ? '-0.01em' : undefined,
+              }}
             >
               {node.title}
             </span>
@@ -563,6 +582,7 @@ function TimelineNode({
                       boxShadow: `0 0 12px ${category.color}22`,
                     }}
                   >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={node.logo}
                       alt=""
@@ -579,11 +599,16 @@ function TimelineNode({
                 </div>
               )}
               {node.endDate && (
-                <div className="text-xs font-mono" style={{ color: category.color, opacity: 0.75 }}>
+                <div className="font-mono" style={{ fontSize: 12, color: category.color, opacity: 0.75 }}>
                   → {formatDate(node.endDate)}
                 </div>
               )}
-              <p className="text-xs text-gray-300 leading-relaxed">{node.description}</p>
+              <p
+                className="leading-relaxed"
+                style={{ fontSize: isWsp ? 13 : 12, color: isWsp ? '#d1d5db' : '#9ca3af' }}
+              >
+                {node.description}
+              </p>
               {node.tags.length > 0 && (
                 <div
                   className="flex flex-wrap gap-1 mt-2"
@@ -623,12 +648,12 @@ function TimelineNode({
         />
         {isYAH && (
           <div
-            className="mt-1.5 text-xs font-bold px-2 py-0.5 rounded whitespace-nowrap animate-pulse"
+            className="mt-1.5 font-bold px-2 py-0.5 rounded whitespace-nowrap animate-pulse"
             style={{
+              fontSize: 10,
               color: category.color,
               border: `1px solid ${category.color}`,
               background: `${category.color}12`,
-              fontSize: 9,
             }}
           >
             YOU ARE HERE
@@ -636,16 +661,20 @@ function TimelineNode({
         )}
       </div>
 
-      {/* Year hint — opposite side */}
+      {/* Year label — opposite side of card */}
       <div
         className={`hidden md:flex w-5/12 items-start ${
-          side === 'left' ? 'pl-6 md:pl-10' : 'pr-6 md:pr-10 justify-end order-first'
+          side === 'left' ? 'pl-8 md:pl-12' : 'pr-8 md:pr-12 justify-end order-first'
         }`}
-        style={{ paddingTop: 12 }}
+        style={{ paddingTop: 10 }}
       >
         <span
-          className="font-mono"
-          style={{ fontSize: isCompact ? 9 : 11, color: '#3a3a3a' }}
+          className="font-mono font-semibold"
+          style={{
+            fontSize: isCompact ? 12 : 15,
+            color: isWsp ? `${category.color}cc` : '#505050',
+            letterSpacing: '0.04em',
+          }}
         >
           {node.date.split('-')[0]}
         </span>
@@ -759,6 +788,14 @@ export default function TimelineView() {
 
   return (
     <div className="relative min-h-screen bg-black overflow-x-hidden">
+      {/* WSP node glow keyframe — color driven by --glow-color CSS var on each card */}
+      <style>{`
+        @keyframes wspGlow {
+          0%,100% { box-shadow: 0 0 8px var(--glow-color), 0 0 0 1px color-mix(in srgb, var(--glow-color) 45%, transparent); }
+          50%      { box-shadow: 0 0 22px var(--glow-color), 0 0 0 1.5px var(--glow-color), 0 0 38px color-mix(in srgb, var(--glow-color) 35%, transparent); }
+        }
+      `}</style>
+
       {/* Z-0: starfield */}
       <StarfieldCanvas />
 
