@@ -100,9 +100,3 @@ Auth uses Twitch's **Implicit Grant Flow** (correct for static exports — no ba
 | Bare channel name (no domain) | Not detected | — | ❌ needs guard |
 
 **Note:** ReactPlayer requires `parent: [hostname]` in its Twitch config — this is correctly set in `UnifiedPlayer.tsx` from `window.location.hostname`.
-
----
-
-## Decision: Re-enable `/twitch-glazer` Link?
-
-**Not yet.** The auto-login redirect (Bug #1) must be fixed first. Once gated behind a user-initiated OAuth button the page is safe to re-link. Estimated scope: small — single `useEffect` guard change in `MediaTwitchDashboard`.
