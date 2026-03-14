@@ -55,10 +55,15 @@ function AuthImage({ src, alt, ...props }: AuthImageProps) {
 
 import React, { useState, useRef, useEffect, useMemo } from "react";
 import Image from "next/image";
-
-// Custom image component to fetch Twitch thumbnails with Authorization header
-import gsap from "gsap";
 import { getUserInfo, getVideos, getClips } from "../lib/twitchApi";
+import { handleTwitchRedirect, loginWithTwitch } from "../lib/twitchAuthClient";
+
+class SessionExpiredError extends Error {
+  constructor() {
+    super("Session expired — please log in again.");
+    this.name = "SessionExpiredError";
+  }
+}
 
 
 
@@ -95,13 +100,11 @@ export default function MediaTwitchDashboard() {
   const [authed, setAuthed] = useState(false);
 
   useEffect(() => {
-    const { handleTwitchRedirect } = require("../lib/twitchAuthClient");
     const token = handleTwitchRedirect() || localStorage.getItem('twitch_access_token');
     setAuthed(!!token);
   }, []);
 
   function login() {
-    const { loginWithTwitch } = require("../lib/twitchAuthClient");
     loginWithTwitch();
   }
 
@@ -122,7 +125,10 @@ export default function MediaTwitchDashboard() {
   function assertNotUnauthed(res: Response) {
     if (res.status === 401) {
       handleExpiredToken();
-      throw new Error("Session expired — please log in again.");
+      throw new SessionExpiredError();
+    }
+    if (!res.ok) {
+      throw new Error(`Twitch API error ${res.status}: ${res.statusText}`);
     }
     return res;
   }
@@ -138,67 +144,49 @@ export default function MediaTwitchDashboard() {
     setFollowers([]);
     setGame(null);
     try {
-      // 1. User info
+      // 1. User info (needed for userId)
       const user = await getUserInfo(channelName);
       setProfile(user);
       const userId = user.id;
-      // 2. Channel info
-      const channelRes = assertNotUnauthed(await fetch(`https://api.twitch.tv/helix/channels?broadcaster_id=${userId}`, {
-        headers: {
-          "Client-ID": process.env.NEXT_PUBLIC_TWITCH_CLIENT_ID!,
-          "Authorization": `Bearer ${localStorage.getItem('twitch_access_token')}`,
-        },
-      }));
-      const channelData = await channelRes.json();
+      const token = localStorage.getItem('twitch_access_token');
+      const headers = {
+        "Client-ID": process.env.NEXT_PUBLIC_TWITCH_CLIENT_ID!,
+        "Authorization": `Bearer ${token}`,
+      };
+      // 2-6. Fire all independent requests in parallel
+      const [rawChannelRes, rawStreamRes, clipsRes, videosRes, rawFollowersRes] = await Promise.all([
+        fetch(`https://api.twitch.tv/helix/channels?broadcaster_id=${userId}`, { headers }),
+        fetch(`https://api.twitch.tv/helix/streams?user_id=${userId}`, { headers }),
+        getClips(userId, 50),
+        getVideos(userId, 50),
+        fetch(`https://api.twitch.tv/helix/users/follows?to_id=${userId}&first=10`, { headers }),
+      ]);
+      // Check auth / error status sequentially — first failure throws and short-circuits
+      const channelRes = assertNotUnauthed(rawChannelRes);
+      const streamRes = assertNotUnauthed(rawStreamRes);
+      const followersRes = assertNotUnauthed(rawFollowersRes);
+      // Parse JSON bodies in parallel
+      const [channelData, streamData, followersData] = await Promise.all([
+        channelRes.json(),
+        streamRes.json(),
+        followersRes.json(),
+      ]);
       setChannel(channelData.data?.[0] || null);
-      // 3. Stream info (live data)
-      const streamRes = assertNotUnauthed(await fetch(`https://api.twitch.tv/helix/streams?user_id=${userId}`, {
-        headers: {
-          "Client-ID": process.env.NEXT_PUBLIC_TWITCH_CLIENT_ID!,
-          "Authorization": `Bearer ${localStorage.getItem('twitch_access_token')}`,
-        },
-      }));
-      const streamData = await streamRes.json();
       setStream(streamData.data?.[0] || null);
-      // 4. Clips
-  const clipsRes = await getClips(userId, 50);
-      if (typeof window !== 'undefined') {
-        // Debug log all raw fields for clips
-        // eslint-disable-next-line no-console
-        console.log('[TWITCH DEBUG] Raw clips data:', clipsRes.data);
-      }
-  setClips((clipsRes.data || []).slice(0, 50));
-      // 5. Videos
-  const videosRes = await getVideos(userId, 50);
-      if (typeof window !== 'undefined') {
-        // Debug log all raw fields for videos
-        // eslint-disable-next-line no-console
-        console.log('[TWITCH DEBUG] Raw videos data:', videosRes.data);
-      }
-  setVideos((videosRes.data || []).slice(0, 50));
-      // 6. Followers
-      const followersRes = assertNotUnauthed(await fetch(`https://api.twitch.tv/helix/users/follows?to_id=${userId}&first=10`, {
-        headers: {
-          "Client-ID": process.env.NEXT_PUBLIC_TWITCH_CLIENT_ID!,
-          "Authorization": `Bearer ${localStorage.getItem('twitch_access_token')}`,
-        },
-      }));
-      const followersData = await followersRes.json();
+      setClips((clipsRes.data || []).slice(0, 50));
+      setVideos((videosRes.data || []).slice(0, 50));
       setFollowers(followersData.data || []);
-      // 7. Game info (if available)
-      let gameId = channelData.data?.[0]?.game_id || streamData.data?.[0]?.game_id;
+      // 7. Game info (depends on channel / stream data)
+      const gameId = channelData.data?.[0]?.game_id || streamData.data?.[0]?.game_id;
       if (gameId) {
-        const gameRes = await fetch(`https://api.twitch.tv/helix/games?id=${gameId}`, {
-          headers: {
-            "Client-ID": process.env.NEXT_PUBLIC_TWITCH_CLIENT_ID!,
-            "Authorization": `Bearer ${localStorage.getItem('twitch_access_token')}`,
-          },
-        });
+        const gameRes = await fetch(`https://api.twitch.tv/helix/games?id=${gameId}`, { headers });
         const gameData = await gameRes.json();
         setGame(gameData.data?.[0] || null);
       }
     } catch (e: any) {
-      setError(e.message || "Failed to load channel data");
+      if (!(e instanceof SessionExpiredError)) {
+        setError(e.message || "Failed to load channel data");
+      }
     } finally {
       setLoading(false);
     }
