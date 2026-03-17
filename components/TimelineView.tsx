@@ -47,9 +47,9 @@ const SPACING_STEP    = 3;
 const SPACING_DEFAULT = 24;
 
 // Timeline zoom — scales the entire timeline body (Flash-style transform)
-const ZOOM_DEFAULT = 0.85;
-const ZOOM_MAX     = 1.15;
-const ZOOM_MIN     = 0.04;
+const ZOOM_DEFAULT = 1.00;
+const ZOOM_MAX     = 2.50;
+const ZOOM_MIN     = 0.0004;
 const ZOOM_STEP    = 0.04;
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -269,26 +269,18 @@ function StickyFilterBar({
   onToggle: (id: string) => void;
 }) {
   return (
-    <div
-      className="fixed flex items-center justify-center gap-1.5 flex-wrap px-4 py-2 w-full"
-      style={{
-        top: 64, // flush below fixed nav (h-16 = 64px)
-        zIndex: 25,
-        background: 'rgba(0,0,0,0.88)',
-        backdropFilter: 'blur(14px)',
-        borderBottom: '1px solid rgba(57,255,20,0.08)',
-      }}
-    >
-      {categories.map(c => (
+    <div className="flex items-center justify-center gap-1.5 flex-wrap px-4 py-3">
+      {categories.map((c, i) => (
         <button
           key={c.id}
           onClick={() => onToggle(c.id)}
-          className="px-2.5 py-0.5 rounded-full text-xs font-semibold border transition-all duration-200 whitespace-nowrap"
+          className="filter-pill px-2.5 py-0.5 rounded-full text-xs font-semibold border transition-all duration-200 whitespace-nowrap"
           style={{
             borderColor: c.color,
             color: active.has(c.id) ? '#000' : c.color,
             background: active.has(c.id) ? c.color : 'transparent',
             opacity: active.has(c.id) ? 1 : 0.55,
+            animationDelay: `${0.25 + i * 0.1}s`,
           }}
           title={c.description}
         >
@@ -329,8 +321,8 @@ function LeftPanel({
 
   return (
     <div
-      className="fixed top-20 left-2"
-      style={{ zIndex: 30, width: 156 }}
+      className="fixed left-2"
+      style={{ top: 140, zIndex: 30, width: 156 }}
     >
       <div
         className="rounded-xl border"
@@ -352,7 +344,7 @@ function LeftPanel({
               style={{ opacity: active.has(c.id) ? 1 : 0.28 }}
             >
               <span
-                className="w-2 h-2 rounded-full flex-shrink-0"
+                className="w-3 h-3 rounded-full flex-shrink-0"
                 style={{
                   background: c.color,
                   boxShadow: active.has(c.id) ? `0 0 5px ${c.color}` : 'none',
@@ -701,12 +693,12 @@ function TimelineNode({
                 alt=""
                 aria-hidden="true"
                 style={{
-                  width: isCompact ? 18 : 20,
-                  height: isCompact ? 18 : 20,
+                  width: isCompact ? 28 : 30,
+                  height: isCompact ? 28 : 30,
                   objectFit: 'contain',
                   flexShrink: 0,
                   filter: 'invert(1)',
-                  opacity: 0.65,
+                  opacity: 0.60,
                 }}
               />
             )}
@@ -725,35 +717,32 @@ function TimelineNode({
           </div>
 
           {isExpanded && (
-            <div className="mt-3 space-y-2">
-              {/* Large logo in expanded state */}
+            <div className="mt-3 space-y-2" style={{ overflow: 'hidden' }}>
+              {/* Logo floats so description text wraps around it */}
               {node.logo && (
                 <div
-                  className="flex mb-3"
-                  style={{ justifyContent: side === 'left' ? 'flex-end' : 'flex-start' }}
+                  className="rounded-lg p-2"
+                  style={{
+                    float: side === 'left' ? 'right' : 'left',
+                    margin: side === 'left' ? '0 0 6px 13px' : '0 13px 6px 0',
+                    background: `${category.color}12`,
+                    border: `1px solid ${category.color}30`,
+                    boxShadow: `0 0 12px ${category.color}22`,
+                  }}
                 >
-                  <div
-                    className="rounded-lg p-2"
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={node.logo}
+                    alt=""
+                    aria-hidden="true"
                     style={{
-                      background: `${category.color}12`,
-                      border: `1px solid ${category.color}30`,
-                      boxShadow: `0 0 12px ${category.color}22`,
+                      width: 55,
+                      height: 55,
+                      objectFit: 'contain',
+                      filter: 'invert(1)',
+                      opacity: 0.85,
                     }}
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={node.logo}
-                      alt=""
-                      aria-hidden="true"
-                      style={{
-                        width: 55,
-                        height: 55,
-                        objectFit: 'contain',
-                        filter: 'invert(1)',
-                        opacity: 0.85,
-                      }}
-                    />
-                  </div>
+                  />
                 </div>
               )}
               {node.endDate && (
@@ -819,6 +808,8 @@ function TimelineNode({
         )}
       </div>
 
+      {/* Spacer — keeps justify-between working now that year labels are on the spine */}
+      <div className="w-5/12" aria-hidden="true" />
     </div>
   );
 }
@@ -832,6 +823,7 @@ export default function TimelineView() {
   const leftPanelRef     = useRef<HTMLDivElement>(null);  // fade-in wrapper
   const minimapRef       = useRef<HTMLDivElement>(null);  // fade-in wrapper
   const heroRef          = useRef<HTMLDivElement>(null);  // fade-in wrapper
+  const timelineFadeRef  = useRef<HTMLDivElement>(null);  // fade-in wrapper
 
   const [expandedId, setExpandedId]           = useState<string | null>(null);
   const [scrollProgress, setScrollProgress]   = useState(0);
@@ -976,24 +968,56 @@ export default function TimelineView() {
     });
   }, [timelineZoom, naturalHeight]);
 
-  // Fade-in side panels + hero after page loads.
-  // NOTE: initial opacity: 0 is set via inline JSX styles — NOT here —
-  // so the elements are invisible on the very first paint (no flash).
+  // Hero word-by-word GSAP sequence + side panel fade-in.
+  // Pills animate via CSS @keyframes pillDrop — no GSAP needed for them.
+  // Every other element starts at opacity:0 via inline JSX — no gsap.set needed.
   useEffect(() => {
     const lp = leftPanelRef.current;
     const mm = minimapRef.current;
-    const hr = heroRef.current;
-    if (!lp || !mm || !hr) return;
+    const tl = timelineFadeRef.current;
+    if (!lp || !mm || !tl) return;
 
-    // Hero slides down from slight offset — not fixed-positioned so transform is safe
-    gsap.fromTo(hr,
-      { opacity: 0, y: -14 },
-      { opacity: 1, y: 0, duration: 0.75, delay: 0.4, ease: 'power2.out' }
+    // ── Timeline body slides up from below with heavy Flash-era ease
+    gsap.fromTo(tl,
+      { opacity: 0, y: 90 },
+      { opacity: 1, y: 0, duration: 1.15, delay: 1.1, ease: 'power4.out' }
     );
 
-    // Panels: opacity only — wrapper has fixed children, transform would break their layout
-    gsap.to(lp, { opacity: 1, duration: 0.65, delay: 1.9, ease: 'power2.out' });
-    gsap.to(mm, { opacity: 1, duration: 0.65, delay: 2.1, ease: 'power2.out' });
+    // ── Stage 1: name words stagger up (4 words × 0.09s = 0.36s window)
+    gsap.fromTo('.hero-name-word',
+      { opacity: 0, y: 18 },
+      { opacity: 1, y: 0, duration: 0.5, stagger: 0.09, delay: 0.25, ease: 'power3.out' }
+    );
+
+    // ── Stage 2: subtitle fades in after last name word settles
+    gsap.fromTo('.hero-subtitle',
+      { opacity: 0, y: 10 },
+      { opacity: 1, y: 0, duration: 0.45, delay: 0.85, ease: 'power2.out' }
+    );
+
+    // ── Stage 3: "25 Years" — scale pop from slightly small
+    gsap.fromTo('.hero-h1-line1',
+      { opacity: 0, scale: 0.82, y: 6 },
+      { opacity: 1, scale: 1, y: 0, duration: 0.6, delay: 1.35, ease: 'back.out(1.6)', transformOrigin: 'center center' }
+    );
+
+    // ── Stage 4: "in the Making" — words stagger in below
+    gsap.fromTo('.hero-h1-word',
+      { opacity: 0, y: 14 },
+      { opacity: 1, y: 0, duration: 0.45, stagger: 0.1, delay: 1.85, ease: 'power2.out' }
+    );
+
+    // ── Stage 5: scroll hint
+    gsap.fromTo('.hero-scroll',
+      { opacity: 0 },
+      { opacity: 1, duration: 0.5, delay: 2.25, ease: 'power2.out' }
+    );
+
+    // ── Stage 6: side panels slide in after hero finishes
+    gsap.set(lp, { opacity: 0 });
+    gsap.set(mm, { opacity: 0 });
+    gsap.to(lp, { opacity: 1, duration: 0.65, delay: 2.4, ease: 'power2.out' });
+    gsap.to(mm, { opacity: 1, duration: 0.65, delay: 2.6, ease: 'power2.out' });
   }, []);
 
   return (
@@ -1050,6 +1074,13 @@ export default function TimelineView() {
           border-radius: 2px;
           background: rgba(0,200,255,0.2);
         }
+        @keyframes pillDrop {
+          from { transform: translateY(-52px); opacity: 0; }
+          to   { transform: translateY(0);     opacity: 1; }
+        }
+        .filter-pill {
+          animation: pillDrop 0.65s cubic-bezier(0.34,1.56,0.64,1) backwards;
+        }
       `}</style>
 
       {/* Z-0: starfield */}
@@ -1084,35 +1115,59 @@ export default function TimelineView() {
         />
       </div>
 
-      {/* Z-25: filter bar — fixed below nav, always visible while scrolling */}
+      {/* ── Page content ─────────────────────────── */}
+
+      {/* Words start opacity:0 individually — wrapper is visible from paint */}
+      <div ref={heroRef} className="relative px-4 text-center" style={{ zIndex: 10, paddingTop: 66, paddingBottom: 32 }}>
+
+        {/* Name — each word animates in with stagger */}
+        <p className="font-mono mb-1 uppercase ml-6" style={{ fontSize: 28, letterSpacing: '0.2em', color: '#ffffff' }}>
+          {['Walter', 'Steve', 'Pollard', 'Jr'].map(w => (
+            <span key={w} className="hero-name-word" style={{ display: 'inline-block', opacity: 0, marginRight: '0.55em' }}>{w}</span>
+          ))}
+        </p>
+
+        {/* Subtitle — single fade */}
+        <p className="hero-subtitle font-mono mb-8 uppercase" style={{ fontSize: 15, color: '#6b7280', letterSpacing: '0.16em', opacity: 0 }}>
+          Software Engineer&nbsp;·&nbsp;Video&nbsp;·&nbsp;Chromecast&nbsp;·&nbsp;AI
+        </p>
+
+        {/* h1 — two lines, each animates separately */}
+        <h1 className="font-bold text-white mb-2" style={{ fontSize: 'clamp(3rem, 8vw, 5.5rem)', lineHeight: 1.08 }}>
+          <span className="block">
+            <span className="hero-h1-line1" style={{ color: '#39FF14', display: 'inline-block', opacity: 0 }}>
+              25 Years
+            </span>
+          </span>
+          <span className="block">
+            {['in', 'the', 'Making'].map(w => (
+              <span key={w} className="hero-h1-word" style={{ display: 'inline-block', opacity: 0, marginRight: '0.22em' }}>{w}</span>
+            ))}
+          </span>
+        </h1>
+
+        {/* Scroll hint */}
+        <div className="hero-scroll mt-8 font-medium animate-bounce" style={{ fontSize: 15, color: '#4b5563', opacity: 0 }}>
+          ↓ scroll to explore
+        </div>
+      </div>
+
+      {/* Filter pills — scrolls with page, sits between hero and timeline */}
       <StickyFilterBar
         categories={timelineData.meta.categories as TCategory[]}
         active={activeCategories}
         onToggle={toggleCategory}
       />
 
-      {/* ── Page content ─────────────────────────── */}
-
-      <div ref={heroRef} className="relative px-4 text-center" style={{ zIndex: 10, opacity: 0, paddingTop: 128, paddingBottom: 32 }}>
-        <p className="font-mono tracking-[0.22em] text-gray-400 mb-1 uppercase" style={{ fontSize: 28, letterSpacing: '0.2em' }}>
-          Walter Steve Pollard Jr
-        </p>
-        <p className="font-mono tracking-[0.18em] mb-6 uppercase" style={{ fontSize: 15, color: '#6b7280', letterSpacing: '0.16em' }}>
-          Software Engineer&nbsp;·&nbsp;Video&nbsp;·&nbsp;Chromecast&nbsp;·&nbsp;AI
-        </p>
-        <h1 className="font-bold text-white leading-tight mb-2" style={{ fontSize: 'clamp(3rem, 8vw, 5.5rem)' }}>
-          <span style={{ color: '#39FF14' }}>25 Years</span> in the Making
-        </h1>
-        <div className="mt-6 text-gray-500 font-medium animate-bounce" style={{ fontSize: 15 }}>↓ scroll to explore</div>
-      </div>
-
       {/* Timeline — height-keeper shrinks with GSAP zoom so scroll area stays correct */}
       <div
+        ref={timelineFadeRef}
         style={{
           position: 'relative',
           height: naturalHeight > 0 ? naturalHeight * timelineZoom : undefined,
           transition: 'height 0.45s cubic-bezier(0.25,0,0.25,1)',
           zIndex: 10,
+          opacity: 0,
         }}
       >
         <div

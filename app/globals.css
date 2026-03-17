@@ -858,6 +858,7 @@ body {
   /* Navigation menu items */
   .nav-menu-item {
     @apply text-gray-300 transition-colors duration-200;
+    font-size: 1rem;
   }
   
   .nav-menu-item:hover {
@@ -891,6 +892,7 @@ body {
   .cast-button-nav-scale {
     transform: scale(0.95);
     transform-origin: center;
+    font-size: 0.875rem;
   }
 
   /* Hero Section Animation Classes */

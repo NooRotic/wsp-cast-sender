@@ -4,43 +4,43 @@
       {
         "id": "personal",
         "label": "Personal",
-        "color": "#FF6B6B",
+        "color": "#FF3040",
         "description": "Life milestones & hobbies"
       },
       {
         "id": "career",
         "label": "Career",
-        "color": "#39FF14",
+        "color": "#FF9500",
         "description": "WSP professional journey"
       },
       {
         "id": "education",
         "label": "Education",
-        "color": "#60A5FA",
+        "color": "#FFD60A",
         "description": "Academic milestones"
       },
       {
         "id": "tech-release",
         "label": "Tech Release",
-        "color": "#4ECDC4",
+        "color": "#30D158",
         "description": "Software & platform launches"
       },
       {
         "id": "gaming",
         "label": "Gaming",
-        "color": "#FFD700",
+        "color": "#0A84FF",
         "description": "Game & console releases"
       },
       {
         "id": "ai-llm",
         "label": "AI / LLM",
-        "color": "#FF8C00",
+        "color": "#6E6BF5",
         "description": "Artificial Intelligence milestones"
       },
       {
         "id": "world-event",
         "label": "World Event",
-        "color": "#A855F7",
+        "color": "#BF5AF2",
         "description": "Major industry moments"
       }
     ],
@@ -1892,11 +1892,11 @@
     },
     {
       "id": "wsp-ps3",
-      "date": "2006-11",
+      "date": "2008-06",
       "category": "personal",
       "title": "WSP Gets a PlayStation 3",
       "shortTitle": "Got the PS3",
-      "description": "Sony's powerhouse console with built-in Blu-ray arrives in the collection. Uncharted, The Last of Us, Metal Gear Solid 4 — a golden era of cinematic gaming.",
+      "description": "Sony's powerhouse console with built-in Blu-ray arrives in the collection. Uncharted, The Last of Us, Metal Gear Solid 4 — a golden era of cinematic gaming. A Father's day gift to him from his newly adopted dog ;)",
       "isHighlight": false,
       "tags": [
         "personal",
