@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect, useMemo } from 'react';
+import React, { useState, useRef, useEffect, useLayoutEffect, useMemo } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import timelineData from '@/data/timeline.json';
@@ -40,11 +40,17 @@ interface TNode {
 
 const MONTH_LABELS = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 // "normal" spacing = 48px → 100%. Default compact = 24px → 50%.
-const SPACING_NORMAL = 48;
-const SPACING_MIN    = 12;
-const SPACING_MAX    = 96;
-const SPACING_STEP   = 8;
+const SPACING_NORMAL  = 48;
+const SPACING_MIN     = 1;
+const SPACING_MAX     = 220;
+const SPACING_STEP    = 3;
 const SPACING_DEFAULT = 24;
+
+// Timeline zoom — scales the entire timeline body (Flash-style transform)
+const ZOOM_DEFAULT = 0.85;
+const ZOOM_MAX     = 1.15;
+const ZOOM_MIN     = 0.04;
+const ZOOM_STEP    = 0.04;
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -264,11 +270,11 @@ function StickyFilterBar({
 }) {
   return (
     <div
-      className="sticky flex items-center justify-center gap-1.5 flex-wrap px-4 py-2"
+      className="fixed flex items-center justify-center gap-1.5 flex-wrap px-4 py-2 w-full"
       style={{
-        top: 64, // below fixed nav (h-16)
+        top: 64, // flush below fixed nav (h-16 = 64px)
         zIndex: 25,
-        background: 'rgba(0,0,0,0.82)',
+        background: 'rgba(0,0,0,0.88)',
         backdropFilter: 'blur(14px)',
         borderBottom: '1px solid rgba(57,255,20,0.08)',
       }}
@@ -293,44 +299,43 @@ function StickyFilterBar({
   );
 }
 
-// ─── Right Panel — Legend + Scale + Minimap ───────────────────────────────────
+// ─── Left Panel — Legend + Scale ─────────────────────────────────────────────
 
-function RightPanel({
+function LeftPanel({
   categories,
   active,
   nodeSpacing,
   onZoomIn,
   onZoomOut,
-  nodes,
-  progress,
-  categoryMap,
+  onSpacingChange,
+  timelineZoom,
+  onTimelineZoomIn,
+  onTimelineZoomOut,
+  onTimelineZoomChange,
 }: {
   categories: TCategory[];
   active: Set<string>;
   nodeSpacing: number;
   onZoomIn: () => void;
   onZoomOut: () => void;
-  nodes: TNode[];
-  progress: number;
-  categoryMap: Record<string, TCategory>;
+  onSpacingChange: (v: number) => void;
+  timelineZoom: number;
+  onTimelineZoomIn: () => void;
+  onTimelineZoomOut: () => void;
+  onTimelineZoomChange: (v: number) => void;
 }) {
-  const scrollToNode = (idx: number) => {
-    const els = document.querySelectorAll('[data-timeline-node]');
-    els[idx]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  };
-
-  const scalePercent = Math.round((nodeSpacing / SPACING_NORMAL) * 100);
+  const spacingPercent = Math.round((nodeSpacing / SPACING_NORMAL) * 100);
+  const zoomPercent    = Math.round(timelineZoom * 100);
 
   return (
     <div
-      className="fixed top-20 right-2 flex flex-col gap-2"
-      style={{ zIndex: 30, width: 148, bottom: 16 }}
+      className="fixed top-20 left-2"
+      style={{ zIndex: 30, width: 156 }}
     >
-      {/* Legend + Scale controls */}
       <div
-        className="rounded-xl border flex-shrink-0"
+        className="rounded-xl border"
         style={{
-          background: 'rgba(0,0,0,0.78)',
+          background: 'rgba(0,0,0,0.82)',
           backdropFilter: 'blur(12px)',
           borderColor: 'rgba(255,255,255,0.07)',
         }}
@@ -360,71 +365,224 @@ function RightPanel({
           ))}
         </div>
 
-        {/* Scale controls */}
+        {/* Bubble Spacing controls */}
+        <div
+          className="px-3 pb-2 pt-2"
+          style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}
+        >
+          <div className="text-xs font-semibold tracking-widest uppercase mb-2" style={{ color: '#4a5568' }}>
+            Bubble Spacing
+          </div>
+          <input
+            type="range"
+            className="timeline-slider timeline-slider--green"
+            min={SPACING_MIN} max={SPACING_MAX} step={SPACING_STEP}
+            value={nodeSpacing}
+            onChange={e => onSpacingChange(Number(e.target.value))}
+          />
+          <div className="flex items-center gap-1.5 mt-1.5">
+            <button
+              onClick={onZoomOut}
+              disabled={nodeSpacing <= SPACING_MIN}
+              className="w-8 h-8 rounded flex items-center justify-center text-base font-bold transition-all hover:opacity-80 disabled:opacity-25"
+              style={{ background: 'rgba(57,255,20,0.12)', color: '#39FF14', border: '1px solid rgba(57,255,20,0.25)' }}
+              aria-label="Less spacing"
+            >
+              −
+            </button>
+            <span className="flex-1 text-center text-xs font-mono" style={{ color: '#39FF14' }}>
+              {spacingPercent}%
+            </span>
+            <button
+              onClick={onZoomIn}
+              disabled={nodeSpacing >= SPACING_MAX}
+              className="w-8 h-8 rounded flex items-center justify-center text-base font-bold transition-all hover:opacity-80 disabled:opacity-25"
+              style={{ background: 'rgba(57,255,20,0.12)', color: '#39FF14', border: '1px solid rgba(57,255,20,0.25)' }}
+              aria-label="More spacing"
+            >
+              +
+            </button>
+          </div>
+        </div>
+
+        {/* Timeline Zoom — GSAP-scales the entire timeline body */}
         <div
           className="px-3 pb-3 pt-2"
           style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}
         >
           <div className="text-xs font-semibold tracking-widest uppercase mb-2" style={{ color: '#4a5568' }}>
-            Scale
+            Timeline Zoom
           </div>
-          <div className="flex items-center gap-1.5">
+          <input
+            type="range"
+            className="timeline-slider timeline-slider--cyan"
+            min={ZOOM_MIN} max={ZOOM_MAX} step={ZOOM_STEP}
+            value={timelineZoom}
+            onChange={e => onTimelineZoomChange(Number(e.target.value))}
+          />
+          <div className="flex items-center gap-1.5 mt-1.5">
             <button
-              onClick={onZoomOut}
-              disabled={nodeSpacing <= SPACING_MIN}
-              className="w-6 h-6 rounded flex items-center justify-center text-sm font-bold transition-all hover:opacity-80 disabled:opacity-25"
-              style={{ background: 'rgba(57,255,20,0.12)', color: '#39FF14', border: '1px solid rgba(57,255,20,0.25)' }}
-              aria-label="Zoom out"
+              onClick={onTimelineZoomOut}
+              disabled={timelineZoom <= ZOOM_MIN}
+              className="w-8 h-8 rounded flex items-center justify-center text-base font-bold transition-all hover:opacity-80 disabled:opacity-25"
+              style={{ background: 'rgba(0,200,255,0.12)', color: '#00C8FF', border: '1px solid rgba(0,200,255,0.25)' }}
+              aria-label="Zoom out timeline"
             >
               −
             </button>
-            <span className="flex-1 text-center text-xs font-mono" style={{ color: '#39FF14' }}>
-              {scalePercent}%
+            <span className="flex-1 text-center text-xs font-mono" style={{ color: '#00C8FF' }}>
+              {zoomPercent}%
             </span>
             <button
-              onClick={onZoomIn}
-              disabled={nodeSpacing >= SPACING_MAX}
-              className="w-6 h-6 rounded flex items-center justify-center text-sm font-bold transition-all hover:opacity-80 disabled:opacity-25"
-              style={{ background: 'rgba(57,255,20,0.12)', color: '#39FF14', border: '1px solid rgba(57,255,20,0.25)' }}
-              aria-label="Zoom in"
+              onClick={onTimelineZoomIn}
+              disabled={timelineZoom >= ZOOM_MAX}
+              className="w-8 h-8 rounded flex items-center justify-center text-base font-bold transition-all hover:opacity-80 disabled:opacity-25"
+              style={{ background: 'rgba(0,200,255,0.12)', color: '#00C8FF', border: '1px solid rgba(0,200,255,0.25)' }}
+              aria-label="Zoom in timeline"
             >
               +
             </button>
           </div>
         </div>
       </div>
+    </div>
+  );
+}
 
-      {/* Minimap — fills remaining vertical space */}
-      <div className="flex-1 min-h-0 flex justify-center py-1">
-        <div className="relative w-0.5 h-full rounded-full" style={{ background: 'rgba(255,255,255,0.07)' }}>
-          {/* Progress fill */}
+// ─── Minimap Panel — Right side, full-height vertical scrubber ────────────────
+
+function MinimapPanel({
+  nodes,
+  progress,
+  viewportRatio,
+  categoryMap,
+}: {
+  nodes: TNode[];
+  progress: number;
+  viewportRatio: number;
+  categoryMap: Record<string, TCategory>;
+}) {
+  const scrollToNode = (idx: number) => {
+    const els = document.querySelectorAll('[data-timeline-node]');
+    els[idx]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
+
+  return (
+    <div
+      className="fixed right-3 top-20 bottom-4 flex items-stretch justify-center pointer-events-none"
+      style={{ zIndex: 30, width: 16 }}
+    >
+      <div className="relative flex-1 flex justify-center">
+        {/* Rail */}
+        <div
+          className="absolute top-0 bottom-0 rounded-full"
+          style={{ width: 3, left: '50%', transform: 'translateX(-50%)', background: 'rgba(255,255,255,0.06)' }}
+        >
+          {/* Scrolled-past fill — subtle trail */}
           <div
-            className="absolute top-0 left-0 w-full rounded-full transition-all duration-100"
-            style={{ height: `${progress * 100}%`, background: 'rgba(57,255,20,0.45)' }}
+            className="absolute top-0 left-0 w-full rounded-full"
+            style={{
+              height: `${progress * 100}%`,
+              background: 'linear-gradient(to bottom, rgba(57,255,20,0.08), rgba(57,255,20,0.22))',
+              transition: 'height 0.15s linear',
+            }}
           />
-          {/* Node dots */}
-          {nodes.map((n, i) => {
-            const cat = categoryMap[n.category];
-            const pct = (i / Math.max(nodes.length - 1, 1)) * 100;
-            return (
-              <button
-                key={n.id}
-                onClick={() => scrollToNode(i)}
-                className="absolute rounded-full focus:outline-none transition-transform hover:scale-[2.5]"
-                style={{
-                  width: n.isHighlight ? 6 : 3,
-                  height: n.isHighlight ? 6 : 3,
-                  top: `${pct}%`,
-                  left: '50%',
-                  transform: 'translate(-50%, -50%)',
-                  background: cat?.color ?? '#888',
-                  boxShadow: n.isHighlight ? `0 0 3px ${cat?.color}` : 'none',
-                }}
-                title={n.shortTitle}
-              />
-            );
-          })}
         </div>
+
+        {/* Viewport band — glowing window showing current view position */}
+        {viewportRatio > 0 && viewportRatio < 1 && (
+          <div
+            className="absolute pointer-events-none"
+            style={{
+              top:    `${progress * (1 - viewportRatio) * 100}%`,
+              height: `${viewportRatio * 100}%`,
+              left: '50%',
+              width: 11,
+              transform: 'translateX(-50%)',
+              background: 'rgba(57,255,20,0.14)',
+              borderRadius: 3,
+              border: '1px solid rgba(57,255,20,0.85)',
+              boxShadow: [
+                '0 0 4px  rgba(57,255,20,0.95)',   // tight inner glow
+                '0 0 10px rgba(57,255,20,0.70)',   // mid bloom
+                '0 0 20px rgba(57,255,20,0.40)',   // outer diffuse
+                '0 0 32px rgba(57,255,20,0.18)',   // farthest halo
+              ].join(', '),
+              transition: 'top 0.12s linear',
+            }}
+          />
+        )}
+
+        {/* Clickable node dots — pointer-events re-enabled per-button */}
+        {nodes.map((n, i) => {
+          const cat = categoryMap[n.category];
+          const pct = (i / Math.max(nodes.length - 1, 1)) * 100;
+          const sz = n.isHighlight ? 5 : 2;
+          return (
+            <button
+              key={n.id}
+              onClick={() => scrollToNode(i)}
+              className="absolute rounded-full focus:outline-none hover:scale-[2.2] transition-transform"
+              style={{
+                width: sz,
+                height: sz,
+                top: `${pct}%`,
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                background: cat?.color ?? '#888',
+                boxShadow: n.isHighlight ? `0 0 4px ${cat?.color}` : 'none',
+                pointerEvents: 'auto',
+              }}
+              title={n.shortTitle}
+            />
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ─── Year Marker ──────────────────────────────────────────────────────────────
+
+function YearMarker({ year, nodeSpacing }: { year: number; nodeSpacing: number }) {
+  const isDecade = year % 10 === 0;
+  const pad      = Math.max(8, Math.round(nodeSpacing * 0.4));
+
+  return (
+    <div className="relative w-full" style={{ paddingTop: pad, paddingBottom: pad }}>
+      {/* Horizontal rule behind the text — wide for decades, narrower otherwise */}
+      <div
+        className="absolute"
+        style={{
+          top: '50%',
+          left:  isDecade ? '4%'  : '22%',
+          right: isDecade ? '4%'  : '22%',
+          height: 1,
+          transform: 'translateY(-50%)',
+          background: isDecade
+            ? 'linear-gradient(to right, transparent, rgba(255,255,255,0.14) 18%, rgba(255,255,255,0.14) 82%, transparent)'
+            : 'linear-gradient(to right, transparent, rgba(255,255,255,0.05) 18%, rgba(255,255,255,0.05) 82%, transparent)',
+        }}
+      />
+      {/* Year text — centered on spine, opaque bg masks the rule + spine line */}
+      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
+        <span
+          className="font-mono block text-center select-none"
+          style={{
+            fontSize:   isDecade ? 32 : 20,
+            fontWeight: isDecade ? 800 : 500,
+            color:      isDecade ? '#ffffff' : '#777',
+            letterSpacing: '0.07em',
+            lineHeight: 1,
+            padding: '0 10px',
+            background: 'rgba(0,0,0,0.88)',
+            textShadow: isDecade
+              ? '0 0 18px rgba(255,255,255,0.55), 0 0 36px rgba(255,255,255,0.22)'
+              : 'none',
+          }}
+        >
+          {year}
+        </span>
       </div>
     </div>
   );
@@ -475,7 +633,7 @@ function TimelineNode({
   const isCompact = nodeSpacing < SPACING_NORMAL;
   const isWsp     = WSP_CATEGORIES.has(node.category);
   const dotSize   = node.isHighlight ? (isCompact ? 14 : 18) : (isCompact ? 8 : 11);
-  const cardPad   = isCompact ? 'p-2' : 'p-3';
+  const cardPad   = isCompact ? 'p-3' : 'p-5';
 
   return (
     <div
@@ -502,7 +660,7 @@ function TimelineNode({
       <div className={`w-5/12 ${side === 'right' ? 'pl-8 order-last' : 'pr-8'}`}>
         <div
           onClick={onToggle}
-          className={`rounded-xl ${cardPad} cursor-pointer border transition-all duration-300`}
+          className={`timeline-card rounded-xl ${cardPad} cursor-pointer border`}
           style={{
             '--glow-color': category.color,
             borderColor: isExpanded
@@ -522,7 +680,7 @@ function TimelineNode({
         >
           <div
             className="font-mono mb-0.5"
-            style={{ fontSize: isCompact ? 10 : 12, color: category.color, opacity: 0.9 }}
+            style={{ fontSize: isCompact ? 13 : 16, color: category.color, opacity: 0.9 }}
           >
             {formatDate(node.date)}
             {node.endDate && !isCompact && ` – ${formatDate(node.endDate)}`}
@@ -543,12 +701,12 @@ function TimelineNode({
                 alt=""
                 aria-hidden="true"
                 style={{
-                  width: isCompact ? 14 : 16,
-                  height: isCompact ? 14 : 16,
+                  width: isCompact ? 18 : 20,
+                  height: isCompact ? 18 : 20,
                   objectFit: 'contain',
                   flexShrink: 0,
-                  filter: 'brightness(0) invert(1)',
-                  opacity: 0.55,
+                  filter: 'invert(1)',
+                  opacity: 0.65,
                 }}
               />
             )}
@@ -556,8 +714,8 @@ function TimelineNode({
               className="text-white"
               style={{
                 fontSize: isCompact
-                  ? (node.isHighlight ? 13 : 11)
-                  : (node.isHighlight ? 17 : 14),
+                  ? (node.isHighlight ? 16 : 14)
+                  : (node.isHighlight ? 22 : 18),
                 fontWeight: isWsp ? 700 : 600,
                 letterSpacing: isWsp ? '-0.01em' : undefined,
               }}
@@ -588,10 +746,10 @@ function TimelineNode({
                       alt=""
                       aria-hidden="true"
                       style={{
-                        width: 44,
-                        height: 44,
+                        width: 55,
+                        height: 55,
                         objectFit: 'contain',
-                        filter: 'brightness(0) invert(1)',
+                        filter: 'invert(1)',
                         opacity: 0.85,
                       }}
                     />
@@ -605,7 +763,7 @@ function TimelineNode({
               )}
               <p
                 className="leading-relaxed"
-                style={{ fontSize: isWsp ? 13 : 12, color: isWsp ? '#d1d5db' : '#9ca3af' }}
+                style={{ fontSize: isWsp ? 16 : 15, color: isWsp ? '#d1d5db' : '#9ca3af' }}
               >
                 {node.description}
               </p>
@@ -661,24 +819,6 @@ function TimelineNode({
         )}
       </div>
 
-      {/* Year label — opposite side of card */}
-      <div
-        className={`hidden md:flex w-5/12 items-start ${
-          side === 'left' ? 'pl-8 md:pl-12' : 'pr-8 md:pr-12 justify-end order-first'
-        }`}
-        style={{ paddingTop: 10 }}
-      >
-        <span
-          className="font-mono font-semibold"
-          style={{
-            fontSize: isCompact ? 12 : 15,
-            color: isWsp ? `${category.color}cc` : '#505050',
-            letterSpacing: '0.04em',
-          }}
-        >
-          {node.date.split('-')[0]}
-        </span>
-      </div>
     </div>
   );
 }
@@ -686,11 +826,18 @@ function TimelineNode({
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 export default function TimelineView() {
-  const containerRef  = useRef<HTMLDivElement>(null);
-  const spineRef      = useRef<HTMLDivElement>(null);
-  const [expandedId, setExpandedId]       = useState<string | null>(null);
-  const [scrollProgress, setScrollProgress] = useState(0);
-  const [nodeSpacing, setNodeSpacing]     = useState(SPACING_DEFAULT);
+  const containerRef     = useRef<HTMLDivElement>(null);
+  const spineRef         = useRef<HTMLDivElement>(null);
+  const timelineScaleRef = useRef<HTMLDivElement>(null);  // GSAP zoom target
+  const leftPanelRef     = useRef<HTMLDivElement>(null);  // fade-in wrapper
+  const minimapRef       = useRef<HTMLDivElement>(null);  // fade-in wrapper
+  const heroRef          = useRef<HTMLDivElement>(null);  // fade-in wrapper
+
+  const [expandedId, setExpandedId]           = useState<string | null>(null);
+  const [scrollProgress, setScrollProgress]   = useState(0);
+  const [nodeSpacing, setNodeSpacing]         = useState(SPACING_DEFAULT);
+  const [timelineZoom, setTimelineZoom]       = useState(ZOOM_DEFAULT);
+  const [naturalHeight, setNaturalHeight]     = useState(0);
   const [activeCategories, setActiveCategories] = useState<Set<string>>(
     () => new Set(timelineData.meta.categories.map(c => c.id))
   );
@@ -699,6 +846,14 @@ export default function TimelineView() {
     () => Object.fromEntries(timelineData.meta.categories.map(c => [c.id, c])),
     []
   );
+
+  // Fraction of timeline visible at once — re-derived whenever zoom or layout changes.
+  // Using naturalHeight * timelineZoom (not document.scrollHeight) keeps it
+  // scoped to the timeline section only, independent of hero/nav height.
+  const viewportRatio = useMemo(() => {
+    if (naturalHeight === 0 || typeof window === 'undefined') return 0;
+    return Math.min(1, window.innerHeight / (naturalHeight * timelineZoom));
+  }, [naturalHeight, timelineZoom]);
 
   const sortedNodes = useMemo<TNode[]>(
     () =>
@@ -715,13 +870,23 @@ export default function TimelineView() {
 
   const annotatedNodes = useMemo(() => {
     let lastEraId = '';
-    const result: Array<{ type: 'era'; era: TEra } | { type: 'node'; node: TNode; index: number }> = [];
+    let lastYear  = '';
+    const result: Array<
+      | { type: 'era';  era: TEra }
+      | { type: 'year'; year: number }
+      | { type: 'node'; node: TNode; index: number }
+    > = [];
     let nodeIdx = 0;
     filteredNodes.forEach(node => {
       const era = getEraForDate(node.date, timelineData.meta.eras as TEra[]);
       if (era && era.id !== lastEraId) {
         lastEraId = era.id;
         result.push({ type: 'era', era });
+      }
+      const year = node.date.split('-')[0];
+      if (year !== lastYear) {
+        lastYear = year;
+        result.push({ type: 'year', year: Number(year) });
       }
       result.push({ type: 'node', node, index: nodeIdx++ });
     });
@@ -786,6 +951,51 @@ export default function TimelineView() {
   const zoomIn  = () => setNodeSpacing(s => Math.min(s + SPACING_STEP, SPACING_MAX));
   const zoomOut = () => setNodeSpacing(s => Math.max(s - SPACING_STEP, SPACING_MIN));
 
+  const timelineZoomIn  = () => setTimelineZoom(z => parseFloat(Math.min(z + ZOOM_STEP, ZOOM_MAX).toFixed(2)));
+  const timelineZoomOut = () => setTimelineZoom(z => parseFloat(Math.max(z - ZOOM_STEP, ZOOM_MIN).toFixed(2)));
+
+  // Measure natural height (at scale 1) before each zoom change so the
+  // height-keeper wrapper stays in sync and scroll area shrinks correctly.
+  useLayoutEffect(() => {
+    const el = timelineScaleRef.current;
+    if (!el) return;
+    gsap.set(el, { scale: 1, immediateRender: true });
+    setNaturalHeight(el.scrollHeight);
+    gsap.set(el, { scale: timelineZoom, immediateRender: true });
+  }, [filteredNodes, nodeSpacing]);
+
+  // Smooth GSAP scale animation whenever timelineZoom changes
+  useEffect(() => {
+    const el = timelineScaleRef.current;
+    if (!el || naturalHeight === 0) return;
+    gsap.to(el, {
+      scale: timelineZoom,
+      transformOrigin: 'top center',
+      duration: 0.45,
+      ease: 'power2.out',
+    });
+  }, [timelineZoom, naturalHeight]);
+
+  // Fade-in side panels + hero after page loads.
+  // NOTE: initial opacity: 0 is set via inline JSX styles — NOT here —
+  // so the elements are invisible on the very first paint (no flash).
+  useEffect(() => {
+    const lp = leftPanelRef.current;
+    const mm = minimapRef.current;
+    const hr = heroRef.current;
+    if (!lp || !mm || !hr) return;
+
+    // Hero slides down from slight offset — not fixed-positioned so transform is safe
+    gsap.fromTo(hr,
+      { opacity: 0, y: -14 },
+      { opacity: 1, y: 0, duration: 0.75, delay: 0.4, ease: 'power2.out' }
+    );
+
+    // Panels: opacity only — wrapper has fixed children, transform would break their layout
+    gsap.to(lp, { opacity: 1, duration: 0.65, delay: 1.9, ease: 'power2.out' });
+    gsap.to(mm, { opacity: 1, duration: 0.65, delay: 2.1, ease: 'power2.out' });
+  }, []);
+
   return (
     <div className="relative min-h-screen bg-black overflow-x-hidden">
       {/* WSP node glow keyframe — color driven by --glow-color CSS var on each card */}
@@ -793,6 +1003,52 @@ export default function TimelineView() {
         @keyframes wspGlow {
           0%,100% { box-shadow: 0 0 8px var(--glow-color), 0 0 0 1px color-mix(in srgb, var(--glow-color) 45%, transparent); }
           50%      { box-shadow: 0 0 22px var(--glow-color), 0 0 0 1.5px var(--glow-color), 0 0 38px color-mix(in srgb, var(--glow-color) 35%, transparent); }
+        }
+        .timeline-card {
+          transition: box-shadow 0.22s ease, border-color 0.22s ease, transform 0.18s ease !important;
+        }
+        .timeline-card:hover {
+          box-shadow: 0 0 32px var(--glow-color), 0 0 64px color-mix(in srgb, var(--glow-color) 18%, transparent) !important;
+          border-color: var(--glow-color) !important;
+          transform: scale(1.018);
+        }
+        .timeline-slider {
+          -webkit-appearance: none;
+          appearance: none;
+          width: 100%;
+          height: 3px;
+          border-radius: 2px;
+          outline: none;
+          cursor: pointer;
+          background: rgba(255,255,255,0.08);
+        }
+        .timeline-slider--green { accent-color: #39FF14; }
+        .timeline-slider--green::-webkit-slider-thumb {
+          -webkit-appearance: none;
+          width: 10px; height: 10px;
+          border-radius: 50%;
+          background: #39FF14;
+          box-shadow: 0 0 6px rgba(57,255,20,0.8);
+          cursor: pointer;
+        }
+        .timeline-slider--green::-webkit-slider-runnable-track {
+          height: 3px;
+          border-radius: 2px;
+          background: rgba(57,255,20,0.2);
+        }
+        .timeline-slider--cyan { accent-color: #00C8FF; }
+        .timeline-slider--cyan::-webkit-slider-thumb {
+          -webkit-appearance: none;
+          width: 10px; height: 10px;
+          border-radius: 50%;
+          background: #00C8FF;
+          box-shadow: 0 0 6px rgba(0,200,255,0.8);
+          cursor: pointer;
+        }
+        .timeline-slider--cyan::-webkit-slider-runnable-track {
+          height: 3px;
+          border-radius: 2px;
+          background: rgba(0,200,255,0.2);
         }
       `}</style>
 
@@ -802,94 +1058,128 @@ export default function TimelineView() {
       {/* Z-1: floating quotes */}
       <FloatingQuotes quotes={timelineData.meta.quotes} />
 
-      {/* Z-30: fixed right panel (legend + scale + minimap) */}
-      <RightPanel
-        categories={timelineData.meta.categories as TCategory[]}
-        active={activeCategories}
-        nodeSpacing={nodeSpacing}
-        onZoomIn={zoomIn}
-        onZoomOut={zoomOut}
-        nodes={filteredNodes}
-        progress={scrollProgress}
-        categoryMap={categoryMap}
-      />
-
-      {/* ── Page content ─────────────────────────── */}
-
-      {/* Hero */}
-      <div className="relative pt-24 pb-8 px-4 text-center" style={{ zIndex: 10 }}>
-        <p className="text-sm font-mono tracking-[0.28em] text-gray-500 mb-1 uppercase">
-          Walter Steve Pollard Jr
-        </p>
-        <p className="text-base font-mono tracking-[0.22em] text-gray-400 mb-6 uppercase">
-          Software Engineer&nbsp;·&nbsp;Video&nbsp;·&nbsp;Chromecast&nbsp;·&nbsp;AI
-        </p>
-        <h1 className="text-4xl md:text-6xl font-bold text-white leading-tight mb-2">
-          <span style={{ color: '#39FF14' }}>25 Years</span> in the Making
-        </h1>
-        <div className="mt-5 text-gray-600 text-xs animate-bounce">↓ scroll to explore</div>
+      {/* Z-30: left panel — legend + bubble spacing + timeline zoom */}
+      <div ref={leftPanelRef} style={{ opacity: 0 }}>
+        <LeftPanel
+          categories={timelineData.meta.categories as TCategory[]}
+          active={activeCategories}
+          nodeSpacing={nodeSpacing}
+          onZoomIn={zoomIn}
+          onZoomOut={zoomOut}
+          onSpacingChange={v => setNodeSpacing(v)}
+          timelineZoom={timelineZoom}
+          onTimelineZoomIn={timelineZoomIn}
+          onTimelineZoomOut={timelineZoomOut}
+          onTimelineZoomChange={v => setTimelineZoom(parseFloat(v.toFixed(2)))}
+        />
       </div>
 
-      {/* Sticky filter bar — sticks just below nav (top: 64px) */}
+      {/* Z-30: right minimap — full-height vertical scrubber */}
+      <div ref={minimapRef} style={{ opacity: 0 }}>
+        <MinimapPanel
+          nodes={filteredNodes}
+          progress={scrollProgress}
+          viewportRatio={viewportRatio}
+          categoryMap={categoryMap}
+        />
+      </div>
+
+      {/* Z-25: filter bar — fixed below nav, always visible while scrolling */}
       <StickyFilterBar
         categories={timelineData.meta.categories as TCategory[]}
         active={activeCategories}
         onToggle={toggleCategory}
       />
 
-      {/* Timeline */}
+      {/* ── Page content ─────────────────────────── */}
+
+      <div ref={heroRef} className="relative px-4 text-center" style={{ zIndex: 10, opacity: 0, paddingTop: 128, paddingBottom: 32 }}>
+        <p className="font-mono tracking-[0.22em] text-gray-400 mb-1 uppercase" style={{ fontSize: 28, letterSpacing: '0.2em' }}>
+          Walter Steve Pollard Jr
+        </p>
+        <p className="font-mono tracking-[0.18em] mb-6 uppercase" style={{ fontSize: 15, color: '#6b7280', letterSpacing: '0.16em' }}>
+          Software Engineer&nbsp;·&nbsp;Video&nbsp;·&nbsp;Chromecast&nbsp;·&nbsp;AI
+        </p>
+        <h1 className="font-bold text-white leading-tight mb-2" style={{ fontSize: 'clamp(3rem, 8vw, 5.5rem)' }}>
+          <span style={{ color: '#39FF14' }}>25 Years</span> in the Making
+        </h1>
+        <div className="mt-6 text-gray-500 font-medium animate-bounce" style={{ fontSize: 15 }}>↓ scroll to explore</div>
+      </div>
+
+      {/* Timeline — height-keeper shrinks with GSAP zoom so scroll area stays correct */}
       <div
-        ref={containerRef}
-        className="relative mx-auto px-4 pt-8 pb-48"
-        style={{ maxWidth: 860, zIndex: 10 }}
+        style={{
+          position: 'relative',
+          height: naturalHeight > 0 ? naturalHeight * timelineZoom : undefined,
+          transition: 'height 0.45s cubic-bezier(0.25,0,0.25,1)',
+          zIndex: 10,
+        }}
       >
-        {/* Spine rail */}
         <div
-          className="absolute top-0 bottom-0 pointer-events-none"
-          style={{ left: '50%', transform: 'translateX(-50%)', width: 2, background: 'rgba(57,255,20,0.07)' }}
+          ref={timelineScaleRef}
+          style={{
+            position: naturalHeight > 0 ? 'absolute' : 'relative',
+            top: 0, left: 0, right: 0,
+            transformOrigin: 'top center',
+          }}
         >
           <div
-            ref={spineRef}
-            style={{
-              width: '100%',
-              height: '100%',
-              background:
-                'linear-gradient(to bottom, transparent 0%, rgba(57,255,20,0.5) 15%, rgba(57,255,20,0.5) 85%, transparent 100%)',
-              transformOrigin: 'top center',
-              transform: 'scaleY(0)',
-            }}
-          />
-        </div>
+            ref={containerRef}
+            className="relative mx-auto px-4 pt-8 pb-48"
+            style={{ maxWidth: 860 }}
+          >
+            {/* Spine rail */}
+            <div
+              className="absolute top-0 bottom-0 pointer-events-none"
+              style={{ left: '50%', transform: 'translateX(-50%)', width: 2, background: 'rgba(57,255,20,0.07)' }}
+            >
+              <div
+                ref={spineRef}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  background:
+                    'linear-gradient(to bottom, transparent 0%, rgba(57,255,20,0.5) 15%, rgba(57,255,20,0.5) 85%, transparent 100%)',
+                  transformOrigin: 'top center',
+                  transform: 'scaleY(0)',
+                }}
+              />
+            </div>
 
-        {/* Nodes + era banners */}
-        {annotatedNodes.map(item => {
-          if (item.type === 'era') {
-            return <EraBanner key={`era-${item.era.id}`} era={item.era} />;
-          }
-          const { node, index } = item;
-          const cat = categoryMap[node.category] ?? {
-            color: '#888', label: 'Unknown', id: node.category, description: '',
-          };
-          return (
-            <TimelineNode
-              key={node.id}
-              node={node}
-              side={index % 2 === 0 ? 'left' : 'right'}
-              category={cat}
-              isExpanded={expandedId === node.id}
-              nodeSpacing={nodeSpacing}
-              onToggle={() => setExpandedId(expandedId === node.id ? null : node.id)}
-            />
-          );
-        })}
+            {/* Nodes + era banners + year markers */}
+            {annotatedNodes.map(item => {
+              if (item.type === 'era') {
+                return <EraBanner key={`era-${item.era.id}`} era={item.era} />;
+              }
+              if (item.type === 'year') {
+                return <YearMarker key={`year-${item.year}`} year={item.year} nodeSpacing={nodeSpacing} />;
+              }
+              const { node, index } = item;
+              const cat = categoryMap[node.category] ?? {
+                color: '#888', label: 'Unknown', id: node.category, description: '',
+              };
+              return (
+                <TimelineNode
+                  key={node.id}
+                  node={node}
+                  side={index % 2 === 0 ? 'left' : 'right'}
+                  category={cat}
+                  isExpanded={expandedId === node.id}
+                  nodeSpacing={nodeSpacing}
+                  onToggle={() => setExpandedId(expandedId === node.id ? null : node.id)}
+                />
+              );
+            })}
 
-        {/* End cap */}
-        <div className="flex flex-col items-center mt-14 gap-3">
-          <div
-            className="w-5 h-5 rounded-full border-2 animate-pulse"
-            style={{ borderColor: '#39FF14', background: 'rgba(57,255,20,0.12)' }}
-          />
-          <p className="text-gray-600 text-xs italic">The story continues…</p>
+            {/* End cap */}
+            <div className="flex flex-col items-center mt-14 gap-3">
+              <div
+                className="w-5 h-5 rounded-full border-2 animate-pulse"
+                style={{ borderColor: '#39FF14', background: 'rgba(57,255,20,0.12)' }}
+              />
+              <p className="text-gray-600 text-xs italic">The story continues…</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>

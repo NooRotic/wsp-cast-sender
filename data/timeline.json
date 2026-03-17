@@ -402,7 +402,8 @@
         "fps",
         "id-software",
         "pc-gaming"
-      ]
+      ],
+      "logo": "/assets/timeline/logos/doom.svg"
     },
     {
       "id": "playstation-1",
@@ -433,7 +434,8 @@
         "web",
         "language",
         "netscape"
-      ]
+      ],
+      "logo": "/assets/timeline/logos/javascript.svg"
     },
     {
       "id": "java-1",
@@ -880,7 +882,7 @@
         "video",
         "as3"
       ],
-      "logo": "/assets/timeline/logos/comcast.svg"
+      "logo": "/assets/timeline/logos/comcast2.svg"
     },
     {
       "id": "android-1",
@@ -930,7 +932,7 @@
         "entertainment",
         "la"
       ],
-      "logo": "/assets/timeline/logos/comcast.svg"
+      "logo": "/assets/timeline/logos/comcast2.svg"
     },
     {
       "id": "node-js",
@@ -1096,7 +1098,7 @@
         "primetime",
         "consulting"
       ],
-      "logo": "/assets/timeline/logos/comcast.svg"
+      "logo": "/assets/timeline/logos/comcast2.svg"
     },
     {
       "id": "wsp-comcast-fulltime",
@@ -2174,6 +2176,46 @@
         "handheld"
       ],
       "logo": "/assets/timeline/logos/nintendo.svg"
+    },
+    {
+      "id": "y2k",
+      "date": "1999-12",
+      "category": "world-event",
+      "title": "Y2K — The Millennium Bug",
+      "shortTitle": "Y2K",
+      "description": "The world holds its breath as December 31, 1999 arrives. The feared 'Year 2000 bug' — a date overflow in legacy software — triggers billions in remediation spending worldwide. WSP is writing code at Unisys as it happens. Midnight arrives. The lights stay on.",
+      "isHighlight": false,
+      "tags": ["y2k", "history", "software", "millennium"]
+    },
+    {
+      "id": "george-floyd-blm",
+      "date": "2020-05",
+      "category": "world-event",
+      "title": "George Floyd Killed — Global BLM Uprising",
+      "shortTitle": "BLM Uprising",
+      "description": "Minneapolis police officer Derek Chauvin kills George Floyd on May 25, 2020. The video spreads worldwide. Millions take to the streets in the largest civil rights protest movement in US history. A reckoning with systemic racism begins.",
+      "isHighlight": true,
+      "tags": ["politics", "history", "civil-rights", "usa"]
+    },
+    {
+      "id": "elon-buys-twitter",
+      "date": "2022-10",
+      "category": "world-event",
+      "title": "Elon Musk Acquires Twitter → X",
+      "shortTitle": "Twitter → X",
+      "description": "Elon Musk completes his $44 billion acquisition of Twitter and rebrands it to X. Mass layoffs, policy reversals, and chaos follow. The platform that shaped a generation of public discourse transforms overnight.",
+      "isHighlight": false,
+      "tags": ["twitter", "elon-musk", "social-media", "history"]
+    },
+    {
+      "id": "trump-elected-2024",
+      "date": "2024-11",
+      "category": "world-event",
+      "title": "Donald Trump Elected President — Again",
+      "shortTitle": "Trump Re-Elected",
+      "description": "Donald Trump wins the 2024 US presidential election, defeating Kamala Harris to become the 47th President. The first US president elected to non-consecutive terms since Grover Cleveland in 1892.",
+      "isHighlight": false,
+      "tags": ["politics", "history", "usa"]
     }
   ]
 }

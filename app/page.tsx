@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import Navigation from '@/components/Navigation';
 import TimelineCallout from '@/components/TimelineCallout';
+import { useAnimation } from '@/contexts/AnimationContext';
 
 // Lazy-load heavier / background components to defer loading of videos and large bundles
 const ParticleBackground = dynamic(() => import('@/components/ParticleBackground'), { ssr: false, loading: () => null });
@@ -15,6 +16,8 @@ const CastConnectButton = dynamic(() => import('@/components/CastConnectButton')
 
 export default function Home() {
   const [hasMounted, setHasMounted] = useState(false);
+  const { heroAnimationsComplete, userHasScrolled } = useAnimation();
+  const contentVisible = heroAnimationsComplete || userHasScrolled;
 
   // Ensure page starts at top on first render and track mounted state
   useEffect(() => {
@@ -24,13 +27,11 @@ export default function Home() {
     setHasMounted(true);
   }, []);
 
-  // DRY: map sections to keep page concise and easier to maintain
-  const sections: { id: string; Component: any }[] = [
-    { id: 'home', Component: HeroSection },
-    { id: 'projects', Component: ProjectsSection },
-    { id: 'skills', Component: SkillsShowcase },
-    { id: 'contact', Component: ContactSection },
-  ];
+  const belowFoldStyle: React.CSSProperties = {
+    opacity: contentVisible ? 1 : 0,
+    transition: 'opacity 0.6s ease',
+    pointerEvents: contentVisible ? 'auto' : 'none',
+  };
 
   return (
     <main className="relative min-h-screen">
@@ -47,24 +48,31 @@ export default function Home() {
         </div>
       )}
       {hasMounted && (
-      <Navigation />
+        <Navigation />
       )}
-      {sections.map(({ id, Component }) => (
-        <section id={id} key={id}>
-          <Component />
-          {id === 'home' && <TimelineCallout />}
-        </section>
-      ))}
 
-      {/* Defer background until after render to avoid video load on first paint */}
-      {/* <ParticleBackground /> */}
-
-      <footer className="pt-10 text-center text-gray-400 relative z-10 min-h-[200px] flex items-center justify-center">
-        <div className="max-w-4xl mx-auto px-4">
-          <p>&copy; 2025 WSP - Senior Software Engineer. All rights reserved.</p>
-          <p className="m-2 text-sm">Built with Next.js, TypeScript, GSAP, and Tailwind CSS</p>
+      {/* Hero section — always visible, owns the intro animation */}
+      <section id="home">
+        <HeroSection />
+        {/* TimelineCallout sits directly below the hero fold — hide until intro completes */}
+        <div style={belowFoldStyle}>
+          <TimelineCallout />
         </div>
-      </footer>
+      </section>
+
+      {/* Below-fold sections hidden until hero animation completes or user scrolls */}
+      <div style={belowFoldStyle}>
+        <section id="projects"><ProjectsSection /></section>
+        <section id="skills"><SkillsShowcase /></section>
+        <section id="contact"><ContactSection /></section>
+
+        <footer className="pt-10 text-center text-gray-400 relative z-10 min-h-[200px] flex items-center justify-center">
+          <div className="max-w-4xl mx-auto px-4">
+            <p>&copy; 2025 WSP - Senior Software Engineer. All rights reserved.</p>
+            <p className="m-2 text-sm">Built with Next.js, TypeScript, GSAP, and Tailwind CSS</p>
+          </div>
+        </footer>
+      </div>
     </main>
   );
 }
