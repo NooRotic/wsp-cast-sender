@@ -49,7 +49,7 @@ const SPACING_DEFAULT = 24;
 // Timeline zoom — scales the entire timeline body (Flash-style transform)
 const ZOOM_DEFAULT = 1.00;
 const ZOOM_MAX     = 2.50;
-const ZOOM_MIN     = 0.0004;
+const ZOOM_MIN     = 0.10;
 const ZOOM_STEP    = 0.04;
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
