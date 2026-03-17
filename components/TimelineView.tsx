@@ -454,9 +454,38 @@ function MinimapPanel({
   viewportRatio: number;
   categoryMap: Record<string, TCategory>;
 }) {
+  const railRef = useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const dragStartClientY = useRef(0);
+  const dragStartScrollY = useRef(0);
+
   const scrollToNode = (idx: number) => {
     const els = document.querySelectorAll('[data-timeline-node]');
     els[idx]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
+
+  const handleBandPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.currentTarget.setPointerCapture(e.pointerId);
+    setIsDragging(true);
+    dragStartClientY.current = e.clientY;
+    dragStartScrollY.current = window.scrollY;
+  };
+
+  const handleBandPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!isDragging || !railRef.current) return;
+    const railH = railRef.current.getBoundingClientRect().height;
+    const draggableH = railH * (1 - viewportRatio); // px the band can travel
+    if (draggableH <= 0) return;
+    const maxScrollY = document.documentElement.scrollHeight - window.innerHeight;
+    const deltaFraction = (e.clientY - dragStartClientY.current) / draggableH;
+    const newScrollY = Math.max(0, Math.min(maxScrollY, dragStartScrollY.current + deltaFraction * maxScrollY));
+    window.scrollTo({ top: newScrollY, behavior: 'instant' as ScrollBehavior });
+  };
+
+  const handleBandPointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    setIsDragging(false);
+    e.currentTarget.releasePointerCapture(e.pointerId);
   };
 
   return (
@@ -464,7 +493,7 @@ function MinimapPanel({
       className="fixed right-3 top-20 bottom-4 flex items-stretch justify-center pointer-events-none"
       style={{ zIndex: 30, width: 16 }}
     >
-      <div className="relative flex-1 flex justify-center">
+      <div ref={railRef} className="relative flex-1 flex justify-center">
         {/* Rail */}
         <div
           className="absolute top-0 bottom-0 rounded-full"
@@ -481,10 +510,10 @@ function MinimapPanel({
           />
         </div>
 
-        {/* Viewport band — glowing window showing current view position */}
+        {/* Viewport band — draggable glowing window */}
         {viewportRatio > 0 && viewportRatio < 1 && (
           <div
-            className="absolute pointer-events-none"
+            className="absolute"
             style={{
               top:    `${progress * (1 - viewportRatio) * 100}%`,
               height: `${viewportRatio * 100}%`,
@@ -495,13 +524,20 @@ function MinimapPanel({
               borderRadius: 3,
               border: '1px solid rgba(57,255,20,0.85)',
               boxShadow: [
-                '0 0 4px  rgba(57,255,20,0.95)',   // tight inner glow
-                '0 0 10px rgba(57,255,20,0.70)',   // mid bloom
-                '0 0 20px rgba(57,255,20,0.40)',   // outer diffuse
-                '0 0 32px rgba(57,255,20,0.18)',   // farthest halo
+                '0 0 4px  rgba(57,255,20,0.95)',
+                '0 0 10px rgba(57,255,20,0.70)',
+                '0 0 20px rgba(57,255,20,0.40)',
+                '0 0 32px rgba(57,255,20,0.18)',
               ].join(', '),
-              transition: 'top 0.12s linear',
+              transition: isDragging ? 'none' : 'top 0.12s linear',
+              pointerEvents: 'auto',
+              cursor: isDragging ? 'grabbing' : 'grab',
+              touchAction: 'none',
             }}
+            onPointerDown={handleBandPointerDown}
+            onPointerMove={handleBandPointerMove}
+            onPointerUp={handleBandPointerUp}
+            onPointerCancel={handleBandPointerUp}
           />
         )}
 
