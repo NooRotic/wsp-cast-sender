@@ -1636,6 +1636,544 @@
         "predicted"
       ],
       "logo": "/assets/timeline/logos/apple.svg"
+    },
+    {
+      "id": "berlin-wall-falls",
+      "date": "1989-11",
+      "category": "world-event",
+      "title": "Berlin Wall Falls",
+      "shortTitle": "Berlin Wall Falls",
+      "description": "The Berlin Wall — symbol of the Cold War division of Europe — is torn down. East and West Germany begin reunification. The Iron Curtain collapses.",
+      "isHighlight": true,
+      "tags": [
+        "politics",
+        "history",
+        "cold-war",
+        "germany"
+      ]
+    },
+    {
+      "id": "wsp-nes",
+      "date": "1987-12",
+      "category": "personal",
+      "title": "WSP Gets a Nintendo NES",
+      "shortTitle": "Got the NES",
+      "description": "Christmas morning delivers a Nintendo Entertainment System. Super Mario Bros., Duck Hunt, and a lifelong love of Nintendo begins.",
+      "isHighlight": false,
+      "tags": [
+        "personal",
+        "gaming",
+        "nintendo",
+        "console"
+      ],
+      "logo": "/assets/timeline/logos/nintendo.svg"
+    },
+    {
+      "id": "wsp-gameboy",
+      "date": "1990-06",
+      "category": "personal",
+      "title": "WSP Gets a Game Boy",
+      "shortTitle": "Got the Game Boy",
+      "description": "Nintendo's portable gaming machine enters the picture. Tetris on the go — gaming goes everywhere.",
+      "isHighlight": false,
+      "tags": [
+        "personal",
+        "gaming",
+        "nintendo",
+        "handheld"
+      ],
+      "logo": "/assets/timeline/logos/nintendo.svg"
+    },
+    {
+      "id": "gulf-war",
+      "date": "1991-01",
+      "category": "world-event",
+      "title": "Gulf War Begins",
+      "shortTitle": "Gulf War",
+      "description": "Operation Desert Storm launches as a US-led coalition drives Iraqi forces from Kuwait. The first major post-Cold War conflict, broadcast live on CNN.",
+      "isHighlight": false,
+      "tags": [
+        "politics",
+        "history",
+        "war",
+        "middle-east"
+      ]
+    },
+    {
+      "id": "street-fighter-2",
+      "date": "1991-03",
+      "category": "gaming",
+      "title": "Street Fighter II Hits Arcades",
+      "shortTitle": "Street Fighter II",
+      "description": "Capcom's Street Fighter II: The World Warrior drops in arcades and redefines competitive gaming. Ryu, Ken, Blanka, Chun-Li — a cultural phenomenon that owned every quarter in sight.",
+      "isHighlight": true,
+      "tags": [
+        "capcom",
+        "arcade",
+        "fighting-game",
+        "gaming-history"
+      ]
+    },
+    {
+      "id": "wsp-arcade-summers",
+      "date": "1991-06",
+      "category": "personal",
+      "title": "WSP: Summers at the Arcade",
+      "shortTitle": "Arcade Summers",
+      "description": "Every summer from 1991–1996, WSP rides his bike to the local mall arcade — and stretches $5 across 6 to 8+ hours of play. Street Fighter II, Mortal Kombat, NBA Jam. The arcade is a second home.",
+      "isHighlight": true,
+      "tags": [
+        "personal",
+        "gaming",
+        "arcade",
+        "childhood",
+        "street-fighter"
+      ]
+    },
+    {
+      "id": "ussr-dissolved",
+      "date": "1991-12",
+      "category": "world-event",
+      "title": "Soviet Union Dissolved",
+      "shortTitle": "USSR Dissolves",
+      "description": "The USSR officially ceases to exist on December 25, 1991. The Cold War ends. Fifteen independent republics emerge, reshaping global geopolitics for decades.",
+      "isHighlight": true,
+      "tags": [
+        "politics",
+        "history",
+        "cold-war",
+        "russia"
+      ]
+    },
+    {
+      "id": "wsp-snes",
+      "date": "1992-06",
+      "category": "personal",
+      "title": "WSP Gets a Super Nintendo (SNES)",
+      "shortTitle": "Got the SNES",
+      "description": "The 16-bit upgrade arrives. Street Fighter II on the SNES means bringing the arcade home. Mode 7, stellar soundtracks, and some of the greatest games ever made.",
+      "isHighlight": false,
+      "tags": [
+        "personal",
+        "gaming",
+        "nintendo",
+        "console",
+        "street-fighter"
+      ],
+      "logo": "/assets/timeline/logos/nintendo.svg"
+    },
+    {
+      "id": "south-africa-elections",
+      "date": "1994-04",
+      "category": "world-event",
+      "title": "Nelson Mandela Elected — End of Apartheid",
+      "shortTitle": "End of Apartheid",
+      "description": "South Africa holds its first fully democratic elections. Nelson Mandela becomes the first Black president, ending decades of apartheid. One of the defining moments of the 20th century.",
+      "isHighlight": true,
+      "tags": [
+        "politics",
+        "history",
+        "africa",
+        "civil-rights"
+      ]
+    },
+    {
+      "id": "wsp-ps1",
+      "date": "1996-12",
+      "category": "personal",
+      "title": "WSP Gets a PlayStation 1",
+      "shortTitle": "Got the PS1",
+      "description": "Sony's PlayStation arrives. CD-ROM gaming, 3D polygons, and a library that includes Final Fantasy VII, Castlevania: SotN, and Metal Gear Solid. A next-level leap.",
+      "isHighlight": false,
+      "tags": [
+        "personal",
+        "gaming",
+        "sony",
+        "playstation",
+        "console"
+      ],
+      "logo": "/assets/timeline/logos/playstation.svg"
+    },
+    {
+      "id": "wsp-gameboy-color",
+      "date": "1998-11",
+      "category": "personal",
+      "title": "WSP Gets a Game Boy Color",
+      "shortTitle": "Got the GBC",
+      "description": "Nintendo's color handheld joins the collection. Pokémon Gold and Silver, Link's Awakening DX — portable gaming in full color.",
+      "isHighlight": false,
+      "tags": [
+        "personal",
+        "gaming",
+        "nintendo",
+        "handheld"
+      ],
+      "logo": "/assets/timeline/logos/nintendo.svg"
+    },
+    {
+      "id": "nine-eleven",
+      "date": "2001-09",
+      "category": "world-event",
+      "title": "September 11 Attacks",
+      "shortTitle": "9/11",
+      "description": "Al-Qaeda hijackers crash planes into the World Trade Center, the Pentagon, and a field in Pennsylvania. Nearly 3,000 killed. The world changes overnight — the War on Terror begins.",
+      "isHighlight": true,
+      "tags": [
+        "politics",
+        "history",
+        "tragedy",
+        "terrorism"
+      ]
+    },
+    {
+      "id": "wsp-ps2",
+      "date": "2001-11",
+      "category": "personal",
+      "title": "WSP Gets a PlayStation 2",
+      "shortTitle": "Got the PS2",
+      "description": "The PS2 becomes the best-selling console of all time — and WSP has one. Grand Theft Auto III, God of War, Kingdom Hearts, Metal Gear Solid 2. An absurd library.",
+      "isHighlight": false,
+      "tags": [
+        "personal",
+        "gaming",
+        "sony",
+        "playstation",
+        "console"
+      ],
+      "logo": "/assets/timeline/logos/playstation.svg"
+    },
+    {
+      "id": "iraq-war",
+      "date": "2003-03",
+      "category": "world-event",
+      "title": "US Invades Iraq",
+      "shortTitle": "Iraq War",
+      "description": "The United States launches Operation Iraqi Freedom, invading Iraq under the claim of WMDs. Saddam Hussein's government falls. A conflict that reshapes the Middle East for decades.",
+      "isHighlight": false,
+      "tags": [
+        "politics",
+        "history",
+        "war",
+        "middle-east"
+      ]
+    },
+    {
+      "id": "hurricane-katrina",
+      "date": "2005-08",
+      "category": "world-event",
+      "title": "Hurricane Katrina",
+      "shortTitle": "Hurricane Katrina",
+      "description": "Category 5 Hurricane Katrina devastates New Orleans and the Gulf Coast. Over 1,800 deaths, catastrophic flooding, and a massive failure of federal emergency response. One of the costliest natural disasters in US history.",
+      "isHighlight": false,
+      "tags": [
+        "politics",
+        "history",
+        "disaster",
+        "usa"
+      ]
+    },
+    {
+      "id": "wsp-xbox360",
+      "date": "2005-11",
+      "category": "personal",
+      "title": "WSP Gets an Xbox 360",
+      "shortTitle": "Got the Xbox 360",
+      "description": "Microsoft's 360 launches the HD gaming era. Halo 3, Gears of War, Call of Duty 4: Modern Warfare — online multiplayer becomes mainstream. WSP is on Xbox Live.",
+      "isHighlight": false,
+      "tags": [
+        "personal",
+        "gaming",
+        "microsoft",
+        "xbox",
+        "console"
+      ]
+    },
+    {
+      "id": "wsp-ps3",
+      "date": "2006-11",
+      "category": "personal",
+      "title": "WSP Gets a PlayStation 3",
+      "shortTitle": "Got the PS3",
+      "description": "Sony's powerhouse console with built-in Blu-ray arrives in the collection. Uncharted, The Last of Us, Metal Gear Solid 4 — a golden era of cinematic gaming.",
+      "isHighlight": false,
+      "tags": [
+        "personal",
+        "gaming",
+        "sony",
+        "playstation",
+        "console"
+      ],
+      "logo": "/assets/timeline/logos/playstation.svg"
+    },
+    {
+      "id": "wsp-wii",
+      "date": "2007-12",
+      "category": "personal",
+      "title": "WSP Gets a Nintendo Wii",
+      "shortTitle": "Got the Wii",
+      "description": "Nintendo's motion-control revolution lands under the tree. Wii Sports, Super Mario Galaxy, Zelda: Twilight Princess — a totally different kind of fun.",
+      "isHighlight": false,
+      "tags": [
+        "personal",
+        "gaming",
+        "nintendo",
+        "console",
+        "motion-control"
+      ],
+      "logo": "/assets/timeline/logos/nintendo.svg"
+    },
+    {
+      "id": "financial-crisis-2008",
+      "date": "2008-09",
+      "category": "world-event",
+      "title": "Global Financial Crisis",
+      "shortTitle": "Financial Crisis",
+      "description": "Lehman Brothers collapses. The US housing bubble bursts, triggering a global financial meltdown. The worst economic crisis since the Great Depression — millions lose jobs and homes worldwide.",
+      "isHighlight": true,
+      "tags": [
+        "politics",
+        "history",
+        "economy",
+        "usa"
+      ]
+    },
+    {
+      "id": "obama-elected",
+      "date": "2008-11",
+      "category": "world-event",
+      "title": "Barack Obama Elected President",
+      "shortTitle": "Obama Elected",
+      "description": "Barack Obama is elected the 44th President of the United States — the first African American to hold the office. A historic moment for the country and the world.",
+      "isHighlight": true,
+      "tags": [
+        "politics",
+        "history",
+        "usa",
+        "milestone"
+      ]
+    },
+    {
+      "id": "arab-spring",
+      "date": "2010-12",
+      "category": "world-event",
+      "title": "Arab Spring Begins",
+      "shortTitle": "Arab Spring",
+      "description": "A wave of pro-democracy protests erupts across the Arab world, starting in Tunisia. Egypt, Libya, Syria, and others follow. Social media plays a defining role in organizing resistance.",
+      "isHighlight": false,
+      "tags": [
+        "politics",
+        "history",
+        "middle-east",
+        "democracy"
+      ]
+    },
+    {
+      "id": "bin-laden-killed",
+      "date": "2011-05",
+      "category": "world-event",
+      "title": "Osama bin Laden Killed",
+      "shortTitle": "Bin Laden Killed",
+      "description": "US Navy SEALs raid a compound in Abbottabad, Pakistan and kill Osama bin Laden, mastermind of the 9/11 attacks. Nearly a decade after 9/11, a chapter closes.",
+      "isHighlight": false,
+      "tags": [
+        "politics",
+        "history",
+        "terrorism",
+        "usa"
+      ]
+    },
+    {
+      "id": "wsp-wiiu",
+      "date": "2012-11",
+      "category": "personal",
+      "title": "WSP Gets a Nintendo Wii U",
+      "shortTitle": "Got the Wii U",
+      "description": "Nintendo's tablet-controller hybrid console joins the collection. Super Mario 3D World, Splatoon, and Breath of the Wild in its final days.",
+      "isHighlight": false,
+      "tags": [
+        "personal",
+        "gaming",
+        "nintendo",
+        "console"
+      ],
+      "logo": "/assets/timeline/logos/nintendo.svg"
+    },
+    {
+      "id": "wsp-ps4",
+      "date": "2013-11",
+      "category": "personal",
+      "title": "WSP Gets a PlayStation 4",
+      "shortTitle": "Got the PS4",
+      "description": "The PS4 launches the current-gen era. Bloodborne, Horizon Zero Dawn, God of War (2018), Spider-Man — Sony's first-party studio output is unmatched.",
+      "isHighlight": false,
+      "tags": [
+        "personal",
+        "gaming",
+        "sony",
+        "playstation",
+        "console"
+      ],
+      "logo": "/assets/timeline/logos/playstation.svg"
+    },
+    {
+      "id": "brexit-vote",
+      "date": "2016-06",
+      "category": "world-event",
+      "title": "Brexit — UK Votes to Leave the EU",
+      "shortTitle": "Brexit",
+      "description": "The United Kingdom votes 52%–48% to leave the European Union, shocking the world. Years of political turmoil follow as the UK navigates its departure.",
+      "isHighlight": false,
+      "tags": [
+        "politics",
+        "history",
+        "uk",
+        "europe"
+      ]
+    },
+    {
+      "id": "trump-elected",
+      "date": "2016-11",
+      "category": "world-event",
+      "title": "Donald Trump Elected President",
+      "shortTitle": "Trump Elected",
+      "description": "Donald Trump wins the US presidential election in a stunning upset over Hillary Clinton, reshaping American politics and foreign policy.",
+      "isHighlight": false,
+      "tags": [
+        "politics",
+        "history",
+        "usa"
+      ]
+    },
+    {
+      "id": "wsp-switch",
+      "date": "2017-03",
+      "category": "personal",
+      "title": "WSP Gets a Nintendo Switch",
+      "shortTitle": "Got the Switch",
+      "description": "Nintendo's hybrid home/portable console is an instant classic. Breath of the Wild at launch, then Mario Odyssey, Metroid Dread, Tears of the Kingdom — the Switch library is legendary.",
+      "isHighlight": false,
+      "tags": [
+        "personal",
+        "gaming",
+        "nintendo",
+        "console",
+        "handheld"
+      ],
+      "logo": "/assets/timeline/logos/nintendo.svg"
+    },
+    {
+      "id": "eagles-super-bowl-lii",
+      "date": "2018-02",
+      "category": "personal",
+      "title": "Philadelphia Eagles Win Super Bowl LII",
+      "shortTitle": "Eagles Win! SB LII",
+      "description": "THE moment. The Philadelphia Eagles defeat the New England Patriots 41–33 in Super Bowl LII — the franchise's FIRST Super Bowl championship. Nick Foles, the Philly Special, and pandemonium across the city. Fly Eagles Fly.",
+      "isHighlight": true,
+      "tags": [
+        "personal",
+        "sports",
+        "eagles",
+        "nfl",
+        "philadelphia",
+        "milestone"
+      ]
+    },
+    {
+      "id": "jan-6-capitol",
+      "date": "2021-01",
+      "category": "world-event",
+      "title": "January 6 — US Capitol Attack",
+      "shortTitle": "January 6th",
+      "description": "Supporters of President Trump storm the US Capitol building in an attempt to halt the certification of the 2020 election results. A defining and divisive moment in American democracy.",
+      "isHighlight": true,
+      "tags": [
+        "politics",
+        "history",
+        "usa",
+        "democracy"
+      ]
+    },
+    {
+      "id": "wsp-ps5",
+      "date": "2021-06",
+      "category": "personal",
+      "title": "WSP Gets a PlayStation 5",
+      "shortTitle": "Got the PS5",
+      "description": "After the notorious PS5 shortage, WSP secures Sony's next-gen beast. Demon's Souls, Ratchet & Clank: Rift Apart, and the DualSense controller that changes how games feel.",
+      "isHighlight": false,
+      "tags": [
+        "personal",
+        "gaming",
+        "sony",
+        "playstation",
+        "console"
+      ],
+      "logo": "/assets/timeline/logos/playstation.svg"
+    },
+    {
+      "id": "russia-invades-ukraine",
+      "date": "2022-02",
+      "category": "world-event",
+      "title": "Russia Invades Ukraine",
+      "shortTitle": "Russia Invades Ukraine",
+      "description": "Russia launches a full-scale invasion of Ukraine, triggering the largest land war in Europe since World War II. The world rallies around Ukraine in a conflict that reshapes global security alliances.",
+      "isHighlight": true,
+      "tags": [
+        "politics",
+        "history",
+        "war",
+        "europe",
+        "russia"
+      ]
+    },
+    {
+      "id": "hamas-attack-gaza-war",
+      "date": "2023-10",
+      "category": "world-event",
+      "title": "Hamas Attacks Israel — Gaza War Begins",
+      "shortTitle": "Gaza War",
+      "description": "Hamas launches a large-scale attack on Israel on October 7, killing over 1,200 people and taking hundreds hostage. Israel's military response triggers a devastating war in Gaza and regional escalation.",
+      "isHighlight": false,
+      "tags": [
+        "politics",
+        "history",
+        "war",
+        "middle-east"
+      ]
+    },
+    {
+      "id": "eagles-super-bowl-lix",
+      "date": "2025-02",
+      "category": "personal",
+      "title": "Philadelphia Eagles Win Super Bowl LIX",
+      "shortTitle": "Eagles Win! SB LIX",
+      "description": "The Eagles do it again — defeating the Kansas City Chiefs 40–22 in Super Bowl LIX. Back on top. Philly celebrates again. Fly Eagles Fly.",
+      "isHighlight": true,
+      "tags": [
+        "personal",
+        "sports",
+        "eagles",
+        "nfl",
+        "philadelphia",
+        "milestone"
+      ]
+    },
+    {
+      "id": "wsp-switch-2",
+      "date": "2025-06",
+      "category": "personal",
+      "title": "WSP Gets a Nintendo Switch 2",
+      "shortTitle": "Got the Switch 2",
+      "description": "Nintendo's next-generation hybrid console arrives. The Switch lineage continues — bigger screen, more power, and a new generation of Nintendo magic.",
+      "isHighlight": false,
+      "tags": [
+        "personal",
+        "gaming",
+        "nintendo",
+        "console",
+        "handheld"
+      ],
+      "logo": "/assets/timeline/logos/nintendo.svg"
     }
   ]
 }
