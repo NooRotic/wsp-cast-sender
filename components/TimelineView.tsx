@@ -280,7 +280,7 @@ function StickyFilterBar({
             color: active.has(c.id) ? '#000' : c.color,
             background: active.has(c.id) ? c.color : 'transparent',
             opacity: active.has(c.id) ? 1 : 0.55,
-            animationDelay: `${0.25 + i * 0.1}s`,
+            animationDelay: `${2.5 + i * 0.1}s`,
           }}
           title={c.description}
         >
