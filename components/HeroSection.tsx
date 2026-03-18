@@ -121,7 +121,7 @@ export default function HeroSection() {
         .addLabel("title-cycle")
         .to({}, { duration: 0.6 })
         .to(titleRef.current, {
-          text: 'From Flash & ActionScript\nto Streaming Video\nto Local AI LLMs\nto AI Agentic Development',
+          text: 'From Flash & ActionScript<br>to Streaming Video<br>to Local AI LLMs<br>to AI Agentic Development',
           duration: 5.5,
           scale: 1,
           ease: "none",
@@ -335,7 +335,6 @@ export default function HeroSection() {
         <h1
           ref={titleRef}
           className="hero-title text-2xl md:text-6xl font-semibold tracking-wide text-gradient-active mb-3 drop-shadow-white hero-title-3d leading-relaxed pb-2"
-          style={{ whiteSpace: 'pre-line' }}
         />
         {/* Glass Container for Developer Info */}
         <div 
