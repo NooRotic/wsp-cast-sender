@@ -121,7 +121,7 @@ export default function HeroSection() {
         .addLabel("title-cycle")
         .to({}, { duration: 0.6 })
         .to(titleRef.current, {
-          text: 'From Flash & ActionScript<br>to Streaming Video<br>to Local AI LLMs<br>to AI Agentic Development',
+          text: 'From Flash & ActionScript<br>to Streaming Video<br>to Local AI LLMs<br>to AI Assisted Development',
           duration: 5.5,
           scale: 1,
           ease: "none",

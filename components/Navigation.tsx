@@ -50,7 +50,6 @@ export default function Navigation() {
   ];
 
   const demoPages = [
-    { label: "Timeline", href: "/timeline" },
     { label: "Cast Demo", href: "/cast-demo" },
     { label: "Media Demo", href: "/media-demo" },
   ];
@@ -93,6 +92,8 @@ export default function Navigation() {
                 {item.label}
               </button>
             ))}
+
+            <Link href="/timeline" className="nav-menu-item">Timeline</Link>
 
             {/* Demo Pages dropdown */}
             <div className="relative" ref={dropdownRef}>
@@ -163,6 +164,14 @@ export default function Navigation() {
                   {item.label}
                 </button>
               ))}
+
+              <Link
+                href="/timeline"
+                onClick={() => setIsOpen(false)}
+                className="block px-3 py-2 text-sm text-gray-300 hover:text-[#39FF14] hover:bg-[#39FF14]/10 transition-colors rounded"
+              >
+                Timeline
+              </Link>
 
               <div className="border-t border-[#39FF14]/20 pt-2 mt-2">
                 <div className="px-3 py-1 text-xs text-[#39FF14] font-semibold">Demo Pages</div>
