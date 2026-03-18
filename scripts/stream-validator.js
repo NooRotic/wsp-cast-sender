@@ -208,20 +208,22 @@ class StreamValidator {
     const streamableTypes = [
       'application/vnd.apple.mpegurl',
       'application/x-mpegurl',
+      'application/dash+xml',    // MPEG-DASH manifests
       'video/mp4',
       'video/mp2t',
+      'video/webm',
       'video/x-msvideo',
       'video/quicktime',
       'application/octet-stream' // Many streams use this generic type
     ];
 
     // Check content type
-    const isStreamableType = streamableTypes.some(type => 
+    const isStreamableType = streamableTypes.some(type =>
       contentType.toLowerCase().includes(type)
     );
 
     // Also check URL extension as fallback
-    const hasStreamExtension = /\.(m3u8|ts|mp4|avi|mkv|mov)$/i.test(url);
+    const hasStreamExtension = /\.(m3u8|mpd|ts|mp4|webm|avi|mkv|mov)(\?.*)?$/i.test(url);
 
     return isStreamableType || hasStreamExtension;
   }

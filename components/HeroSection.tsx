@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { Video, StepForward } from "lucide-react";
 import { gsap } from "gsap";
@@ -21,11 +21,28 @@ export default function HeroSection() {
   const skillsRef = useRef<HTMLDivElement | null>(null);
   const expertiseHeaderRef = useRef<HTMLHeadingElement | null>(null);
   const featuredWorkHeaderRef = useRef<HTMLHeadingElement | null>(null);
-  const [isLoaded, setIsLoaded] = useState(false);
   const [userScrolled, setUserScrolled] = useState(false);
   const timelineRef = useRef<gsap.core.Timeline | null>(null);
   const developerName = process.env.NEXT_PUBLIC_DEVELOPER_NAME || 'Walter S. Pollard Jr';
   const developerTitle = process.env.NEXT_PUBLIC_DEVELOPER_TITLE || 'Senior Software Engineer';
+
+  // Hide all animated elements before the first browser paint so GSAP
+  // can take ownership of opacity/visibility without any flash of content.
+  useLayoutEffect(() => {
+    gsap.set(
+      [
+        titleRef.current,
+        subtitleRef.current,
+        subtitle2Ref.current,
+        subtitle3Ref.current,
+        skillsRef.current,
+        expertiseHeaderRef.current,
+        featuredWorkHeaderRef.current,
+      ].filter(Boolean),
+      { opacity: 0 }
+    );
+    if (titleRef.current) titleRef.current.textContent = "";
+  }, []);
 
   useEffect(() => {
     // Scroll detection to skip animation
@@ -80,7 +97,6 @@ export default function HeroSection() {
         return;
       }
 
-      setIsLoaded(true);
       if (!titleRef.current) return;
   
       timelineRef.current = gsap.timeline()
@@ -105,8 +121,8 @@ export default function HeroSection() {
         .addLabel("title-cycle")
         .to({}, { duration: 0.6 })
         .to(titleRef.current, {
-          text: 'From Flash & ActionScript to Streaming Web Video to Local LLMs and Agentic workflows',
-          duration: 4.3,
+          text: 'From Flash & ActionScript<br>to Streaming Video<br>to Local AI LLMs<br>to AI Assisted Development',
+          duration: 5.5,
           scale: 1,
           ease: "none",
         })
@@ -136,7 +152,7 @@ export default function HeroSection() {
             opacity: 1,
             y: 0,
             z: -6,
-            duration: 1.8,
+            duration: 1.0,
             ease: "power2.out",
           },
           "-=0.8"
@@ -161,7 +177,7 @@ export default function HeroSection() {
                   transformOrigin: () => gsap.utils.random(["left bottom", "right bottom", "left top", "right top"]),
                 },
                 {
-                  duration: 1.15,
+                  duration: 1.0,
                   y: 0,
                   x: 0,
                   rotation: 0,
@@ -193,7 +209,7 @@ export default function HeroSection() {
                   x: 15,
                 },
                 {
-                  duration: 1.5,
+                  duration: 1.8,
                   opacity: 1,
                   x: 0,
                   stagger: 0.2,
@@ -318,10 +334,8 @@ export default function HeroSection() {
       <div className="text-center w-full max-w-full mx-auto m-8 drop-shadow-xl relative z-0 hero-content-spacing-compact hero-3d-container">
         <h1
           ref={titleRef}
-          className={`hero-title text-2xl md:text-6xl font-semibold tracking-wide text-gradient-active opacity-95 mb-3 drop-shadow-white hero-title-3d leading-relaxed pb-2 transition-opacity duration-300${!isLoaded ? ' opacity-0 invisible' : ''}`}
-        >
-          {developerName}
-        </h1>
+          className="hero-title text-2xl md:text-6xl font-semibold tracking-wide text-gradient-active mb-3 drop-shadow-white hero-title-3d leading-relaxed pb-2"
+        />
         {/* Glass Container for Developer Info */}
         <div 
           ref={subtitleRef}

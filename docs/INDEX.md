@@ -29,6 +29,11 @@
 - [**SESSION_PERSISTENCE.md**](./SESSION_PERSISTENCE.md) - Session management
 - [**RECEIVER_ACKNOWLEDGMENT_GUIDE.md**](./RECEIVER_ACKNOWLEDGMENT_GUIDE.md) - Receiver communication guide
 
+### **🎬 Media & Streams**
+
+- [**STREAM_VALIDATOR.md**](./STREAM_VALIDATOR.md) - M3U playlist validator CLI usage and options
+- [**WEB_WORKER_M3U_PARSER.md**](./WEB_WORKER_M3U_PARSER.md) - Chunked M3U parser with Web Worker support
+
 ### **📦 Project Management**
 
 - [**CHANGELOG.md**](./CHANGELOG.md) - Version history and changes
@@ -61,6 +66,7 @@
 - **Understand Cast integration?** → [CAST_INTEGRATION.md](./CAST_INTEGRATION.md)
 - **Implement video controls?** → [PROJECT_GUIDE.md](./PROJECT_GUIDE.md)
 - **Set up acknowledgments?** → [CAST_ACKNOWLEDGMENT_IMPLEMENTATION_SUMMARY.md](./CAST_ACKNOWLEDGMENT_IMPLEMENTATION_SUMMARY.md)
+- **Clean up an M3U playlist?** → [STREAM_VALIDATOR.md](./STREAM_VALIDATOR.md)
 
 ---
 

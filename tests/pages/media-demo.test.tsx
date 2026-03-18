@@ -210,7 +210,7 @@ describe('Media Demo Page', () => {
     render(<MediaDemoPage />)
     
     await waitFor(() => {
-      expect(screen.getByText(/Media Demo/i)).toBeInTheDocument()
+      expect(screen.getByText(/Adaptive Media Player/i)).toBeInTheDocument()
     })
   })
 
