@@ -52,7 +52,7 @@ jest.mock('../../contexts/CastContext', () => ({
 }))
 
 jest.mock('../../contexts/AnimationContext', () => ({
-  AnimationProvider: MockAnimationProvider,
+  AnimationProvider: ({ children }: { children: React.ReactNode }) => children,
   useAnimation: () => mockAnimationContext,
 }))
 
