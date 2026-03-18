@@ -775,7 +775,7 @@ function TimelineNode({
                       width: 55,
                       height: 55,
                       objectFit: 'contain',
-                      filter: 'invert(1)',
+                      filter: 'brightness(0) invert(1)',
                       opacity: 0.85,
                     }}
                   />
@@ -1064,6 +1064,7 @@ export default function TimelineView() {
           0%,100% { box-shadow: 0 0 8px var(--glow-color), 0 0 0 1px color-mix(in srgb, var(--glow-color) 45%, transparent); }
           50%      { box-shadow: 0 0 22px var(--glow-color), 0 0 0 1.5px var(--glow-color), 0 0 38px color-mix(in srgb, var(--glow-color) 35%, transparent); }
         }
+<<<<<<< HEAD
         .timeline-card {
           transition: box-shadow 0.22s ease, border-color 0.22s ease, transform 0.18s ease !important;
         }
