@@ -775,7 +775,7 @@ function TimelineNode({
                       width: 55,
                       height: 55,
                       objectFit: 'contain',
-                      filter: 'brightness(0) invert(1)',
+                      filter: 'invert(1)',
                       opacity: 0.85,
                     }}
                   />
