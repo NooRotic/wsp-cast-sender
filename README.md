@@ -4,7 +4,7 @@
 
 > A Next.js 15 portfolio site that doubles as a Chromecast sender app, enabling a connected TV to display portfolio content and stream media controlled from the browser.
 
-**Live:** [walter.pollardjr.com](https://walter.pollardjr.com) &nbsp;|&nbsp; **Companion Receiver:** [wsp-cast-receiver](https://github.com/NooRotic/wsp-cast-receiver)
+**Live:** [walter.pollardjr.com](https://walter.pollardjr.com) &nbsp;|&nbsp; **Companion Receiver:** wsp-cast-receiver *(coming soon — currently private)*
 
 ---
 
@@ -53,7 +53,7 @@ Building this into the portfolio itself is the demonstration. The TV becomes a s
 | Video — MPEG-DASH | Dash.js |
 | Video — Twitch | ReactPlayer |
 | UI Components | shadcn/ui, Radix UI |
-| Testing | Jest + @testing-library/react — 146 tests |
+| Testing | Jest + @testing-library/react |
 | CI/CD | GitHub Actions — PR gate, staging auto-deploy, manual prod deploy |
 | Hosting | IONOS shared hosting — fully static export, deployed via SCP |
 
@@ -175,11 +175,11 @@ See [`deploy_walkthrough.md`](./deploy_walkthrough.md) for the full step-by-step
 
 ## Companion Receiver
 
-The receiver application: **[NooRotic/wsp-cast-receiver](https://github.com/NooRotic/wsp-cast-receiver)**
+The receiver application: **NooRotic/wsp-cast-receiver** *(coming soon — currently private)*
 
 It handles the TV side — receiving typed messages from this sender, rendering portfolio content on the Chromecast screen, managing media playback, and sending acknowledgments back through the Cast message bus.
 
-Both repos are required for the full Chromecast experience. The sender controls; the receiver displays.
+Both repos are required for the full Chromecast experience. The sender controls; the receiver displays. The receiver repo will be published once cleanup and rebranding are complete.
 
 ---
 
