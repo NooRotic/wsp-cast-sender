@@ -71,7 +71,14 @@ export const CastProvider: React.FC<CastProviderProps> = ({ children }) => {
     expectsAck: boolean;
   }>>(new Map());
 
-  const appId = process.env.NEXT_PUBLIC_CAST_APP_ID || '44453EED';
+  // Cast App ID — environment-aware.
+  // Production: 44453EED  → receiver.pollardjr.com
+  // Staging:    F9B1A5A8  → staging-receiver.pollardjr.com
+  // NEXT_PUBLIC_CAST_APP_ID overrides everything when set explicitly.
+  const appId = process.env.NEXT_PUBLIC_CAST_APP_ID
+    || (process.env.NEXT_PUBLIC_ENVIRONMENT === 'staging'
+        ? (process.env.NEXT_PUBLIC_STAGING_CAST_APP_ID || 'F9B1A5A8')
+        : '44453EED');
   const namespace = process.env.NEXT_PUBLIC_CAST_NAMESPACE || 'urn:x-cast:com.nrx.cast.skills';
 
   // Enhanced message acknowledgment timeout (30 seconds)
@@ -645,18 +652,13 @@ export const CastProvider: React.FC<CastProviderProps> = ({ children }) => {
 
       // Ensure Cast options are properly set by checking if we have a valid app ID
       if (!appId || appId === 'CC1AD845') {
-        console.log('📱 Invalid or default app ID, using fallback...');
-        castContext.setOptions({
-          receiverApplicationId: '44453EED', // Default receiver app ID
-          autoJoinPolicy: chrome.cast.AutoJoinPolicy.ORIGIN_SCOPED,
-        });
-      } else {
-        console.log('📱 Setting Cast options with app ID:', appId);
-        castContext.setOptions({
-          receiverApplicationId: appId,
-          autoJoinPolicy: chrome.cast.AutoJoinPolicy.ORIGIN_SCOPED,
-        });
+        console.log('📱 Invalid or default app ID, using resolved appId...');
       }
+      console.log('📱 Setting Cast options with app ID:', appId);
+      castContext.setOptions({
+        receiverApplicationId: appId,
+        autoJoinPolicy: chrome.cast.AutoJoinPolicy.ORIGIN_SCOPED,
+      });
 
       console.log('📱 Requesting Cast session...');
       console.log('📱 Current Cast state before request:', castContext.getCastState());
