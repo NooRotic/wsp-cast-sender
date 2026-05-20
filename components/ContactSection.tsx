@@ -84,12 +84,14 @@ export default function ContactSection() {
       label: 'LinkedIn',
       value: 'linkedin.com/in/walterpollardjr',
       href: 'https://www.linkedin.com/in/walterpollardjr',
+      external: true,
     },
     {
       icon: Github,
       label: 'GitHub',
       value: 'github.com/noorotic',
       href: 'https://github.com/noorotic',
+      external: true,
     },
     {
       icon: Phone,
@@ -121,6 +123,8 @@ export default function ContactSection() {
               <a
                 key={index}
                 href={item.href}
+                target={item.external ? '_blank' : undefined}
+                rel={item.external ? 'noopener noreferrer' : undefined}
                 className="bg-black/40 backdrop-blur-sm border border-gray-700/50 hover:border-[#39FF14]/30 rounded-lg p-6 flex items-center gap-4 hover:scale-105 transition-all duration-300 hover:bg-black/60"
               >
                 <div className="p-3 bg-[#39FF14]/20 rounded-full">
