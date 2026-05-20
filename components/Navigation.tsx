@@ -57,6 +57,11 @@ export default function Navigation() {
   const scrollToSection = (href: string) => {
     if (pathname === '/' || pathname === '') {
       document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
+      // Mirror the browser's native anchor-link behavior — update the URL
+      // hash so the address bar reflects where the user is on the page.
+      if (href.startsWith('#') && typeof window !== 'undefined') {
+        window.history.pushState(null, '', href);
+      }
     } else {
       router.push('/' + href);
     }
