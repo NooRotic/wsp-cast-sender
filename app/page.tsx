@@ -31,11 +31,14 @@ export default function Home() {
     const hash = window.location.hash;
     if (hash) {
       setUserHasScrolled(true);
+      // Wait until the target's dynamic component has actually rendered with
+      // content (offsetHeight > 0). Querying earlier returns an empty wrapper
+      // and scrollIntoView lands just below the hero instead of the section.
       const tryScroll = (attempts = 0) => {
-        const el = document.querySelector(hash);
-        if (el) {
+        const el = document.querySelector(hash) as HTMLElement | null;
+        if (el && el.offsetHeight > 0) {
           el.scrollIntoView({ behavior: 'smooth' });
-        } else if (attempts < 20) {
+        } else if (attempts < 30) {
           setTimeout(() => tryScroll(attempts + 1), 100);
         }
       };
