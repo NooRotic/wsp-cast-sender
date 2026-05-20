@@ -31,18 +31,31 @@ export default function Home() {
     const hash = window.location.hash;
     if (hash) {
       setUserHasScrolled(true);
-      // Wait until the target's dynamic component has actually rendered with
-      // content (offsetHeight > 0). Querying earlier returns an empty wrapper
-      // and scrollIntoView lands just below the hero instead of the section.
+      // Wait for the document height to stabilize before scrolling — every
+      // dynamic-imported section above the target shifts its position as it
+      // mounts, so scrolling before they settle lands us at a stale offset.
+      let lastHeight = 0;
+      let stableCount = 0;
       const tryScroll = (attempts = 0) => {
         const el = document.querySelector(hash) as HTMLElement | null;
+        const docHeight = document.documentElement.scrollHeight;
         if (el && el.offsetHeight > 0) {
-          el.scrollIntoView({ behavior: 'smooth' });
-        } else if (attempts < 30) {
+          if (docHeight === lastHeight) {
+            stableCount++;
+            if (stableCount >= 3) {
+              el.scrollIntoView({ behavior: 'smooth' });
+              return;
+            }
+          } else {
+            stableCount = 0;
+          }
+        }
+        lastHeight = docHeight;
+        if (attempts < 50) {
           setTimeout(() => tryScroll(attempts + 1), 100);
         }
       };
-      setTimeout(() => tryScroll(), 50);
+      tryScroll();
     } else {
       window.scrollTo(0, 0);
     }
