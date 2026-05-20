@@ -406,8 +406,18 @@ body {
   border-radius: 12px; /* Ensure consistent rounded corners */
 }
 
-.skill-card:hover {
-  /* Remove all transform and animation effects. Only border color and box-shadow should update on hover. */
+.skill-card:hover,
+.skill-card:focus-visible,
+.skill-card:active {
+  /* Baseline so touch users see visual feedback on tap and keyboard
+     users get a focus ring — GSAP enhances on top for mouse devices. */
+  border-color: var(--color-brand-primary);
+  box-shadow: 0 0 16px 0 color-mix(in srgb, var(--color-brand-primary) 50%, transparent);
+}
+
+.skill-card:focus-visible {
+  outline: 2px solid var(--color-brand-primary);
+  outline-offset: 2px;
 }
 
 /* Cast Demo Page Specific Styles */
