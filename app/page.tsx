@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import dynamic from 'next/dynamic';
 import Navigation from '@/components/Navigation';
 import TimelineCallout from '@/components/TimelineCallout';
@@ -81,9 +81,13 @@ export default function Home() {
   return (
     <main className="relative min-h-screen">
 
-      {/* Persistent Cast Connect Button (bottom center) - pointer-events enabled so it's clickable */}
+      {/* Persistent Cast Connect Button (bottom center) - pointer-events enabled so it's clickable.
+          Wrapped in Suspense so its ssr:false bailout doesn't propagate up the tree and abort
+          SSR of the rest of the page. */}
       <div className="fixed left-1/2 bottom-8 z-[9999] -translate-x-1/2 flex items-center justify-center select-none" style={{ width: '100%', maxWidth: '100vw' }}>
-        <CastConnectButton />
+        <Suspense fallback={null}>
+          <CastConnectButton />
+        </Suspense>
       </div>
 
       {/* Google Cast Launcher positioned in top right corner - only render after mount */}
