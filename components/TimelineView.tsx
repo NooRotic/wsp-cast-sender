@@ -318,6 +318,46 @@ function LeftPanel({
 }) {
   const spacingPercent = Math.round((nodeSpacing / SPACING_NORMAL) * 100);
   const zoomPercent    = Math.round(timelineZoom * 100);
+  const [isOpen, setIsOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const mql = window.matchMedia('(max-width: 767px)');
+    setIsMobile(mql.matches);
+    const handler = (e: MediaQueryListEvent) => {
+      setIsMobile(e.matches);
+      if (!e.matches) setIsOpen(false);
+    };
+    mql.addEventListener('change', handler);
+    return () => mql.removeEventListener('change', handler);
+  }, []);
+
+  // Mobile collapsed — show only L + hamburger toggle
+  if (isMobile && !isOpen) {
+    return (
+      <div className="fixed left-2" style={{ top: 140, zIndex: 30 }}>
+        <button
+          onClick={() => setIsOpen(true)}
+          className="flex items-center gap-1 rounded-lg transition-all hover:opacity-80"
+          style={{
+            background: 'rgba(0,0,0,0.82)',
+            backdropFilter: 'blur(12px)',
+            border: '1px solid rgba(255,255,255,0.07)',
+            padding: '8px 10px',
+            color: '#ccc',
+          }}
+          aria-label="Open legend panel"
+        >
+          <span className="text-sm font-bold" style={{ color: '#39FF14' }}>L</span>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+            <rect x="2" y="3" width="12" height="1.5" rx="0.5" />
+            <rect x="2" y="7" width="12" height="1.5" rx="0.5" />
+            <rect x="2" y="11" width="12" height="1.5" rx="0.5" />
+          </svg>
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -325,13 +365,24 @@ function LeftPanel({
       style={{ top: 140, zIndex: 30, width: 156 }}
     >
       <div
-        className="rounded-xl border"
+        className="rounded-xl border relative"
         style={{
           background: 'rgba(0,0,0,0.82)',
           backdropFilter: 'blur(12px)',
           borderColor: 'rgba(255,255,255,0.07)',
         }}
       >
+        {/* Close button — mobile only when panel is expanded */}
+        {isMobile && (
+          <button
+            onClick={() => setIsOpen(false)}
+            className="absolute top-2 right-2 w-6 h-6 flex items-center justify-center rounded text-xs transition-all hover:opacity-80"
+            style={{ color: '#888', background: 'rgba(255,255,255,0.08)' }}
+            aria-label="Close legend panel"
+          >
+            ✕
+          </button>
+        )}
         {/* Legend */}
         <div className="px-3 pt-3 pb-2">
           <div className="text-xs font-semibold tracking-widest uppercase mb-2" style={{ color: '#4a5568' }}>
