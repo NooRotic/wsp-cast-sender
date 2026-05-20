@@ -1032,15 +1032,17 @@ export default function TimelineView() {
   const timelineZoomIn  = () => setTimelineZoom(z => parseFloat(Math.min(z + ZOOM_STEP, ZOOM_MAX).toFixed(2)));
   const timelineZoomOut = () => setTimelineZoom(z => parseFloat(Math.max(z - ZOOM_STEP, ZOOM_MIN).toFixed(2)));
 
-  // Measure natural height (at scale 1) before each zoom change so the
-  // height-keeper wrapper stays in sync and scroll area shrinks correctly.
+  // Measure natural height at scale 1 whenever content changes, then restore
+  // the displayed scale. timelineZoom is read but intentionally not a dep —
+  // including it would snap-to-1 and back on every zoom step, fighting the
+  // smooth zoom animation handled by the next effect.
   useLayoutEffect(() => {
     const el = timelineScaleRef.current;
     if (!el) return;
     gsap.set(el, { scale: 1, immediateRender: true });
     setNaturalHeight(el.scrollHeight);
     gsap.set(el, { scale: timelineZoom, immediateRender: true });
-  }, [filteredNodes, nodeSpacing]);
+  }, [filteredNodes, nodeSpacing]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Smooth GSAP scale animation whenever timelineZoom changes
   useEffect(() => {
