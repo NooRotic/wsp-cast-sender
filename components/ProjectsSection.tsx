@@ -6,6 +6,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import ProjectCard from './ProjectCard';
 import projectsData from '@/data/projects.json';
 import { ProjectsData, Project } from '@/types';
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
@@ -16,6 +17,7 @@ export default function ProjectsSection() {
   const titleRef = useRef<HTMLHeadingElement>(null);
   const cardsRef = useRef<HTMLDivElement[]>([]);
   const [mounted, setMounted] = useState(false);
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   useEffect(() => {
     setMounted(true);
@@ -25,6 +27,13 @@ export default function ProjectsSection() {
     if (!mounted) return;
 
     const cards = cardsRef.current.filter(Boolean);
+
+    // Honor OS-level reduced-motion setting: snap to final state, no animations.
+    if (prefersReducedMotion) {
+      if (titleRef.current) gsap.set(titleRef.current, { opacity: 1, y: 0 });
+      if (cards.length > 0) gsap.set(cards, { opacity: 1, y: 0, scale: 1 });
+      return;
+    }
 
     // Matrix-styled title animation (same as SkillsShowcase titleRef)
     if (titleRef.current) {
@@ -76,7 +85,7 @@ export default function ProjectsSection() {
       });
     }
 
-  }, [mounted]);
+  }, [mounted, prefersReducedMotion]);
 
   // Helper function to determine if project has media
   const hasMedia = (project: Project) => {
@@ -110,6 +119,7 @@ export default function ProjectsSection() {
                 }}
                 className="skill-card bg-black/40 backdrop-blur-sm border border-gray-700/50 rounded-lg group"
                 onMouseEnter={() => {
+                  if (prefersReducedMotion) return;
                   const card = cardsRef.current[index];
                   if (card) {
                   gsap.to(card, {
@@ -123,6 +133,7 @@ export default function ProjectsSection() {
                   }
                 }}
                 onMouseLeave={() => {
+                  if (prefersReducedMotion) return;
                   const card = cardsRef.current[index];
                   if (card) {
                   gsap.to(card, {
@@ -153,6 +164,7 @@ export default function ProjectsSection() {
                 }}
                 className="skill-card bg-black/40 backdrop-blur-sm border border-gray-700/50 rounded-lg group"
                 onMouseEnter={() => {
+                  if (prefersReducedMotion) return;
                   const card = cardsRef.current[projectsWithMedia.length + index];
                   if (card) {
                     gsap.to(card, {
@@ -165,6 +177,7 @@ export default function ProjectsSection() {
                   }
                 }}
                 onMouseLeave={() => {
+                  if (prefersReducedMotion) return;
                   const card = cardsRef.current[projectsWithMedia.length + index];
                   if (card) {
                     gsap.to(card, {

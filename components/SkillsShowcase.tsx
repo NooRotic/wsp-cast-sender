@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import skillsData from '@/data/skills.json';
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
@@ -25,6 +26,7 @@ export default function SkillsShowcase() {
   const titleRef = useRef<HTMLHeadingElement>(null);
   const cardsRef = useRef<HTMLDivElement[]>([]);
   const [mounted, setMounted] = useState(false);
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   useEffect(() => {
     setMounted(true);
@@ -34,6 +36,24 @@ export default function SkillsShowcase() {
     if (!mounted) return;
 
     const cards = cardsRef.current.filter(Boolean);
+
+    // Honor OS-level reduced-motion: snap to final state, skill bars to full width.
+    if (prefersReducedMotion) {
+      if (titleRef.current) {
+        gsap.set(titleRef.current, { opacity: 1, y: 0, text: 'Technical Expertise' });
+      }
+      if (cards.length > 0) {
+        gsap.set(cards, { opacity: 1, scale: 1 });
+        cards.forEach((card) => {
+          const skillBars = card.querySelectorAll('.skill-bar') as NodeListOf<HTMLElement>;
+          skillBars.forEach((bar) => {
+            const level = bar.dataset.level;
+            if (level) gsap.set(bar, { width: `${level}%` });
+          });
+        });
+      }
+      return;
+    }
 
     // Title animation
     if (titleRef.current) {
@@ -110,7 +130,7 @@ export default function SkillsShowcase() {
       });
     }
 
-  }, [mounted]);
+  }, [mounted, prefersReducedMotion]);
 
   const renderCompactSkillCard = (category: SkillCategory, index: number) => {
     return (
