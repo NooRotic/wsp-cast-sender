@@ -16,16 +16,35 @@ const CastConnectButton = dynamic(() => import('@/components/CastConnectButton')
 
 export default function Home() {
   const [hasMounted, setHasMounted] = useState(false);
-  const { heroAnimationsComplete, userHasScrolled } = useAnimation();
+  const { heroAnimationsComplete, userHasScrolled, setUserHasScrolled } = useAnimation();
   const contentVisible = heroAnimationsComplete || userHasScrolled;
 
-  // Ensure page starts at top on first render and track mounted state
+  // On mount: if landing on a hash (cross-route nav from /media-demo etc.),
+  // reveal the below-fold and scroll to the target once its dynamic section
+  // mounts. Otherwise, reset to top like a normal page load.
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window === 'undefined') {
+      setHasMounted(true);
+      return;
+    }
+
+    const hash = window.location.hash;
+    if (hash) {
+      setUserHasScrolled(true);
+      const tryScroll = (attempts = 0) => {
+        const el = document.querySelector(hash);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth' });
+        } else if (attempts < 20) {
+          setTimeout(() => tryScroll(attempts + 1), 100);
+        }
+      };
+      setTimeout(() => tryScroll(), 50);
+    } else {
       window.scrollTo(0, 0);
     }
     setHasMounted(true);
-  }, []);
+  }, [setUserHasScrolled]);
 
   const belowFoldStyle: React.CSSProperties = {
     opacity: contentVisible ? 1 : 0,
