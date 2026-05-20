@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Mail, Linkedin, Github, Phone } from 'lucide-react';
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
@@ -14,6 +15,7 @@ export default function ContactSection() {
   const titleRef = useRef<HTMLHeadingElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const [mounted, setMounted] = useState(false);
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   useEffect(() => {
     setMounted(true);
@@ -21,6 +23,13 @@ export default function ContactSection() {
 
   useEffect(() => {
     if (!mounted) return;
+
+    // Honor OS-level reduced-motion setting: snap to final state, no animations.
+    if (prefersReducedMotion) {
+      if (titleRef.current) gsap.set(titleRef.current, { opacity: 1, y: 0 });
+      if (contentRef.current) gsap.set(contentRef.current, { opacity: 1, y: 0 });
+      return;
+    }
 
     // Matrix-styled title animation (same as SkillsShowcase titleRef)
     if (titleRef.current) {
@@ -70,7 +79,7 @@ export default function ContactSection() {
         delay: 0.7,
       });
     }
-  }, [mounted]);
+  }, [mounted, prefersReducedMotion]);
 
   const contactItems = [
     {

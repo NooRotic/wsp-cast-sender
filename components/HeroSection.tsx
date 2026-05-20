@@ -5,6 +5,7 @@ import { gsap } from "gsap";
 import { TextPlugin } from "gsap/TextPlugin";
 import SplitType from "split-type";
 import { useAnimation } from "@/contexts/AnimationContext";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
 // Register GSAP plugins (TextPlugin only, SplitText removed)
 if (typeof window !== "undefined") {
@@ -25,10 +26,14 @@ export default function HeroSection() {
   const timelineRef = useRef<gsap.core.Timeline | null>(null);
   const developerName = process.env.NEXT_PUBLIC_DEVELOPER_NAME || 'Walter S. Pollard Jr.';
   const developerTitle = process.env.NEXT_PUBLIC_DEVELOPER_TITLE || 'Senior Software Engineer';
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   // Hide all animated elements before the first browser paint so GSAP
   // can take ownership of opacity/visibility without any flash of content.
+  // Reduced-motion users skip the hide step — they'll see the final state
+  // directly without any animation flicker.
   useLayoutEffect(() => {
+    if (prefersReducedMotion) return;
     gsap.set(
       [
         titleRef.current,
@@ -42,7 +47,7 @@ export default function HeroSection() {
       { opacity: 0 }
     );
     if (titleRef.current) titleRef.current.textContent = "";
-  }, []);
+  }, [prefersReducedMotion]);
 
   useEffect(() => {
     // Scroll detection to skip animation
@@ -90,6 +95,14 @@ export default function HeroSection() {
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
+
+    // Reduced-motion users: skip the GSAP timeline entirely, show final state,
+    // and report the animation as complete so the rest of the page unblocks.
+    if (prefersReducedMotion) {
+      showContentImmediately();
+      setHeroAnimationsComplete(true);
+      return () => window.removeEventListener('scroll', handleScroll);
+    }
 
     const initTimer = setTimeout(() => {
       if (userScrolled) {
@@ -314,7 +327,7 @@ export default function HeroSection() {
         timelineRef.current.kill();
       }
     };
-  }, [developerName, userScrolled, setHeroAnimationsComplete, setUserHasScrolled]);
+  }, [developerName, userScrolled, setHeroAnimationsComplete, setUserHasScrolled, prefersReducedMotion]);
 
   return (
     <section ref={heroRef} className="min-h-screen flex flex-col justify-center items-center relative px-4 z-0 hero-section-loading pt-12 hero-perspective">
