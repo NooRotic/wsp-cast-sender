@@ -68,6 +68,41 @@ export default function RootLayout({
         <script src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1"></script>
       </head>
       <body className={`${inter.className} antialiased`}>
+        <noscript>
+          <div style={{
+            padding: '2rem',
+            maxWidth: '40rem',
+            margin: '4rem auto',
+            color: '#e5e5e5',
+            backgroundColor: 'rgba(0,0,0,0.6)',
+            border: '1px solid rgba(57,255,20,0.3)',
+            borderRadius: '0.5rem',
+            fontFamily: 'Inter, system-ui, sans-serif',
+            lineHeight: 1.6,
+          }}>
+            <h1 style={{ color: '#39FF14', marginBottom: '1rem' }}>
+              Walter S. Pollard Jr.
+            </h1>
+            <p style={{ marginBottom: '1rem' }}>
+              Senior Software Engineer with 25+ years building for the web —
+              13 years at Comcast on the Xfinity Stream video player. This
+              portfolio uses JavaScript for its interactive features.
+            </p>
+            <p style={{ marginBottom: '1rem' }}>
+              For a static view of my background:
+              <br />
+              <a href="/resume/WalterSPollardJrResume.pdf" style={{ color: '#39FF14', textDecoration: 'underline' }}>
+                Download Resume (PDF)
+              </a>
+            </p>
+            <p>
+              Or contact me directly:{' '}
+              <a href="mailto:walter@pollardjr.com" style={{ color: '#39FF14', textDecoration: 'underline' }}>
+                walter@pollardjr.com
+              </a>
+            </p>
+          </div>
+        </noscript>
         <ClientScript />
         <ScrollToTop />
         <ClientAnimationProvider>
