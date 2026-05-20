@@ -8,6 +8,12 @@ import { useEffect } from 'react';
  */
 export default function ScrollToTop() {
   useEffect(() => {
+    // Deep link to a hash anchor — let page.tsx own scroll positioning;
+    // stomping with scrollTo(0,0) here would interrupt the hash scroll.
+    if (typeof window !== 'undefined' && window.location.hash) {
+      return;
+    }
+
     // Scroll to top immediately on mount
     window.scrollTo(0, 0);
 
