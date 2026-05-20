@@ -83,7 +83,7 @@ export default function ContactSection() {
       icon: Linkedin,
       label: 'LinkedIn',
       value: 'linkedin.com/in/walterpollardjr',
-      href: 'www.linkedin.com/in/walterpollardjr',
+      href: 'https://www.linkedin.com/in/walterpollardjr',
     },
     {
       icon: Github,
@@ -136,7 +136,7 @@ export default function ContactSection() {
 
           <div className="space-y-4">
             <p className="text-gray-400">
-              Available for freelance projects and full-time opportunities
+              Available for contract engagements and full-time opportunities, remote.
             </p>
             <div className="flex justify-center gap-4">
               <span className="px-4 py-2 bg-[#39FF14]/20 text-[#39FF14] rounded-full text-sm">

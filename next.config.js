@@ -15,7 +15,7 @@ let nextConfig = {
   basePath: '',
 
   eslint: {
-    ignoreDuringBuilds: true,
+    ignoreDuringBuilds: false,
   },
 
   images: {

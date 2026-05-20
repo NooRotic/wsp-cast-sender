@@ -23,7 +23,7 @@ export default function HeroSection() {
   const featuredWorkHeaderRef = useRef<HTMLHeadingElement | null>(null);
   const [userScrolled, setUserScrolled] = useState(false);
   const timelineRef = useRef<gsap.core.Timeline | null>(null);
-  const developerName = process.env.NEXT_PUBLIC_DEVELOPER_NAME || 'Walter S. Pollard Jr';
+  const developerName = process.env.NEXT_PUBLIC_DEVELOPER_NAME || 'Walter S. Pollard Jr.';
   const developerTitle = process.env.NEXT_PUBLIC_DEVELOPER_TITLE || 'Senior Software Engineer';
 
   // Hide all animated elements before the first browser paint so GSAP
