@@ -30,10 +30,11 @@ export default function Home() {
 
     const hash = window.location.hash;
     if (hash) {
-      setUserHasScrolled(true);
-      // Wait for the document height to stabilize before scrolling — every
-      // dynamic-imported section above the target shifts its position as it
-      // mounts, so scrolling before they settle lands us at a stale offset.
+      // Keep below-fold hidden during the polling so the user doesn't see
+      // sections loading at the top before the jump. offsetHeight still
+      // works against opacity:0 elements (layout is independent of paint),
+      // so the stability check is unaffected. Once stable, jump instantly
+      // and reveal in the same tick — user goes hero → contact, no flash.
       let lastHeight = 0;
       let stableCount = 0;
       const tryScroll = (attempts = 0) => {
@@ -43,7 +44,8 @@ export default function Home() {
           if (docHeight === lastHeight) {
             stableCount++;
             if (stableCount >= 3) {
-              el.scrollIntoView({ behavior: 'smooth' });
+              el.scrollIntoView({ behavior: 'auto' });
+              setUserHasScrolled(true);
               return;
             }
           } else {
@@ -53,6 +55,9 @@ export default function Home() {
         lastHeight = docHeight;
         if (attempts < 50) {
           setTimeout(() => tryScroll(attempts + 1), 100);
+        } else {
+          // Fallback — reveal anyway so the user isn't stuck on a hero-only page
+          setUserHasScrolled(true);
         }
       };
       tryScroll();
