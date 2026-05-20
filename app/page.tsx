@@ -6,12 +6,17 @@ import Navigation from '@/components/Navigation';
 import TimelineCallout from '@/components/TimelineCallout';
 import { useAnimation } from '@/contexts/AnimationContext';
 
-// Lazy-load heavier / background components to defer loading of videos and large bundles
+// Content sections — render via SSR/static export so crawlers, link-preview
+// bots, and JS-disabled clients see real markup. Code-splitting via dynamic()
+// still keeps each section in its own bundle chunk.
+const HeroSection = dynamic(() => import('@/components/HeroSection'));
+const SkillsShowcase = dynamic(() => import('@/components/SkillsShowcase'));
+const ProjectsSection = dynamic(() => import('@/components/ProjectsSection'));
+const ContactSection = dynamic(() => import('@/components/ContactSection'));
+
+// Browser-only widgets — kept ssr:false because they depend on window APIs
+// (Cast SDK state) or are currently unused dead code.
 const ParticleBackground = dynamic(() => import('@/components/ParticleBackground'), { ssr: false, loading: () => null });
-const HeroSection = dynamic(() => import('@/components/HeroSection'), { ssr: false, loading: () => null });
-const SkillsShowcase = dynamic(() => import('@/components/SkillsShowcase'), { ssr: false, loading: () => null });
-const ProjectsSection = dynamic(() => import('@/components/ProjectsSection'), { ssr: false, loading: () => null });
-const ContactSection = dynamic(() => import('@/components/ContactSection'), { ssr: false, loading: () => null });
 const CastConnectButton = dynamic(() => import('@/components/CastConnectButton'), { ssr: false, loading: () => null });
 
 export default function Home() {

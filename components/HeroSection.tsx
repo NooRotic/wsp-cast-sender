@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { Video, StepForward } from "lucide-react";
