@@ -17,6 +17,12 @@ export default function Navigation() {
   const [isDemoDropdownOpen, setIsDemoDropdownOpen] = useState(false);
   const [shouldShowNav, setShouldShowNav] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const dropdownToggleRef = useRef<HTMLButtonElement>(null);
+
+  const isHomePath = pathname === '/' || pathname === '';
+  const isTimelinePath = pathname === '/timeline' || pathname === '/timeline/';
+  const isCastDemoPath = pathname === '/cast-demo' || pathname === '/cast-demo/';
+  const isMediaDemoPath = pathname === '/media-demo' || pathname === '/media-demo/';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -41,6 +47,19 @@ export default function Navigation() {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  // ESC closes the demos dropdown and returns focus to the toggle button.
+  useEffect(() => {
+    if (!isDemoDropdownOpen) return;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsDemoDropdownOpen(false);
+        dropdownToggleRef.current?.focus();
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isDemoDropdownOpen]);
 
   const menuItems = [
     { label: "Home", href: "#home" },
@@ -93,36 +112,58 @@ export default function Navigation() {
                 key={item.label}
                 onClick={() => scrollToSection(item.href)}
                 className="nav-menu-item"
+                aria-current={item.href === '#home' && isHomePath ? 'page' : undefined}
               >
                 {item.label}
               </button>
             ))}
 
-            <Link href="/timeline" className="nav-menu-item">Timeline</Link>
+            <Link
+              href="/timeline"
+              className="nav-menu-item"
+              aria-current={isTimelinePath ? 'page' : undefined}
+            >
+              Timeline
+            </Link>
 
             {/* Demo Pages dropdown */}
             <div className="relative" ref={dropdownRef}>
               <button
+                ref={dropdownToggleRef}
                 onClick={() => setIsDemoDropdownOpen(!isDemoDropdownOpen)}
                 className="nav-menu-item flex items-center space-x-1"
+                aria-haspopup="menu"
+                aria-expanded={isDemoDropdownOpen}
+                aria-controls="demos-menu"
               >
                 <span>Demos</span>
                 <ChevronDown className={`w-4 h-4 transition-transform ${isDemoDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
 
               {isDemoDropdownOpen && (
-                <div className="absolute top-full left-0 mt-2 w-56 bg-gray-900/95 backdrop-blur-sm border border-[#39FF14]/20 rounded-lg shadow-lg z-50">
+                <div
+                  id="demos-menu"
+                  role="menu"
+                  className="absolute top-full left-0 mt-2 w-56 bg-gray-900/95 backdrop-blur-sm border border-[#39FF14]/20 rounded-lg shadow-lg z-50"
+                >
                   <div className="py-2">
-                    {demoPages.map((page) => (
-                      <Link
-                        key={page.href}
-                        href={page.href}
-                        onClick={() => setIsDemoDropdownOpen(false)}
-                        className="block px-4 py-2 text-sm text-gray-300 hover:text-[#39FF14] hover:bg-[#39FF14]/10 transition-colors"
-                      >
-                        {page.label}
-                      </Link>
-                    ))}
+                    {demoPages.map((page) => {
+                      const isActive =
+                        (page.href === '/cast-demo' && isCastDemoPath) ||
+                        (page.href === '/media-demo' && isMediaDemoPath);
+                      return (
+                        <Link
+                          key={page.href}
+                          href={page.href}
+                          role="menuitem"
+                          onClick={() => setIsDemoDropdownOpen(false)}
+                          aria-current={isActive ? 'page' : undefined}
+                          className="block px-4 py-2 text-sm text-gray-300 hover:text-[#39FF14] hover:bg-[#39FF14]/10 transition-colors"
+                        >
+                          {page.label}
+                        </Link>
+                      );
+                    })}
                   </div>
                 </div>
               )}
@@ -165,6 +206,7 @@ export default function Navigation() {
                   key={item.label}
                   onClick={() => scrollToSection(item.href)}
                   className="nav-mobile-menu-item"
+                  aria-current={item.href === '#home' && isHomePath ? 'page' : undefined}
                 >
                   {item.label}
                 </button>
@@ -173,6 +215,7 @@ export default function Navigation() {
               <Link
                 href="/timeline"
                 onClick={() => setIsOpen(false)}
+                aria-current={isTimelinePath ? 'page' : undefined}
                 className="block px-3 py-2 text-sm text-gray-300 hover:text-[#39FF14] hover:bg-[#39FF14]/10 transition-colors rounded"
               >
                 Timeline
@@ -180,16 +223,22 @@ export default function Navigation() {
 
               <div className="border-t border-[#39FF14]/20 pt-2 mt-2">
                 <div className="px-3 py-1 text-xs text-[#39FF14] font-semibold">Demo Pages</div>
-                {demoPages.map((page) => (
-                  <Link
-                    key={page.href}
-                    href={page.href}
-                    onClick={() => setIsOpen(false)}
-                    className="block px-3 py-2 text-sm text-gray-300 hover:text-[#39FF14] hover:bg-[#39FF14]/10 transition-colors rounded"
-                  >
-                    {page.label}
-                  </Link>
-                ))}
+                {demoPages.map((page) => {
+                  const isActive =
+                    (page.href === '/cast-demo' && isCastDemoPath) ||
+                    (page.href === '/media-demo' && isMediaDemoPath);
+                  return (
+                    <Link
+                      key={page.href}
+                      href={page.href}
+                      onClick={() => setIsOpen(false)}
+                      aria-current={isActive ? 'page' : undefined}
+                      className="block px-3 py-2 text-sm text-gray-300 hover:text-[#39FF14] hover:bg-[#39FF14]/10 transition-colors rounded"
+                    >
+                      {page.label}
+                    </Link>
+                  );
+                })}
               </div>
 
               <div className="border-t border-[#39FF14]/20 pt-2 mt-2">

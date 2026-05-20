@@ -865,6 +865,13 @@ body {
     color: var(--color-brand-primary);
   }
 
+  .nav-menu-item[aria-current="page"] {
+    color: var(--color-brand-primary);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-thickness: 2px;
+  }
+
   /* Mobile menu */
   .nav-mobile-menu {
     background-color: color-mix(in srgb, var(--color-brand-background) 95%, transparent);
@@ -880,6 +887,11 @@ body {
   
   .nav-mobile-menu-item:hover {
     color: var(--color-brand-primary);
+  }
+
+  .nav-mobile-menu-item[aria-current="page"] {
+    color: var(--color-brand-primary);
+    background-color: color-mix(in srgb, var(--color-brand-primary) 12%, transparent);
   }
 
   /* Mobile menu button */
