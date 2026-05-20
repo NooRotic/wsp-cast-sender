@@ -100,11 +100,13 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Below-fold sections hidden until hero animation completes or user scrolls */}
+      {/* Below-fold sections hidden until hero animation completes or user scrolls.
+          The inner components own their own <section id="..."> markup, so wrapping
+          them here would create duplicate IDs. */}
       <div style={belowFoldStyle}>
-        <section id="projects"><ProjectsSection /></section>
-        <section id="skills"><SkillsShowcase /></section>
-        <section id="contact"><ContactSection /></section>
+        <ProjectsSection />
+        <SkillsShowcase />
+        <ContactSection />
 
         <footer className="pt-10 text-center text-gray-400 relative z-10 min-h-[200px] flex items-center justify-center">
           <div className="max-w-4xl mx-auto px-4">
