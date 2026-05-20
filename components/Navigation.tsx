@@ -10,7 +10,7 @@ import { useAnimation } from "@/contexts/AnimationContext";
 
 export default function Navigation() {
   const { heroAnimationsComplete, userHasScrolled, setUserHasScrolled } = useAnimation();
-  const pathname = typeof window !== 'undefined' ? window.location.pathname : '/';
+  const pathname = usePathname() ?? '/';
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
