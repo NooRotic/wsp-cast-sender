@@ -21,6 +21,7 @@ export default function Navigation() {
   const dropdownToggleRef = useRef<HTMLButtonElement>(null);
 
   const isHomePath = pathname === '/' || pathname === '';
+  const isNowPath = pathname === '/now' || pathname === '/now/';
   const isTimelinePath = pathname === '/timeline' || pathname === '/timeline/';
   const isCastDemoPath = pathname === '/cast-demo' || pathname === '/cast-demo/';
   const isMediaDemoPath = pathname === '/media-demo' || pathname === '/media-demo/';
@@ -145,6 +146,14 @@ export default function Navigation() {
             ))}
 
             <Link
+              href="/now"
+              className="nav-menu-item"
+              aria-current={isNowPath ? 'page' : undefined}
+            >
+              Now
+            </Link>
+
+            <Link
               href="/timeline"
               className="nav-menu-item"
               aria-current={isTimelinePath ? 'page' : undefined}
@@ -237,6 +246,15 @@ export default function Navigation() {
                   {item.label}
                 </button>
               ))}
+
+              <Link
+                href="/now"
+                onClick={() => setIsOpen(false)}
+                aria-current={isNowPath ? 'page' : undefined}
+                className="block px-3 py-2 text-sm text-gray-300 hover:text-[#39FF14] hover:bg-[#39FF14]/10 transition-colors rounded"
+              >
+                Now
+              </Link>
 
               <Link
                 href="/timeline"
