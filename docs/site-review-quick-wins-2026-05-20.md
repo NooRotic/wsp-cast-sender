@@ -330,6 +330,32 @@ Today's PR ships a working hash-scroll mechanism, but it's a workaround for the 
 
 ---
 
+## 🆕 Found during Batch 2 smoke test (2026-05-20 → 2026-05-21)
+
+### 25. No loading feedback when clicking Timeline from root
+
+**Files:** none yet — needs `app/timeline/loading.tsx`
+
+Clicking the Timeline link from the home page causes a route transition that downloads the `/timeline` bundle (the heaviest route at ~23.7 kB plus its component tree). During the transition the browser stays on the current page with no visible feedback that something is loading — users wonder if their click registered.
+
+**Fix:** Create `app/timeline/loading.tsx` exporting a default React component. Next.js App Router automatically renders it as the suspense fallback while the route's chunks load. A small centered spinner with the brand neon green is sufficient. Same pattern would help on any other heavy route (e.g., `/cast-demo` if its bundle grows).
+
+Discovered during PR #11 smoke testing.
+
+### 26. Active-nav underline snaps instantly between items (polish)
+
+**Files:** `components/Navigation.tsx`, `app/globals.css`
+
+The aria-current="page" underline (shipped in #17) uses `text-decoration: underline` which snaps between nav items with no transition. This is correct a11y behavior — screen-reader users want immediate feedback. But for sighted users a sliding indicator feels more polished and gives a visual hint about which section is active even when peripherally noticed.
+
+**Fix:** Replace the text-decoration underline with a separate absolutely-positioned bar (`<span aria-hidden="true">`) under the active nav item, animated with FLIP-style transforms when the active item changes. Keep the aria-current attribute for screen readers regardless.
+
+Low priority — current implementation is fully accessible. Treat as polish, not a bug.
+
+Discovered during PR #11 smoke testing.
+
+---
+
 ## Recommended fix order
 
 If Walter wants to ship these in batches:
@@ -363,6 +389,8 @@ If Walter wants to ship these in batches:
 - #20 image loader audit
 - #23 consolidate scroll-to-top logic *(new — found in Batch 1)*
 - #24 delete hash-scroll polling once #7 lands *(new — found in Batch 1)*
+- #25 loading.tsx for /timeline route *(new — found in Batch 2 smoke)*
+- #26 sliding active-nav indicator (polish, not bug) *(new — found in Batch 2 smoke)*
 
 ---
 
