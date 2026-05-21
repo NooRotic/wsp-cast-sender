@@ -7,7 +7,7 @@ export const dynamic = 'force-static';
 
 // Next.js Metadata API conventions — these constants populate alt + size + type
 // in the generated OG meta tags automatically.
-export const alt = 'Walter S. Pollard Jr. — Senior Software Engineer';
+export const alt = 'Walter S. Pollard Jr. | Senior Software Engineer';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
@@ -63,7 +63,7 @@ export default function OpenGraphImage() {
               maxWidth: 1000,
             }}
           >
-            25+ years building for the web. 13 years on Comcast Xfinity Stream — streaming video, Chromecast, and now AI-native development.
+            25+ years building for the web. 13 years on Comcast Xfinity Stream: streaming video, Chromecast, and now AI-native development.
           </div>
         </div>
 
