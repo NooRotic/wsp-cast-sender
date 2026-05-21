@@ -101,6 +101,25 @@ export default function HeroSection() {
     // Reduced-motion users: skip the GSAP timeline entirely, show final state,
     // and report the animation as complete so the rest of the page unblocks.
     if (prefersReducedMotion) {
+      // Strip any GSAP-set inline styles in case the timeline already
+      // started during the initial render (race between the hook's mount
+      // setState and the 5ms initTimer below). Without clearProps the
+      // title gets stuck at scale: 0.1 from the timeline's fromTo
+      // from-state, rendering tiny instead of the CSS-defined text-6xl.
+      const animatedEls = [
+        titleRef.current,
+        subtitleRef.current,
+        subtitle2Ref.current,
+        subtitle3Ref.current,
+        skillsRef.current,
+        expertiseHeaderRef.current,
+        featuredWorkHeaderRef.current,
+      ].filter(Boolean);
+      if (timelineRef.current) {
+        timelineRef.current.kill();
+        timelineRef.current = null;
+      }
+      gsap.set(animatedEls, { clearProps: 'all' });
       showContentImmediately();
       setHeroAnimationsComplete(true);
       return () => window.removeEventListener('scroll', handleScroll);
