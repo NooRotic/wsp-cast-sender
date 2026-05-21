@@ -72,22 +72,22 @@ export default function NowPage() {
           </h2>
           <ul className="text-gray-200 space-y-3" style={{ listStyle: 'none', padding: 0 }}>
             <li>
-              <strong className="text-white">walter.pollardjr.com</strong> —
+              <strong className="text-white">walter.pollardjr.com</strong>:
               this site. Next.js 15 with a static export to IONOS, doubles
               as a Chromecast sender for the companion receiver app.
             </li>
             <li>
-              <strong className="text-white">JobTrackr</strong> — a
+              <strong className="text-white">JobTrackr</strong>: a
               SvelteKit 5 dashboard I built to keep the application
               pipeline coherent across listings, drafts, and outreach.
             </li>
             <li>
-              <strong className="text-white">RipTheAI</strong> — a Twitch
+              <strong className="text-white">RipTheAI</strong>: a Twitch
               chatbot with dual AI personalities and contextual response
               routing. Side project; learning ground for agentic patterns.
             </li>
             <li>
-              <strong className="text-white">Daily agentic workflows</strong> —
+              <strong className="text-white">Daily agentic workflows</strong>:
               Claude Code as primary editor, chaining sub-agents for
               research, build, and review across these projects.
             </li>
@@ -122,7 +122,7 @@ export default function NowPage() {
           <p>
             Last edited{' '}
             <time dateTime={LAST_UPDATED}>{LAST_UPDATED}</time>. If
-            something here looks out of date, that&apos;s on me — ping me
+            something here looks out of date, that&apos;s on me. Ping me
             and I&apos;ll fix it.
           </p>
         </footer>
