@@ -1,5 +1,10 @@
 import type { MetadataRoute } from 'next';
 
+// Required by `output: 'export'` — route handlers must explicitly opt into
+// static rendering since the default is dynamic (runtime). Without this, the
+// production build fails with "export const dynamic = 'force-static' not configured".
+export const dynamic = 'force-static';
+
 const BASE = process.env.NEXT_PUBLIC_BASE_URL || 'https://walter.pollardjr.com';
 
 export default function sitemap(): MetadataRoute.Sitemap {
