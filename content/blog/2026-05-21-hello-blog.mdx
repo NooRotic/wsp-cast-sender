@@ -1,0 +1,47 @@
+---
+title: "Why I'm finally writing this down"
+description: "Twenty-five years of war stories from streaming video, Chromecast, and the AI-native dev loop. Notes from the years I have not been writing them."
+date: "2026-05-21"
+tags: ["meta"]
+draft: false
+---
+
+I have been building for the web since 1999. Most of that time was at Comcast, on the video player team behind Xfinity Stream. I spent thirteen years there as the SME on two flagship products: the Xfinity desktop player and the Xfinity Stream Chromecast app. Production stack was Google Polymer and Lit Element. Concurrent viewers in the millions. The kind of system where every retry strategy gets argued over for weeks because the cost of getting it wrong is measured in pages to oncall.
+
+For most of those years, I did not write any of it down.
+
+What changed: AI-native development. The prompt-generate-review-iterate days are very much numbered, and the parts that will outlast that pattern are the parts I have been doing for years without naming. Context management. Subagent chaining. Reusable skills. Public-asset leverage. Worth writing those down before someone else does it badly.
+
+## What I want to write about
+
+The two systems I know best are Chromecast CAF and large streaming video pipelines. Both areas have shallow public documentation. The Google docs cover the happy path. They do not cover the heartbeat pattern that took me a year to get right, or the tradeoffs between DAI and SSAI under realistic load.
+
+A short list of what I plan to cover:
+
+- The Chromecast CAF heartbeat pattern, end to end
+- The in-player debug tooling I built that around 100 engineers at Comcast eventually used
+- Practical agentic workflows in Claude Code, run across multiple projects at once
+- The Polymer-to-React migration story (mine, and others')
+
+## A small example, to prove the platform works
+
+Here is what an acknowledged Cast message looks like in the sender app this blog is part of:
+
+```typescript
+const message = {
+  type: 'PORTFOLIO_DATA',
+  payload: { projects, skills, contact },
+  ackId: crypto.randomUUID(),
+  timestamp: Date.now(),
+};
+
+session.sendMessage(NAMESPACE, message);
+```
+
+Nothing radical. The interesting part is what happens when the ack never comes back, which is the topic of a future post.
+
+## A note on cadence
+
+I will write when I have something genuinely new to say. No schedule promises. Each post will be findable here at `/blog`, in the [RSS feed](/feed.xml), and on the [`/now`](/now) page when one is fresh.
+
+If something I write helps you debug your own streaming pipeline or unstick an agentic workflow, that is what success looks like.
