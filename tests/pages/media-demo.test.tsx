@@ -177,10 +177,7 @@ describe('Media Demo Page', () => {
     expect(main).toHaveClass('relative', 'z-10', 'pt-20', 'pb-12')
   })
 
-  it('renders navigation component', () => {
-    render(<MediaDemoPage />)
-    expect(screen.getByTestId('navigation')).toBeInTheDocument()
-  })
+  // Navigation moved to app/layout.tsx — not in this page-isolation render.
 
   it('renders particle background', () => {
     render(<MediaDemoPage />)
