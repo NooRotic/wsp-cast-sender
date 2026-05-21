@@ -2,7 +2,6 @@
 
 import { useEffect, useState, Suspense } from 'react';
 import dynamic from 'next/dynamic';
-import Navigation from '@/components/Navigation';
 import TimelineCallout from '@/components/TimelineCallout';
 import { useAnimation } from '@/contexts/AnimationContext';
 
@@ -96,10 +95,6 @@ export default function Home() {
           <google-cast-launcher className="w-full h-full"></google-cast-launcher>
         </div>
       )}
-      {hasMounted && (
-        <Navigation />
-      )}
-
       {/* Hero section — always visible, owns the intro animation */}
       <section id="home">
         <HeroSection />

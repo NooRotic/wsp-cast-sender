@@ -11,7 +11,6 @@ import dynamic from 'next/dynamic';
 import UnifiedPlayer from '@/components/UnifiedPlayer';
 import VideoLibrary from '@/components/VideoLibrary';
 const ParticleBackground = dynamic(() => import('@/components/ParticleBackground'), { ssr: false, loading: () => null });
-import Navigation from '@/components/Navigation';
 import { useCast } from '@/contexts/CastContext';
 import { parseM3UChunked, convertM3UToVideos } from '@/lib/m3uParser';
 import { getM3UParserWorker, terminateM3UParserWorker, M3UParserWorkerManager } from '@/lib/m3uParserWorker';
@@ -781,7 +780,6 @@ export default function MediaDemoPage() {
   {/* Top group category links moved into Media Filter Controls */}
   <div className="min-h-screen relative">
         <ParticleBackground />
-        <Navigation />
 
         <div className="max-w-7xl mx-auto px-4">
           {/* Header Section */}
