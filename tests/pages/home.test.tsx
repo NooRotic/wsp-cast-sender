@@ -133,13 +133,9 @@ describe('Home Page', () => {
     expect(screen.getByTestId('contact-section')).toBeInTheDocument()
   })
 
-  it('renders navigation component', async () => {
-    render(<Home />)
-    
-    await waitFor(() => {
-      expect(screen.getByTestId('navigation')).toBeInTheDocument()
-    })
-  })
+  // Navigation moved to app/layout.tsx, so it's not present when
+  // <Home /> is rendered in isolation. Test moved out — see layout tests
+  // when those exist; for now, in-browser smoke verifies the nav.
 
   it('renders cast connect button', () => {
     render(<Home />)
@@ -148,13 +144,16 @@ describe('Home Page', () => {
 
   it('renders particle background after mount', async () => {
     render(<Home />)
-    
-    // Wait for dynamic imports to load - ParticleBackground is lazy loaded
+
+    // Wait for dynamic imports to load — contact-section is one of the
+    // dynamic-imported sections, so its presence signals the lazy-load
+    // chunks have hydrated. (Previously used the layout-level navigation
+    // as proxy, but nav now lives in app/layout.tsx and is not in this
+    // render tree.)
     await waitFor(() => {
-      // Check that the component is rendered by looking for navigation first
-      expect(screen.getByTestId('navigation')).toBeInTheDocument()
+      expect(screen.getByTestId('contact-section')).toBeInTheDocument()
     }, { timeout: 3000 })
-    
+
     // Since ParticleBackground is dynamically loaded, it might not have a testid
     // We can test that the main structure is there instead
     expect(screen.getByRole('main')).toBeInTheDocument()
@@ -184,7 +183,8 @@ describe('Home Page', () => {
   it('has accessibility structure', () => {
     render(<Home />)
     expect(screen.getByRole('main')).toBeInTheDocument()
-    expect(screen.getByRole('navigation')).toBeInTheDocument()
+    // Navigation moved to app/layout.tsx — assertion dropped from this
+    // page-isolation test; in-browser smoke verifies the nav landmark.
     expect(screen.getByRole('button', { name: /cast connect/i })).toBeInTheDocument()
   })
 })
