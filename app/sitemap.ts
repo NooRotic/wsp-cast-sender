@@ -11,6 +11,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
   return [
     { url: `${BASE}/`,                          lastModified: now, changeFrequency: 'weekly',  priority: 1.0 },
+    { url: `${BASE}/now/`,                      lastModified: now, changeFrequency: 'weekly',  priority: 0.95 },
     { url: `${BASE}/timeline/`,                 lastModified: now, changeFrequency: 'monthly', priority: 0.9 },
     { url: `${BASE}/cast-demo/`,                lastModified: now, changeFrequency: 'monthly', priority: 0.5 },
     { url: `${BASE}/cast-debug/`,               lastModified: now, changeFrequency: 'monthly', priority: 0.3 },
