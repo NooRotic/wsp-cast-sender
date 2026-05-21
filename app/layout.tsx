@@ -23,20 +23,15 @@ export const metadata: Metadata = {
     locale: 'en_US',
     url: '/',
     siteName: 'walter.pollardjr.com',
-    images: [
-      {
-        url: '/og/default.png',
-        width: 1200,
-        height: 630,
-        alt: 'Walter S. Pollard Jr. — Senior Software Engineer',
-      },
-    ],
+    // images intentionally omitted — Next.js auto-populates from
+    // app/opengraph-image.tsx via the file-based metadata convention.
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Walter S. Pollard Jr. | Senior Software Engineer',
     description: 'Senior software engineer specializing in JavaScript and streaming video technologies.',
-    images: ['/og/default.png'],
+    // images intentionally omitted — Twitter falls back to og:image when
+    // twitter:image isn't set, so the same generated PNG serves both.
   },
   robots: {
     index: true,

@@ -1,0 +1,9 @@
+# IONOS shared hosting (Apache) — MIME type overrides for extension-less files.
+# Next.js's app/opengraph-image.tsx outputs out/opengraph-image with no .png
+# extension, so without this directive Apache defaults to text/plain and
+# LinkedIn/Twitter/Slack reject the file as a non-image when fetching the
+# OG URL. Forcing image/png makes share previews work.
+
+<Files "opengraph-image">
+  ForceType image/png
+</Files>
