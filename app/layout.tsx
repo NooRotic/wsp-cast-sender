@@ -7,6 +7,7 @@ import ScrollToTop from '@/components/ScrollToTop';
 import KeyboardShortcutHandler from '@/components/KeyboardShortcutHandler';
 import MediaPanel from '@/components/MediaPanel';
 import ClientScript from '@/components/ClientScript';
+import Navigation from '@/components/Navigation';
 
 const inter = Inter({ subsets: ['latin'], display: 'swap' });
 
@@ -103,6 +104,7 @@ export default function RootLayout({
         <ClientAnimationProvider>
           <CastProvider>
             <KeyboardShortcutHandler />
+            <Navigation />
             <div className="portfolio-bg">
               {children}
             </div>

@@ -5,7 +5,6 @@ import dynamic from 'next/dynamic';
 import { useRouter } from "next/navigation";
 import { useCast } from "@/contexts/CastContext";
 const ParticleBackground = dynamic(() => import('@/components/ParticleBackground'), { ssr: false, loading: () => null });
-import Navigation from "@/components/Navigation";
 import ContactSection from "@/components/ContactSection";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -439,7 +438,6 @@ export default function CastDemoPage() {
     <main className="relative z-10 pt-20 pb-12">
       <div className="min-h-screen relative">
         <ParticleBackground />
-        <Navigation />
 
         <div className="max-w-6xl mx-auto px-4">
           {/* Hero Section */}
