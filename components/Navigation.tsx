@@ -16,6 +16,7 @@ export default function Navigation() {
   const [scrolled, setScrolled] = useState(false);
   const [isDemoDropdownOpen, setIsDemoDropdownOpen] = useState(false);
   const [shouldShowNav, setShouldShowNav] = useState(false);
+  const [currentHash, setCurrentHash] = useState('');
   const dropdownRef = useRef<HTMLDivElement>(null);
   const dropdownToggleRef = useRef<HTMLButtonElement>(null);
 
@@ -23,6 +24,29 @@ export default function Navigation() {
   const isTimelinePath = pathname === '/timeline' || pathname === '/timeline/';
   const isCastDemoPath = pathname === '/cast-demo' || pathname === '/cast-demo/';
   const isMediaDemoPath = pathname === '/media-demo' || pathname === '/media-demo/';
+
+  // Active section indicator for hash-based nav items on the home page.
+  // Tracks window.location.hash so clicking Projects/Skills/Contact (or
+  // hitting back-button across anchors) shifts the aria-current underline
+  // off Home. Re-runs on pathname change so a cross-route nav into /#contact
+  // picks up the right active item on mount. Note: pushState (used by
+  // scrollToSection) doesn't fire hashchange, so scrollToSection manually
+  // updates the state below.
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const updateHash = () => setCurrentHash(window.location.hash || '');
+    updateHash();
+    window.addEventListener('hashchange', updateHash);
+    window.addEventListener('popstate', updateHash);
+    return () => {
+      window.removeEventListener('hashchange', updateHash);
+      window.removeEventListener('popstate', updateHash);
+    };
+  }, [pathname]);
+
+  // Treat empty hash as Home so the underline lives on a sensible default
+  // when the page first loads at "/" without any fragment.
+  const activeHash = currentHash || '#home';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -80,6 +104,8 @@ export default function Navigation() {
       // hash so the address bar reflects where the user is on the page.
       if (href.startsWith('#') && typeof window !== 'undefined') {
         window.history.pushState(null, '', href);
+        // pushState doesn't fire hashchange — drive aria-current manually.
+        setCurrentHash(href);
       }
     } else {
       router.push('/' + href);
@@ -112,7 +138,7 @@ export default function Navigation() {
                 key={item.label}
                 onClick={() => scrollToSection(item.href)}
                 className="nav-menu-item"
-                aria-current={item.href === '#home' && isHomePath ? 'page' : undefined}
+                aria-current={isHomePath && item.href === activeHash ? 'page' : undefined}
               >
                 {item.label}
               </button>
@@ -206,7 +232,7 @@ export default function Navigation() {
                   key={item.label}
                   onClick={() => scrollToSection(item.href)}
                   className="nav-mobile-menu-item"
-                  aria-current={item.href === '#home' && isHomePath ? 'page' : undefined}
+                  aria-current={isHomePath && item.href === activeHash ? 'page' : undefined}
                 >
                   {item.label}
                 </button>
