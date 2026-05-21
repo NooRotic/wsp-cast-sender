@@ -22,6 +22,7 @@ export default function Navigation() {
 
   const isHomePath = pathname === '/' || pathname === '';
   const isNowPath = pathname === '/now' || pathname === '/now/';
+  const isBlogPath = pathname === '/blog' || pathname === '/blog/' || pathname.startsWith('/blog/');
   const isTimelinePath = pathname === '/timeline' || pathname === '/timeline/';
   const isCastDemoPath = pathname === '/cast-demo' || pathname === '/cast-demo/';
   const isMediaDemoPath = pathname === '/media-demo' || pathname === '/media-demo/';
@@ -154,6 +155,14 @@ export default function Navigation() {
             </Link>
 
             <Link
+              href="/blog"
+              className="nav-menu-item"
+              aria-current={isBlogPath ? 'page' : undefined}
+            >
+              Blog
+            </Link>
+
+            <Link
               href="/timeline"
               className="nav-menu-item"
               aria-current={isTimelinePath ? 'page' : undefined}
@@ -254,6 +263,15 @@ export default function Navigation() {
                 className="block px-3 py-2 text-sm text-gray-300 hover:text-[#39FF14] hover:bg-[#39FF14]/10 transition-colors rounded"
               >
                 Now
+              </Link>
+
+              <Link
+                href="/blog"
+                onClick={() => setIsOpen(false)}
+                aria-current={isBlogPath ? 'page' : undefined}
+                className="block px-3 py-2 text-sm text-gray-300 hover:text-[#39FF14] hover:bg-[#39FF14]/10 transition-colors rounded"
+              >
+                Blog
               </Link>
 
               <Link

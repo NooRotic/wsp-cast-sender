@@ -45,6 +45,11 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
+  alternates: {
+    types: {
+      'application/rss+xml': '/feed.xml',
+    },
+  },
 };
 
 export const viewport = {
@@ -80,7 +85,7 @@ export default function RootLayout({
               Walter S. Pollard Jr.
             </h1>
             <p style={{ marginBottom: '1rem' }}>
-              Senior Software Engineer with 25+ years building for the web —
+              Senior Software Engineer with 25+ years building for the web,
               13 years at Comcast on the Xfinity Stream video player. This
               portfolio uses JavaScript for its interactive features.
             </p>
