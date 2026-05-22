@@ -1,0 +1,91 @@
+---
+title: "260 stars, 6 nebulae, zero libraries"
+description: "What a hand-coded canvas starfield actually costs in code, frame budget, and tuning hours. The starfield behind the /timeline page broken down."
+date: "2026-05-22"
+tags: ["canvas", "animation", "performance"]
+draft: false
+---
+
+The background on my `/timeline` page is a `<canvas>` element with a `requestAnimationFrame` loop. No library, no video, no GIF. 260 stars, 18 brighter hero stars, 6 nebulae. Everything drifts on its own path. The nebulae breathe at slightly different rates so they never pulse in unison.
+
+I spent more time tuning velocities and alpha values than I spent building the Chromecast integration on the rest of the site. That part surprised me, so I figured it was worth writing about.
+
+## The data shape
+
+Each star is a tiny object:
+
+```typescript
+type Star = {
+  nx: number;       // normalized X position 0..1
+  ny: number;       // normalized Y position 0..1
+  vx: number;       // drift velocity per frame
+  vy: number;
+  r: number;        // radius in px
+  alpha: number;    // base opacity
+  parallax: number; // scroll-depth coefficient
+  twinkle: number;  // phase offset for sine-based twinkle
+};
+```
+
+Normalized positions matter. Resizing the window doesn't require rescaling 260 sets of coordinates: I multiply `nx * canvas.width` per frame at draw time. The same code handles a 13-inch laptop and a 4K monitor without a single conditional.
+
+The hero stars are the same shape with bigger radii, slower velocities, and a glow halo. The nebulae are radial gradients on the same drift+pulse loop:
+
+```typescript
+const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+grad.addColorStop(0, `hsla(${b.hue}, 55%, 38%, ${b.alpha * pulse})`);
+grad.addColorStop(0.5, `hsla(${b.hue}, 45%, 25%, ${b.alpha * 0.4})`);
+grad.addColorStop(1, 'transparent');
+```
+
+That third color stop at `transparent` is what makes the nebula edges feel diffuse instead of cut off. Without it, you get a hard circle that breaks the illusion immediately.
+
+## What scroll parallax buys you
+
+The illusion of depth on a flat 2D canvas comes from one line:
+
+```typescript
+const scrollOffset = (scrollY * s.parallax * 0.00018) % 1;
+const drawY = ((s.ny - scrollOffset + 1) % 1) * H;
+```
+
+Each star has a different `parallax` value, between 0.04 and 0.26 for the regular stars. As the page scrolls, the offset shifts each star's drawn position by a different amount. Stars with higher parallax appear to move faster. The brain interprets that as closer. The hero stars use a much smaller range (0.01 to 0.07) so they feel further away.
+
+The `% 1` wrap-around is the trick that keeps the field continuous. When a star drifts off the top, it reappears at the bottom. The math handles that for free because the position is normalized.
+
+## The frame budget
+
+The full draw loop runs in under a millisecond on a mid-tier laptop. Each frame:
+
+- Clear the canvas
+- For each nebula (6 of them): update position, compute pulse, draw a radial gradient
+- For each regular star (260): update position, compute scroll offset, compute twinkle alpha, draw a filled circle
+- For each hero star (18): same as above plus a glow halo gradient
+
+Total draw calls per frame: 6 + 260 + 18 = 284 fills. At 60 fps that's about 17,000 draws per second. Canvas 2D handles this without sweating. The performance cost is essentially zero.
+
+GPU utilization stays low because there are no textures, no shaders, no compositing surfaces. It is the same kind of work the browser does to paint a normal scrollable page, just with more shapes.
+
+## What took time
+
+Not the code. The numbers.
+
+How fast should the stars drift? Faster than `0.0001` and it looks like a screensaver. Slower than `0.00005` and it looks frozen. The settled value is `0.00011`, and the hero stars drift at `0.00004`. I picked those after watching the page for ten minutes and adjusting until I stopped noticing the motion.
+
+How bright should the nebulae be? Too saturated and they fight the text content for attention. Too muted and they disappear. The settled `alpha` values are between `0.028` and `0.052`. Single percentage points matter.
+
+How fast should the twinkle phase advance? `frame * 0.016` for regular stars, `frame * 0.009` for hero stars. Slower phase on the brighter ones because their twinkle is more visible.
+
+None of this is in the documentation for the canvas API. It is taste, and taste compounds over many small decisions.
+
+## What I would not change
+
+Skipping a library was the right call. The canvas API is small, well documented, and stable. Pulling in something like PixiJS would have added 60+ KB to the bundle and replaced a 200-line file with a configuration file pointing at a different rendering engine that I would have to learn anyway.
+
+I also kept the whole field as a single React component that mounts the canvas, runs the loop in a `useEffect`, and tears it down with `cancelAnimationFrame` on unmount. No state, no re-renders. The component is just a host for the imperative animation. That separation is the part I am happiest with.
+
+## What is next
+
+I want to add a slow particle layer underneath the timeline nodes, so when you scroll through a year there is something quiet happening even when you stop. Same data shape, different draw call. Should add another 0.05 ms per frame.
+
+You can see the current version at [`/timeline`](/timeline). The math is in `components/TimelineView.tsx`, `StarfieldCanvas` function.
