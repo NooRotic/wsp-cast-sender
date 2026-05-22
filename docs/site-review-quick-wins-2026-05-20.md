@@ -358,6 +358,30 @@ Discovered during PR #11 smoke testing.
 
 ## 🆕 Found during PR #13 CI run (2026-05-21)
 
+### 28. GSAP `clearProps` is unreliable on killed timelines — defensive pattern needed everywhere
+
+**Files:** `components/HeroSection.tsx` (already uses the defensive pattern); audit `components/TimelineView.tsx`, `components/ContactSection.tsx`, `components/ProjectsSection.tsx`, `components/SkillsShowcase.tsx` for the same exposure
+
+GSAP 3.13 writes BOTH the legacy `transform` shorthand AND the modern individual transform properties (`scale`, `translate`, `rotate`) for browser compatibility. Calling `gsap.set(els, { clearProps: 'all' })` after `timeline.kill()` was observed (2026-05-22) to clear the modern properties (set to `none`) but **leave the legacy `transform: translate(...) scale(0.1)` declaration in place**. Since CSS resolves rendered transform from the legacy property when both are present, the element renders at the partial-animation value despite `scale: none` being correct.
+
+The defensive pattern (implemented in `HeroSection.tsx`'s `showContentImmediately`):
+
+```typescript
+gsap.set(animatedEls, { clearProps: 'all' });
+// Belt-and-suspenders: GSAP can leave the legacy transform behind on
+// killed-mid-animation timelines. Force-clear via DOM.
+animatedEls.forEach((el) => {
+  el.style.transform = '';
+  el.style.translate = '';
+  el.style.rotate = '';
+  el.style.scale = '';
+});
+```
+
+**Fix:** Audit every place in this codebase that calls `timeline.kill()` or `tween.kill()` followed by `clearProps`. If the same kill-then-clear pattern exists, add the DOM-level cleanup. Could be wrapped in a `lib/gsap-utils.ts` helper like `clearGsapTransforms(els)` so the pattern is reusable and discoverable.
+
+Discovered while debugging Walter's cross-route nav title-tiny bug. Root cause took several rounds to find because `clearProps` reports success and the modern transform properties look correct in DevTools at first glance.
+
 ### 27. Navigation has no dedicated tests — moved to layout, test home is now layout-level
 
 **Files:** `tests/pages/home.test.tsx`, `tests/pages/cast-demo.test.tsx`, `tests/pages/media-demo.test.tsx` (existing); future `tests/layout/Navigation.test.tsx`
@@ -414,6 +438,7 @@ If Walter wants to ship these in batches:
 - #25 loading.tsx for /timeline route *(new — found in Batch 2 smoke)*
 - #26 sliding active-nav indicator (polish, not bug) *(new — found in Batch 2 smoke)*
 - #27 Navigation unit tests at layout level *(new — found in PR #13 CI)*
+- #28 GSAP clearProps defensive pattern across remaining GSAP-using components *(new — found in PR #13 smoke)*
 
 ---
 
