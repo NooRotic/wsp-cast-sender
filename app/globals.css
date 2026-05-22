@@ -609,14 +609,18 @@ body {
   color: var(--color-brand-primary);
 }
 
-/* Hero title and subtitle depth effects */
+/* Hero title and subtitle depth effects.
+   No `transition: all` here — GSAP drives all animations on these
+   elements via inline-style updates per requestAnimationFrame. A
+   CSS transition would interpolate the inline-style changes that
+   GSAP and showContentImmediately's clearProps reset perform,
+   leaving the title stuck at a partial scale when the timeline
+   gets killed mid-animation (Walter's 2026-05-22 smoke test). */
 .hero-title {
-  transition: all 1.4s cubic-bezier(0.4, 0, 0.2, 1);
   transform-style: preserve-3d;
 }
 
 .hero-subtitle {
-  transition: all 1.4s cubic-bezier(0.4, 0, 0.2, 1);
   transform-style: preserve-3d;
 }
 
