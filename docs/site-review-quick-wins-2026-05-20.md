@@ -356,6 +356,28 @@ Discovered during PR #11 smoke testing.
 
 ---
 
+## 🆕 Found during PR #13 CI run (2026-05-21)
+
+### 27. Navigation has no dedicated tests — moved to layout, test home is now layout-level
+
+**Files:** `tests/pages/home.test.tsx`, `tests/pages/cast-demo.test.tsx`, `tests/pages/media-demo.test.tsx` (existing); future `tests/layout/Navigation.test.tsx`
+
+When Navigation lived in each page, the page-isolation tests in `tests/pages/*.test.tsx` naturally exercised it. PR #12 moved Nav into `app/layout.tsx`; the three page tests that asserted `getByRole/TestId('navigation')` started failing on CI. The fix (PR #13's test-update commit) removed those assertions, but **Navigation now has no test coverage at all** — no dedicated test file exists for it, and no page test reaches into it.
+
+Surfaces that ship today without unit-test coverage:
+
+- `aria-current="page"` on Home (hash-driven), Now, Blog, Timeline, demo links
+- `currentHash` state tracking via `hashchange` / `popstate` listeners
+- `pushState` synchronization with active-section underline
+- Demos dropdown a11y: `aria-haspopup`, `aria-expanded`, `aria-controls`, ESC key closes + returns focus to toggle
+- Mobile drawer open/close, scroll-detection nav fade-in
+
+**Fix:** Add `tests/layout/Navigation.test.tsx` rendering `<Navigation />` directly with `AnimationProvider` and a `usePathname` mock. Cover the bullets above. Small file, no major refactor needed.
+
+Discovered when PR #12's nav-in-layout commit broke page tests in PR #13's CI run.
+
+---
+
 ## Recommended fix order
 
 If Walter wants to ship these in batches:
@@ -391,6 +413,7 @@ If Walter wants to ship these in batches:
 - #24 delete hash-scroll polling once #7 lands *(new — found in Batch 1)*
 - #25 loading.tsx for /timeline route *(new — found in Batch 2 smoke)*
 - #26 sliding active-nav indicator (polish, not bug) *(new — found in Batch 2 smoke)*
+- #27 Navigation unit tests at layout level *(new — found in PR #13 CI)*
 
 ---
 
