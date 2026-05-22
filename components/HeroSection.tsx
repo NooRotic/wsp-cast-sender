@@ -67,6 +67,24 @@ export default function HeroSection() {
     };
 
     const showContentImmediately = () => {
+      // Strip any inline transforms GSAP set during a partial animation
+      // (e.g., when the timeline gets killed mid-fromTo by a nav-click
+      // scroll-to-section, or by the reduce-motion late-detection path).
+      // Without this the title stays stuck at scale: 0.1 from the
+      // timeline's from-state, rendering microscopic instead of text-6xl.
+      const animatedEls = [
+        titleRef.current,
+        subtitleRef.current,
+        subtitle2Ref.current,
+        subtitle3Ref.current,
+        skillsRef.current,
+        expertiseHeaderRef.current,
+        featuredWorkHeaderRef.current,
+      ].filter(Boolean);
+      if (animatedEls.length > 0) {
+        gsap.set(animatedEls, { clearProps: 'all' });
+      }
+
       // Show all content immediately without animation
       if (titleRef.current) {
         titleRef.current.textContent = developerName;
@@ -98,28 +116,17 @@ export default function HeroSection() {
 
     window.addEventListener('scroll', handleScroll, { passive: true });
 
-    // Reduced-motion users: skip the GSAP timeline entirely, show final state,
-    // and report the animation as complete so the rest of the page unblocks.
+    // Reduced-motion users: skip the GSAP timeline entirely, show final
+    // state, and report the animation as complete so the rest of the page
+    // unblocks. showContentImmediately handles the clearProps reset
+    // internally so the title doesn't stay stuck at scale: 0.1 if the
+    // timeline already started during the initial render (race between
+    // the hook's mount setState and the 5ms initTimer below).
     if (prefersReducedMotion) {
-      // Strip any GSAP-set inline styles in case the timeline already
-      // started during the initial render (race between the hook's mount
-      // setState and the 5ms initTimer below). Without clearProps the
-      // title gets stuck at scale: 0.1 from the timeline's fromTo
-      // from-state, rendering tiny instead of the CSS-defined text-6xl.
-      const animatedEls = [
-        titleRef.current,
-        subtitleRef.current,
-        subtitle2Ref.current,
-        subtitle3Ref.current,
-        skillsRef.current,
-        expertiseHeaderRef.current,
-        featuredWorkHeaderRef.current,
-      ].filter(Boolean);
       if (timelineRef.current) {
         timelineRef.current.kill();
         timelineRef.current = null;
       }
-      gsap.set(animatedEls, { clearProps: 'all' });
       showContentImmediately();
       setHeroAnimationsComplete(true);
       return () => window.removeEventListener('scroll', handleScroll);
