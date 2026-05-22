@@ -80,10 +80,27 @@ export default function HeroSection() {
         skillsRef.current,
         expertiseHeaderRef.current,
         featuredWorkHeaderRef.current,
-      ].filter(Boolean);
+      ].filter((el): el is HTMLElement => el !== null);
+
       if (animatedEls.length > 0) {
         gsap.set(animatedEls, { clearProps: 'all' });
       }
+
+      // Belt-and-suspenders: GSAP 3.13's clearProps clears the MODERN
+      // individual transform properties (scale/translate/rotate -> none)
+      // but on killed-mid-animation timelines was observed leaving the
+      // LEGACY `transform: translate(...) scale(0.1)` declaration in
+      // place (confirmed via DevTools dump 2026-05-22). CSS uses the
+      // legacy `transform` value when both are present, so the title
+      // rendered at scale 0.1 despite scale being set to none. Clear
+      // the inline transform AND the modern individual properties via
+      // DOM so CSS-defined identity sizing reliably takes effect.
+      animatedEls.forEach((el) => {
+        el.style.transform = '';
+        el.style.translate = '';
+        el.style.rotate = '';
+        el.style.scale = '';
+      });
 
       // Show all content immediately without animation
       if (titleRef.current) {
