@@ -80,7 +80,7 @@ export default function HeroSection() {
         skillsRef.current,
         expertiseHeaderRef.current,
         featuredWorkHeaderRef.current,
-      ].filter((el): el is HTMLElement => el !== null);
+      ].filter((el): el is NonNullable<typeof el> => el !== null);
 
       if (animatedEls.length > 0) {
         gsap.set(animatedEls, { clearProps: 'all' });
