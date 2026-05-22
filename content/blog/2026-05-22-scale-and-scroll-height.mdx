@@ -1,0 +1,80 @@
+---
+title: "Why CSS transform: scale() lies about your scroll height"
+description: "Naive zoom breaks the scroll bar. The fix is one extra wrapper div and a height calculation. The story of finding it."
+date: "2026-05-22"
+tags: ["css", "gsap", "layout"]
+draft: false
+---
+
+I built a zoom control for the `/timeline` page so visitors could compress 25 years of history into a single viewport. Naive implementation: bind a slider to `transform: scale(zoomLevel)` on the timeline container. Live demo, looks great at 100%. Drop the zoom to 50% and the visual content shrinks. So far so good.
+
+Then I tried to scroll.
+
+The scroll bar still treated the page as if the content were full size. The viewport showed a half-height timeline floating in the top half of an empty page. The bottom half was just whitespace below the visually scaled content, but the DOM still thought it owned that space.
+
+That is what `transform: scale()` does. It does not change layout.
+
+## The visual / layout split
+
+CSS transforms are a paint-time operation. They affect what the GPU draws, not what the layout engine measures. The element keeps its original geometry for the purposes of scroll height, sibling layout, and any parent that derives its size from this child. When you scale to 0.5, you get a thing rendered at half size occupying its full original bounding box.
+
+This is by design. Transforms are cheap because they skip the layout pass. The browser does not need to re-run layout when you tween a scale or a translate, which is why GSAP can run sixty animations on the same page without dropping a frame. The tradeoff is that scaled content does not change the page's flow.
+
+For most animations that is fine. For a zoom control, it is the wrong default.
+
+## The height-keeper pattern
+
+The fix is one extra div. The outer one tracks the layout. The inner one gets the transform.
+
+```typescript
+<div
+  ref={heightKeeperRef}
+  style={{ height: naturalHeight * timelineZoom }}
+>
+  <div
+    ref={timelineScaleRef}
+    style={{
+      transform: `scale(${timelineZoom})`,
+      transformOrigin: 'top center',
+    }}
+  >
+    {/* the timeline content */}
+  </div>
+</div>
+```
+
+Outer div: a plain block element whose `height` is set explicitly in inline style to `naturalHeight * timelineZoom`. That value is what the browser uses for scroll height calculations. Shrink it, scroll bar shrinks.
+
+Inner div: the visual scale via CSS transform. `transformOrigin: 'top center'` keeps the content anchored so it scales toward the top edge rather than collapsing toward the geometric center.
+
+`naturalHeight` is measured once at scale 1, then cached. The outer div height becomes a function of that natural height and the current zoom value. When the user changes the zoom, only the inline `height` and the inline `transform` need to update. No layout thrash, no relayout pass.
+
+## Measuring naturalHeight correctly
+
+Getting `naturalHeight` right is its own small adventure. You want the height the content would have at scale 1, regardless of the current zoom. The cleanest way is to set scale 1, read `scrollHeight`, then restore the previous scale:
+
+```typescript
+useLayoutEffect(() => {
+  const el = timelineScaleRef.current;
+  if (!el) return;
+  gsap.set(el, { scale: 1, immediateRender: true });
+  setNaturalHeight(el.scrollHeight);
+  gsap.set(el, { scale: timelineZoom, immediateRender: true });
+}, [filteredNodes, nodeSpacing]);
+```
+
+`useLayoutEffect` matters here. Reading scroll height inside a regular `useEffect` happens after the browser paints, which means users see a single frame at the wrong scale during a re-measure. Layout effects fire synchronously after DOM mutations but before paint, so the scale-up-and-down measurement happens invisibly.
+
+The deps list includes `filteredNodes` and `nodeSpacing` but deliberately not `timelineZoom`. Including `timelineZoom` would cause the effect to re-run on every zoom step, snap the scale to 1, remeasure, snap back. The user would see a single-frame flicker of full-size content on every drag of the zoom slider. The current zoom level is read inside the effect for the restore-after-measure step, but it does not need to be a dep because the natural height itself only changes when the underlying content layout changes.
+
+## Why I tried the wrong thing first
+
+The wrong way was faster to type and looked plausible. Documentation for `transform: scale` does not emphasize the layout-bypass aspect because for most cases that is the feature. You read the spec, you build a slider, you bind a value, you ship. Then you scroll.
+
+This is a class of bug I see across CSS work, including in my own. The cheap-to-paint primitives leave a footprint somewhere else, and the cost shows up when you cross a boundary. Scale crosses the layout boundary. Position fixed crosses the stacking-context boundary. Filter crosses the compositing boundary. Each one is fine on its own. Each one breaks an adjacent system if you forget the rule.
+
+The way I find these now is the way I should have built the first version: pick the smallest possible test case that mixes the cheap primitive with a system it interacts with, and check the part you did not change to make sure it still works. Build a zoom, then check the scroll bar. Build a fixed element, then check the modal it lives inside. Build a filter, then check what the children look like when they have their own filters.
+
+## The fix landed in the live site
+
+You can see it at [`/timeline`](/timeline). Drag the zoom control at the top of the page. The content shrinks, the page shrinks with it, the scroll bar agrees. The implementation is in `components/TimelineView.tsx`. Three line changes from the broken version. About a day of staring at it before I understood the problem.
