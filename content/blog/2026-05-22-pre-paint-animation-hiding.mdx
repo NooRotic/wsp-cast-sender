@@ -1,0 +1,103 @@
+---
+title: "Pre-paint animation hiding without flicker"
+description: "useEffect runs after paint. If your animation hides an element from there, the user sees the unhidden state for one frame. Here's how to actually hide it."
+date: "2026-05-22"
+tags: ["animation", "react", "css"]
+draft: false
+---
+
+The hero section of this site has a typewriter intro, a glass card that fades up, and a row of skill tiles that staggers in. They are GSAP-driven. The animation needs all of those elements to start invisible, then fade in on cue.
+
+For a long time the first render of the page included a one-frame flash of the final state before the animation took over. Hero name in full size at full opacity, then snap to scale 0.1 and invisible, then animate. Disorienting, especially on a hard refresh.
+
+This post is about the two fixes that solve it: one for the GSAP-driven elements, one for the CSS-animated filter pills further down the page.
+
+## Why useEffect is too late
+
+React useEffect runs after the browser paints. This is by design: the effect's job is to react to the rendered state. The browser does its layout pass, paints to the screen, then calls into the effect queue.
+
+If your effect hides an element, the user sees one rendered frame with the element visible before the hide takes effect. On a fast machine that frame is 16 ms and most people would not consciously register it. On a slower machine, on a hard refresh, on a phone with thermal throttling, it is plainly visible. The interesting thing is that the bug looks exactly the same: a flash of final state, then animation.
+
+```typescript
+useEffect(() => {
+  gsap.set(titleRef.current, { opacity: 0 });
+  // Too late. The title has already painted at opacity 1.
+}, []);
+```
+
+useLayoutEffect runs before paint, which seems like the answer. And it is, for the cases where you can use it. But layout effects also run on every commit, so they have to be cheap. And they do not give you a way to hide something across the gap between server-rendered HTML and the first client render.
+
+For two of those gaps I found two different fixes.
+
+## Inline style for GSAP targets
+
+The cheapest fix is to put `opacity: 0` directly in the JSX as a style prop. The browser applies it during initial paint, before any JavaScript runs.
+
+```tsx
+<div
+  ref={subtitleRef}
+  className="bg-black/40 backdrop-blur-sm border ..."
+  style={{ opacity: 0 }}
+>
+  ...
+</div>
+```
+
+This works because inline styles are part of the static HTML output. The element renders invisible the moment the browser parses it. No flash, no timing race. When GSAP fires later from a useLayoutEffect or useEffect, it overrides the inline opacity on its way through the timeline.
+
+This is the right answer for any element that will be animated by an imperative library. Tailwind classes like `opacity-0` work too, but inline style is more explicit at the call site. When someone reads the JSX, they see "this element starts hidden" without having to jump to a CSS file.
+
+The catch is that GSAP needs to know to clear the inline style at the end. If the animation finishes and the inline `opacity: 0` is still there in the React render, the next commit reapplies it and the element disappears. The fix is one of:
+
+- Use GSAP's `clearProps` in the final tween so the inline style is removed
+- Have the animation set opacity to 1 explicitly at the end, which overrides the inline value
+- Remove the inline style from JSX once an "intro complete" state is set
+
+The middle option is what I do. The final tween's to-state includes `opacity: 1`, and GSAP keeps inline `opacity: 1` on the element from that point forward. The original `opacity: 0` is overwritten and never seen again.
+
+## animation-fill-mode for CSS-driven elements
+
+The hero's filter pills (the year-range chips below the hero text) are a CSS `@keyframes` animation, not GSAP. They cascade in with a stagger via a 2.5-second `animation-delay`. During that delay, they need to be invisible. The naive approach:
+
+```css
+.pill {
+  opacity: 0;
+  animation: pillDrop 0.6s 2.5s ease-out forwards;
+}
+
+@keyframes pillDrop {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: none; }
+}
+```
+
+This actually does flicker on some browsers because the keyframes `from` block is not enforced during the delay. The browser only starts applying keyframe styles when the animation actually starts playing. During the delay window, only the static CSS applies. With `opacity: 0` set statically, you are okay. Without it, you would flash.
+
+The cleaner version uses `animation-fill-mode: backwards`:
+
+```css
+.pill {
+  animation: pillDrop 0.6s 2.5s ease-out backwards;
+}
+
+@keyframes pillDrop {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: none; }
+}
+```
+
+`backwards` tells the browser to apply the `from` state during the delay period, before the animation starts. No need for a separate static `opacity: 0`. The element renders correctly invisible from the first paint and stays invisible until the delay expires, then animates in.
+
+There is no equivalent of this for JavaScript animations, which is why GSAP targets need the inline-style trick. CSS animations get to participate in the initial paint because the browser knows about them. Imperative animations have to ask, and useEffect asks too late.
+
+## The shape of the problem class
+
+These two fixes are different mechanisms for the same problem: "an animation that targets an element needs to control that element's appearance before the animation's runtime is alive." Anything you do to set up the from-state inside a hook runs after the element has already rendered. So the from-state has to live in something that runs earlier than your hook. That something is either:
+
+- A static style attribute, in the HTML the browser parses
+- A static CSS class that participates in the cascade
+- A `@keyframes` rule plus `fill-mode: backwards`, which encodes the from-state in CSS that the browser knows to apply during delay
+
+There is no fourth option. If you find yourself fighting a one-frame flicker on first paint, the answer is one of those three, picked by which mechanism owns the animation. Imperative animation = inline style or class. CSS animation = `fill-mode: backwards`.
+
+I would have saved myself a few hours on this site if I had known that going in.
