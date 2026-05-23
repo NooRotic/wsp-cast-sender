@@ -1,0 +1,75 @@
+---
+title: "Trying to put Claude on a CyberPi, and the WiFi wall I hit"
+description: "The Makeblock CyberPi has a screen, a mic, buttons, and an ESP3200 WiFi module sitting right there. It should have been the perfect housing for a pocket Claude remote. It wasn't."
+date: "2026-05-22"
+tags: ["hardware", "iot", "cyberpi", "makeblock", "claude"]
+draft: true
+---
+
+The Makeblock CyberPi is a handheld microcontroller learning device with a color screen, microphone, buttons, a gyroscope, a speaker, and a built-in WiFi module (the ESP3200). You program it in Python over USB through Makeblock's mBlock editor. It is aimed at classrooms.
+
+For a project I had in mind, it looked perfect. The CyberPi would be a pocket-sized Claude remote: press a button, speak a prompt into the mic, the device uploads the audio over WiFi to a small server I'd already built, the server hits the Claude API, and the response comes back over the speaker. A standalone always-with-me AI companion roughly the size of a credit card with a screen on top.
+
+I bought the device, plugged it in, started writing Python. Then I hit the wall.
+
+## What I expected the WiFi to do
+
+The ESP3200 is right there on the board. It is advertised in the documentation. The mBlock visual blocks include WiFi connect, HTTP request, and "send to IoT cloud" actions. From the surface it looks like a normal connected microcontroller.
+
+So my mental model was: import the WiFi module from Python, call connect, then either do an HTTP POST or open a socket. Standard stuff. The ESP32 family supports all of that natively when you have direct access. I assumed CyberPi would expose the same.
+
+## What I actually got
+
+{/* TODO: Walter — describe in your words what you saw when you tried.
+    Was it an ImportError for the wifi module from Python? Was it that
+    the wifi module exists but its functions returned errors? Was it
+    silent failure where connect() returns True but no traffic actually
+    leaves the device? Whatever you remember most clearly. */}
+
+The short version is that the WiFi hardware is on the device but the Python runtime cannot reach it. {/* TODO: confirm — is this because the
+ESP3200 sits behind the main MCU and isn't exposed to user-code memory,
+or because the firmware exposes only Makeblock's own cloud endpoints
+and not arbitrary HTTP? Or both? */}
+
+The mBlock visual blocks for WiFi do work, but they appear to route only to Makeblock's own IoT cloud service. There is no documented way (that I found) to use the same hardware for general-purpose HTTP from your own Python code.
+
+## What I tried before giving up
+
+{/* TODO: Walter — fill in any of these you actually tried, drop any
+you didn't. The honest list is more useful than a comprehensive one. */}
+
+- The `wifi` and `network` modules from MicroPython conventions. {/* result */}
+- HTTP via `urequests` or similar. {/* result */}
+- Inspecting the bundled firmware for an exposed transport. {/* result */}
+- Bluetooth to a phone bridge as a fallback path. {/* did you get this far? */}
+- Custom firmware. {/* I'm guessing you didn't go here for the obvious reason that it voids the device's normal use, but worth noting */}
+
+## Why this is by design (probably)
+
+The CyberPi is for classrooms. Schools want predictable, sandboxed devices that connect only to vetted services, do not allow arbitrary outbound HTTP, and cannot accidentally exfiltrate audio recordings of children to an arbitrary endpoint. From that angle, locking the WiFi behind a firmware-managed cloud bridge is the right call.
+
+It is just not the call that lets you build a personal Claude remote.
+
+This is one of those moments where hobbyist intent and educational-product design point in different directions. The same hardware that would unlock the project I had in mind is what makes it inappropriate for the classroom market the device exists to serve. The lock is not malice, it is product strategy. It still kills my project.
+
+## What I would use instead
+
+{/* TODO: Walter — what's your actual plan B? Some candidates:
+
+  - Adafruit Feather ESP32-S3 (Mic Reverse TFT or similar) — has open
+    WiFi, has a speaker pad, the screens are smaller though
+  - Raspberry Pi Zero 2 W with a USB mic and a 1.3-inch SPI screen
+  - Just a phone running a PWA — you already have the API access
+  - ESP32-S3-BOX-3 which is purpose-built for voice assistants
+
+Pick the one(s) you've actually considered or tried. The rest are noise. */}
+
+## The lesson for next time
+
+When evaluating a piece of hardware for an open-ended project, the first question I will ask now is "does this advertised module have an open driver path from arbitrary user code, or is it gated by the vendor's bundled SDK?" The ESP3200 module exists on the CyberPi. The application-layer API to it does not. Knowing which side of that line a module lives on is the difference between a weekend project and a wasted purchase.
+
+The CyberPi is going back in the drawer for now. Maybe a kid in my life ends up using it for what it was built for. That is fine. The lesson is mine.
+
+{/* Walter — when you're ready to publish, flip `draft: false` in the
+frontmatter at the top and commit. Until then this only shows up in
+`npm run dev` with the yellow DRAFT badge. */}
