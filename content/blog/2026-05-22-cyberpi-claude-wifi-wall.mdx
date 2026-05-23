@@ -1,75 +1,51 @@
 ---
-title: "Trying to put Claude on a CyberPi, and the WiFi wall I hit"
-description: "The Makeblock CyberPi has a screen, a mic, buttons, and an ESP3200 WiFi module sitting right there. It should have been the perfect housing for a pocket Claude remote. It wasn't."
+title: "Same chip, two devices, two completely different worlds"
+description: "I wanted a handheld Claude Code approval device. The CyberPi had everything except a usable WiFi stack. Its sibling the HaloCode, on the same ESP32 family, had it for free. Notes from finding the wall, trying to write around it, and pivoting."
 date: "2026-05-22"
-tags: ["hardware", "iot", "cyberpi", "makeblock", "claude"]
+tags: ["hardware", "iot", "cyberpi", "makeblock", "esp32", "claude"]
 draft: true
 ---
 
-The Makeblock CyberPi is a handheld microcontroller learning device with a color screen, microphone, buttons, a gyroscope, a speaker, and a built-in WiFi module (the ESP3200). You program it in Python over USB through Makeblock's mBlock editor. It is aimed at classrooms.
+I have been deep in Claude Code for the past few months and one quiet annoyance kept compounding: every time the agent needs approval, I have to be at the terminal. "Run tests?" "Commit?" "Continue?" The work is async but the approval is not. I could not walk away from the keyboard without leaving the agent stalled.
 
-For a project I had in mind, it looked perfect. The CyberPi would be a pocket-sized Claude remote: press a button, speak a prompt into the mic, the device uploads the audio over WiFi to a small server I'd already built, the server hits the Claude API, and the response comes back over the speaker. A standalone always-with-me AI companion roughly the size of a credit card with a screen on top.
+The fix in my head was a handheld device. Screen, buttons, WiFi. When Claude needs a decision, the prompt appears on the device. I press a button, the answer goes back over MQTT, the agent continues. Approvals decoupled from the keyboard.
 
-I bought the device, plugged it in, started writing Python. Then I hit the wall.
+I had a Makeblock CyberPi sitting in a drawer. Color screen, joystick, A/B buttons, microphone, gyroscope, speaker, battery. ESP32-WROVER-B inside with 8MB flash and 8MB PSRAM. WiFi and Bluetooth in silicon. On paper this was the perfect housing.
 
-## What I expected the WiFi to do
+It was not.
 
-The ESP3200 is right there on the board. It is advertised in the documentation. The mBlock visual blocks include WiFi connect, HTTP request, and "send to IoT cloud" actions. From the surface it looks like a normal connected microcontroller.
+## The wall
 
-So my mental model was: import the WiFi module from Python, call connect, then either do an HTTP POST or open a socket. Standard stuff. The ESP32 family supports all of that natively when you have direct access. I assumed CyberPi would expose the same.
+CyberOS (Makeblock's stock firmware, version 44.01.011 in my case) manages WiFi via a co-processor that is not exposed to MicroPython. You can `import network`, you can call `connect`, you can read back a valid DHCP lease. The device looks online by every diagnostic the user-facing API gives you. Then any actual outbound network call, TCP socket, HTTP request, MQTT publish, fails silently. No exception, no error, just nothing leaves the device.
 
-## What I actually got
+That is the strict version of "blocked from memory" that I had been wrestling with. The WiFi radio is right there in silicon. The firmware just does not let your Python code talk to it for anything other than Makeblock's own cloud endpoints.
 
-{/* TODO: Walter — describe in your words what you saw when you tried.
-    Was it an ImportError for the wifi module from Python? Was it that
-    the wifi module exists but its functions returned errors? Was it
-    silent failure where connect() returns True but no traffic actually
-    leaves the device? Whatever you remember most clearly. */}
+The reason is not hard to guess. The CyberPi is sold into classrooms. Schools want predictable, sandboxed devices that connect only to vetted services and cannot accidentally exfiltrate audio recordings of children to an arbitrary endpoint. Locking the radio behind a firmware-managed cloud bridge is the right call for that market. It is just not the call that lets me build my approval remote.
 
-The short version is that the WiFi hardware is on the device but the Python runtime cannot reach it. {/* TODO: confirm — is this because the
-ESP3200 sits behind the main MCU and isn't exposed to user-code memory,
-or because the firmware exposes only Makeblock's own cloud endpoints
-and not arbitrary HTTP? Or both? */}
+## The custom-firmware attempt
 
-The mBlock visual blocks for WiFi do work, but they appear to route only to Makeblock's own IoT cloud service. There is no documented way (that I found) to use the same hardware for general-purpose HTTP from your own Python code.
+The CyberPi hardware can do this. The limitation is firmware, not silicon. Makeblock publishes an official Arduino SDK for the device. I scaffolded a PlatformIO project, set up four FreeRTOS tasks (MQTT, sensors, serial, UI) communicating over queues, and wrote the F3-protocol serial backwards-compat layer so the device would still work with stock mBlock connections. The build succeeded. The code is in `stem/cyberpi/firmware/` if you want to see it.
 
-## What I tried before giving up
+Then I tried to flash.
 
-{/* TODO: Walter — fill in any of these you actually tried, drop any
-you didn't. The honest list is more useful than a comprehensive one. */}
+The ESP32 enters download mode when GPIO0 is held LOW at reset. On a bare ESP32 dev board this is a button you press. On the CyberPi, GPIO0 is buried inside the case and not exposed on any external connector. There is no software way to put the chip into download mode through CyberOS. To flash custom firmware I would need to physically open the case, solder, and probably void any warranty I had left.
 
-- The `wifi` and `network` modules from MicroPython conventions. {/* result */}
-- HTTP via `urequests` or similar. {/* result */}
-- Inspecting the bundled firmware for an exposed transport. {/* result */}
-- Bluetooth to a phone bridge as a fallback path. {/* did you get this far? */}
-- Custom firmware. {/* I'm guessing you didn't go here for the obvious reason that it voids the device's normal use, but worth noting */}
+I am not against soldering. But the project was supposed to be "build the approval device this weekend," not "open up consumer hardware to escape the vendor's firmware jail." The cost-benefit flipped.
 
-## Why this is by design (probably)
+## The pivot
 
-The CyberPi is for classrooms. Schools want predictable, sandboxed devices that connect only to vetted services, do not allow arbitrary outbound HTTP, and cannot accidentally exfiltrate audio recordings of children to an arbitrary endpoint. From that angle, locking the WiFi behind a firmware-managed cloud bridge is the right call.
+In the same Makeblock product line there is a different device called the HaloCode. Same chip family (ESP32-WROVER, no -B suffix, 4MB flash, no PSRAM). Smaller form factor, no built-in screen, just an LED ring and a touchpad. Sold into the same classroom market.
 
-It is just not the call that lets you build a personal Claude remote.
+The HaloCode has fully functional WiFi in stock MicroPython. `urequests` works. `MQTTClient` works. `network.WLAN` connects and stays connected and your packets actually leave the device. No custom firmware, no soldering, no jailbreak. It just works.
 
-This is one of those moments where hobbyist intent and educational-product design point in different directions. The same hardware that would unlock the project I had in mind is what makes it inappropriate for the classroom market the device exists to serve. The lock is not malice, it is product strategy. It still kills my project.
+Same vendor, same chip family, same target market. Two completely different developer access stories. I do not know whether it is a deliberate product decision (CyberPi is the "managed" classroom device, HaloCode is the "tinkering" one) or an accident of which firmware team owned which device. From the outside it looks accidental, because nothing on the marketing pages of either product hints at the difference. You discover it by ordering both and writing code.
 
-## What I would use instead
+My approval-device project moved to the HaloCode. I lose the screen and the joystick, gain a working network stack, and end up with a device that does the job. The CyberPi went back in the drawer next to the soldering iron.
 
-{/* TODO: Walter — what's your actual plan B? Some candidates:
+## The lesson
 
-  - Adafruit Feather ESP32-S3 (Mic Reverse TFT or similar) — has open
-    WiFi, has a speaker pad, the screens are smaller though
-  - Raspberry Pi Zero 2 W with a USB mic and a 1.3-inch SPI screen
-  - Just a phone running a PWA — you already have the API access
-  - ESP32-S3-BOX-3 which is purpose-built for voice assistants
+Before evaluating any IoT device for an open-ended project, the question I will ask first is "does the advertised radio module have an open path from my user code, or is it gated by the vendor's bundled SDK and a managed cloud endpoint?" The data sheet will tell you the chip. It will not tell you whether you get to use it.
 
-Pick the one(s) you've actually considered or tried. The rest are noise. */}
+The corollary: hardware specs and firmware access live on different invisible-axes. Two devices with the same chip can give you completely opposite developer experiences, and the only way to find out is to try. Engineering judgment cannot replace having the device in your hand and actually attempting to make a network call.
 
-## The lesson for next time
-
-When evaluating a piece of hardware for an open-ended project, the first question I will ask now is "does this advertised module have an open driver path from arbitrary user code, or is it gated by the vendor's bundled SDK?" The ESP3200 module exists on the CyberPi. The application-layer API to it does not. Knowing which side of that line a module lives on is the difference between a weekend project and a wasted purchase.
-
-The CyberPi is going back in the drawer for now. Maybe a kid in my life ends up using it for what it was built for. That is fine. The lesson is mine.
-
-{/* Walter — when you're ready to publish, flip `draft: false` in the
-frontmatter at the top and commit. Until then this only shows up in
-`npm run dev` with the yellow DRAFT badge. */}
+I do not regret the CyberPi purchase. The device taught me something specific about how Makeblock builds, and the failed approval-device project produced the firmware repo at `stem/cyberpi/firmware/` which I will finish someday if a GPIO0 jig appears on Tindie. The pivot to HaloCode is the right call for the original goal. The handheld approval device is in progress on that hardware now. When it works I will write about that too.
