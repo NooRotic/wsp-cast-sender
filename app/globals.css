@@ -3,9 +3,30 @@
 @tailwind utilities;
 
 /* Prevent scroll restoration and ensure page starts at top */
+/* Layered atmospheric base. Subtle multi-hue radial gradients mirror the
+   StarfieldBackground's nebula positions and hues so every route — not just
+   /timeline where the canvas runs at full prominence — has the same "rich
+   dark void" depth. Sits behind the canvas backgrounds; layered colors
+   stack with the canvas instead of competing with it.
+
+   The hue + position values are drawn directly from the nebula array in
+   components/StarfieldBackground.tsx (lines 75-82) so the visual identity
+   stays coherent regardless of which canvas variant rolls. fixed attachment
+   anchors the gradient to the viewport so it does not drift with scroll.
+
+   Trade-off: background-attachment: fixed forces a separate rendering layer
+   on mobile. Static gradients (no animation) absorb this cost cheaply
+   compared to a second canvas RAF loop. */
 html {
   scroll-behavior: smooth;
-  background: #0a0a0a;
+  background-color: #0a0a0a;
+  background-image:
+    radial-gradient(ellipse 60% 50% at 12% 28%, hsla(275, 50%, 28%, 0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 55% 45% at 78% 52%, hsla(205, 50%, 28%, 0.09) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 45% at 42% 82%, hsla(155, 45%, 25%, 0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 55% 40% at 88% 14%, hsla(320, 45%, 28%, 0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 45% 40% at 28% 62%, hsla(185, 45%, 25%, 0.06) 0%, transparent 60%);
+  background-attachment: fixed;
 }
 
 /* Disable scroll restoration on page refresh */
