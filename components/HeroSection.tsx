@@ -397,7 +397,7 @@ export default function HeroSection() {
         {/* Glass Container for Developer Info */}
         <div 
           ref={subtitleRef}
-          className="bg-black/40 backdrop-blur-sm border border-gray-700/50 rounded-lg p-4 hover:border-[#39FF14]/30 transition-all duration-300 w-full max-w-2xl mx-auto mb-6 hero-initial-hidden opacity-0"
+          className="bg-black/80 backdrop-blur-sm border border-gray-700/50 rounded-lg p-4 hover:border-[#39FF14]/30 transition-all duration-300 w-full max-w-2xl mx-auto mb-6 hero-initial-hidden opacity-0"
         >
           <p
             className="hero-subtitle text-lg md:text-2xl underline tracking-normal text-center mx-auto hero-subtitle-z1 mb-4"
@@ -442,7 +442,7 @@ export default function HeroSection() {
 
             {/* Project Preview Cards for Mobile - Responsive Row */}
             <div className="flex flex-col md:flex-row gap-6">
-              <div className="bg-black/40 backdrop-blur-sm border border-gray-700/50 rounded-lg p-8 py-10 project-preview-card flex-1 min-h-[420px]">
+              <div className="bg-black/80 backdrop-blur-sm border border-gray-700/50 rounded-lg p-8 py-10 project-preview-card flex-1 min-h-[420px]">
                 <div className="flex items-center gap-3 mb-4">
                   <Video className="w-5 h-5 text-[#39FF14]" />
                   <h4 className="font-semibold text-white text-base">Comcast Video Streaming Products</h4>
@@ -483,7 +483,7 @@ export default function HeroSection() {
                   <span className="px-2 py-1 bg-[#39FF14]/20 text-[#39FF14] text-sm rounded">Full CI workflow</span>
                 </div>
               </div>
-              <div className="bg-black/40 backdrop-blur-sm border border-gray-700/50 rounded-lg p-6 py-10 project-preview-card flex-1 min-h-[420px]">
+              <div className="bg-black/80 backdrop-blur-sm border border-gray-700/50 rounded-lg p-6 py-10 project-preview-card flex-1 min-h-[420px]">
                 <div className="flex items-center gap-3 mb-4">
                   <StepForward className="w-5 h-5 text-[#39FF14]" />
                   <h4 className="font-semibold text-white text-base">Sr Software Engineer</h4>
@@ -544,7 +544,7 @@ export default function HeroSection() {
               </h3>
 
               {/* Glass Container for Skills & Stats - Two Row Layout */}
-              <div className="bg-black/40 backdrop-blur-sm border border-gray-700/50 rounded-lg p-5  hover:border-[#39FF14]/30 transition-all duration-300 w-full max-w-xl mx-auto">
+              <div className="bg-black/80 backdrop-blur-sm border border-gray-700/50 rounded-lg p-5  hover:border-[#39FF14]/30 transition-all duration-300 w-full max-w-xl mx-auto">
                 {/* First Row: Skills with GIFs - Single Column Layout */}
                 <div className="grid grid-cols-1 gap-10 mb-8 mt-6 justify-items-center">
                   {/* JavaScript Skill Card */}
@@ -627,18 +627,18 @@ export default function HeroSection() {
                 {/* Second Row: Stats */}
                 <div className="grid grid-cols-3 gap-5 md:gap-6 mb-2 w-full">
                   {/* Years Experience Stat */}
-                  <div className="bg-black/40 backdrop-blur-sm border border-gray-700/30 rounded-lg p-2 md:p-3 hover:border-[#39FF14]/30 transition-all duration-300 text-center flex flex-col justify-center min-h-[90px] md:min-h-[100px] min-w-[90px] md:min-w-[100px]">
+                  <div className="bg-black/80 backdrop-blur-sm border border-gray-700/30 rounded-lg p-2 md:p-3 hover:border-[#39FF14]/30 transition-all duration-300 text-center flex flex-col justify-center min-h-[90px] md:min-h-[100px] min-w-[90px] md:min-w-[100px]">
                     <div className="text-lg md:text-xl font-bold text-[#39FF14] mb-1 leading-tight">25+</div>
                     <div className="text-[10px] md:text-xs text-gray-300 leading-tight break-words px-1">Years Experience</div>
                   </div>
 
                   {/* Projects Delivered Stat */}
-                  <div className="bg-black/40 backdrop-blur-sm border border-gray-700/30 rounded-lg p-2 md:p-3 hover:border-[#39FF14]/30 transition-all duration-300 text-center flex flex-col justify-center min-h-[90px] md:min-h-[100px] min-w-[90px] md:min-w-[100px]">
+                  <div className="bg-black/80 backdrop-blur-sm border border-gray-700/30 rounded-lg p-2 md:p-3 hover:border-[#39FF14]/30 transition-all duration-300 text-center flex flex-col justify-center min-h-[90px] md:min-h-[100px] min-w-[90px] md:min-w-[100px]">
                     <div className="text-lg md:text-xl font-bold text-[#39FF14] mb-1 leading-tight">50+</div>
                     <div className="text-[10px] md:text-xs text-gray-300 leading-tight break-words px-1">Projects Delivered</div>
                   </div>
                   {/* Users Served Stat */}
-                  <div className="bg-black/40 backdrop-blur-sm border border-gray-700/30 rounded-lg p-2 md:p-3 hover:border-[#39FF14]/30 transition-all duration-300 text-center flex flex-col justify-center min-h-[90px] md:min-h-[100px] min-w-[90px] md:min-w-[100px]">
+                  <div className="bg-black/80 backdrop-blur-sm border border-gray-700/30 rounded-lg p-2 md:p-3 hover:border-[#39FF14]/30 transition-all duration-300 text-center flex flex-col justify-center min-h-[90px] md:min-h-[100px] min-w-[90px] md:min-w-[100px]">
                     <div className="text-lg md:text-xl font-bold text-[#39FF14] mb-1 leading-tight">100M+</div>
                     <div className="text-[10px] md:text-xs text-gray-300 leading-tight break-words px-1">Ads Served</div>
                   </div>
@@ -657,7 +657,7 @@ export default function HeroSection() {
 
               {/* Single Column Project Preview Cards for Desktop */}
               <div className="space-y-3">
-                <div className="bg-black/40 backdrop-blur-sm border border-gray-700/50 rounded-lg p-4 py-3 project-preview-card">
+                <div className="bg-black/80 backdrop-blur-sm border border-gray-700/50 rounded-lg p-4 py-3 project-preview-card">
                   <div className="flex items-center gap-3 mb-2">
                     <Video className="w-5 h-5 text-[#39FF14]" />
                   <h4 className="font-semibold text-white text-base">Comcast Video Streaming Products</h4>
@@ -709,7 +709,7 @@ export default function HeroSection() {
                     <span className="px-2 py-1 bg-[#39FF14]/20 text-[#39FF14] text-sm rounded">CI workflows</span>
                   </div>
                 </div>
-                <div className="bg-black/40 backdrop-blur-sm border border-gray-700/50 rounded-lg p-4 project-preview-card min-h-[400px]">
+                <div className="bg-black/80 backdrop-blur-sm border border-gray-700/50 rounded-lg p-4 project-preview-card min-h-[400px]">
                   <div className="flex items-center gap-3 mb-2">
                     <StepForward className="w-5 h-5 text-[#39FF14]" />
                     <h4 className="font-semibold text-white text-lg">Career and Personal Development</h4>

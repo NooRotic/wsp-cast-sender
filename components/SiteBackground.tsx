@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { usePathname } from 'next/navigation';
-import StarfieldBackground from './StarfieldBackground';
-import MatrixRainBackground from './MatrixRainBackground';
-import BendingLinesBackground from './BendingLinesBackground';
+import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
+import StarfieldBackground from "./StarfieldBackground";
+import MatrixRainBackground from "./MatrixRainBackground";
+import BendingLinesBackground from "./BendingLinesBackground";
 
 // Picks one of three canvas backgrounds at random per page load, mirroring
 // the behavior of the old ParticleBackground (which randomly picked an MP4
@@ -22,14 +22,14 @@ import BendingLinesBackground from './BendingLinesBackground';
 // showcase, so the route is pinned to starfield at full opacity regardless
 // of which variant the random roll picked for the rest of the session.
 
-const VARIANTS = ['starfield', 'matrix', 'bending'] as const;
+const VARIANTS = ["starfield", "matrix", "bending"] as const;
 type Variant = (typeof VARIANTS)[number];
 
-const SUBTLE_OPACITY = 0.2;
-const PROMINENT_OPACITY = 0.7;
+const SUBTLE_OPACITY = 0.3;
+const PROMINENT_OPACITY = 0.5;
 
 export default function SiteBackground() {
-  const pathname = usePathname() ?? '/';
+  const pathname = usePathname() ?? "/";
   const [variant, setVariant] = useState<Variant | null>(null);
 
   useEffect(() => {
@@ -45,9 +45,9 @@ export default function SiteBackground() {
     // of useSearchParams() so static export (output: 'export') keeps
     // prerendering the routes that use this component.
     let chosen: Variant | undefined;
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
-      const forced = params.get('bg');
+      const forced = params.get("bg");
       if (forced && (VARIANTS as readonly string[]).includes(forced)) {
         chosen = forced as Variant;
       }
@@ -58,7 +58,7 @@ export default function SiteBackground() {
   // /timeline is always the prominent starfield — deterministic, no random
   // roll consulted. Renders on first paint with no null gap because the
   // outcome doesn't depend on client-only state.
-  if (pathname.startsWith('/timeline')) {
+  if (pathname.startsWith("/timeline")) {
     return <StarfieldBackground opacity={PROMINENT_OPACITY} />;
   }
 
@@ -66,7 +66,9 @@ export default function SiteBackground() {
   // has chosen one. Same variant persists across in-app navigation because
   // SiteBackground lives in the layout and useState survives route changes.
   if (!variant) return null;
-  if (variant === 'matrix') return <MatrixRainBackground opacity={SUBTLE_OPACITY} />;
-  if (variant === 'bending') return <BendingLinesBackground opacity={SUBTLE_OPACITY} />;
+  if (variant === "matrix")
+    return <MatrixRainBackground opacity={SUBTLE_OPACITY} />;
+  if (variant === "bending")
+    return <BendingLinesBackground opacity={SUBTLE_OPACITY} />;
   return <StarfieldBackground opacity={SUBTLE_OPACITY} />;
 }

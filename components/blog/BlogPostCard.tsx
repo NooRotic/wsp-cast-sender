@@ -6,7 +6,7 @@ export default function BlogPostCard({ post }: { post: BlogPostMeta }) {
   return (
     <Link
       href={`/blog/${post.slug}`}
-      className="block bg-black/40 backdrop-blur-sm border border-gray-700/50 hover:border-[#39FF14]/40 rounded-lg p-6 transition-all duration-300 hover:bg-black/60 group"
+      className="block bg-black/80 backdrop-blur-sm border border-gray-700/50 hover:border-[#39FF14]/40 rounded-lg p-6 transition-all duration-300 hover:bg-black/60 group"
     >
       <article>
         <div className="flex items-baseline gap-3 mb-3 flex-wrap">
