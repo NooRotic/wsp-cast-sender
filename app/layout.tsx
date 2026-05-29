@@ -8,6 +8,7 @@ import KeyboardShortcutHandler from '@/components/KeyboardShortcutHandler';
 import MediaPanel from '@/components/MediaPanel';
 import ClientScript from '@/components/ClientScript';
 import Navigation from '@/components/Navigation';
+import StarfieldBackground from '@/components/StarfieldBackground';
 
 const inter = Inter({ subsets: ['latin'], display: 'swap' });
 
@@ -109,6 +110,7 @@ export default function RootLayout({
         <ClientAnimationProvider>
           <CastProvider>
             <KeyboardShortcutHandler />
+            <StarfieldBackground />
             <Navigation />
             <div className="portfolio-bg">
               {children}
