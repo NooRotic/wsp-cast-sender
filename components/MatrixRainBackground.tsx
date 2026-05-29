@@ -17,8 +17,8 @@ import { useEffect, useRef } from "react";
 const GLYPHS =
   "アァカサタナハマヤラワABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()";
 const FONT_SIZE = 12;
-const FADE_ALPHA = 0.04; // lower = longer trails
-const SPAWN_RESET_CHANCE = 0.975; // higher = columns reset more rarely
+const FADE_ALPHA = 0.029; // lower = longer trails
+const SPAWN_RESET_CHANCE = 0.575; // higher = columns reset more rarely
 const BRIGHT_HEAD = true; // render the leading character in near-white
 
 // Per-column fall speed range, in rows per frame at 60 fps. Uniform 1.0
@@ -26,13 +26,13 @@ const BRIGHT_HEAD = true; // render the leading character in near-white
 // = ~720 px/s rip). Varied 0.2-0.6 reads closer to the original Wachowski
 // cadence: faster columns are eye-catchers while slower ones build
 // atmospheric depth in the background.
-const SPEED_MIN = 0.0005;
-const SPEED_RANGE = 0.0195;
+const SPEED_MIN = 0.004;
+const SPEED_RANGE = 0.55;
 
 // Internal alphas calibrated so the field reads cleanly at the
 // SiteBackground SUBTLE_OPACITY multiplier (0.4 at time of writing):
 //   body 0.92 * 0.4 = ~0.37 rendered, head 1.0 * 0.4 = 0.4 rendered.
-const BODY_ALPHA = 0.92;
+const BODY_ALPHA = 0.8;
 const HEAD_ALPHA = 1.0;
 
 interface Props {

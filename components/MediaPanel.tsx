@@ -261,7 +261,7 @@ export const MediaPanel: React.FC<MediaPanelProps> = ({ className }) => {
         <div className="fixed inset-0 flex items-center justify-center z-[9999] p-2">
           <div 
             ref={panelRef}
-            className="bg-black/40 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl overflow-hidden"
+            className="bg-black/80 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl overflow-hidden"
             style={{ 
               width: '90vw',
               height: '90vh',

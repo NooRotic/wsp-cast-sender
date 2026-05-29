@@ -117,7 +117,7 @@ export default function ProjectsSection() {
                 ref={(el) => {
                   if (el) cardsRef.current[index] = el;
                 }}
-                className="skill-card bg-black/40 backdrop-blur-sm border border-gray-700/50 rounded-lg group"
+                className="skill-card bg-black/80 backdrop-blur-sm border border-gray-700/50 rounded-lg group"
                 onMouseEnter={() => {
                   if (prefersReducedMotion) return;
                   const card = cardsRef.current[index];
@@ -162,7 +162,7 @@ export default function ProjectsSection() {
                 ref={(el) => {
                   if (el) cardsRef.current[projectsWithMedia.length + index] = el;
                 }}
-                className="skill-card bg-black/40 backdrop-blur-sm border border-gray-700/50 rounded-lg group"
+                className="skill-card bg-black/80 backdrop-blur-sm border border-gray-700/50 rounded-lg group"
                 onMouseEnter={() => {
                   if (prefersReducedMotion) return;
                   const card = cardsRef.current[projectsWithMedia.length + index];

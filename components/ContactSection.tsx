@@ -134,7 +134,7 @@ export default function ContactSection() {
                 href={item.href}
                 target={item.external ? '_blank' : undefined}
                 rel={item.external ? 'noopener noreferrer' : undefined}
-                className="bg-black/40 backdrop-blur-sm border border-gray-700/50 hover:border-[#39FF14]/30 rounded-lg p-6 flex items-center gap-4 hover:scale-105 transition-all duration-300 hover:bg-black/60"
+                className="bg-black/80 backdrop-blur-sm border border-gray-700/50 hover:border-[#39FF14]/30 rounded-lg p-6 flex items-center gap-4 hover:scale-105 transition-all duration-300 hover:bg-black/60"
               >
                 <div className="p-3 bg-[#39FF14]/20 rounded-full">
                   <item.icon className="w-6 h-6 text-[#39FF14]" />

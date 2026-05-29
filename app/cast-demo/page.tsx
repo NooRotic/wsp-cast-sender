@@ -1523,7 +1523,7 @@ export default function CastDemoPage() {
               return (
                 <div
                   key={index}
-                  className="bg-black/40 backdrop-blur-sm border border-gray-700/50 hover:border-[#39FF14]/30 rounded-lg p-6 transition-all duration-300 hover:bg-black/60 transform hover:scale-105"
+                  className="bg-black/80 backdrop-blur-sm border border-gray-700/50 hover:border-[#39FF14]/30 rounded-lg p-6 transition-all duration-300 hover:bg-black/60 transform hover:scale-105"
                 >
                   <div className="w-12 h-12 bg-gradient-to-br from-[#39FF14]/20 to-[#2ed60a]/20 rounded-lg flex items-center justify-center mb-4">
                     <IconComponent className="w-5 h-5 text-[#39FF14]" />

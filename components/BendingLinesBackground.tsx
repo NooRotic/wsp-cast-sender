@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from "react";
 
 // Max Headroom-style bending vertical lines. A grid of vertical strokes that
 // undulate side-to-side via a sum of two sine waves at different frequencies,
@@ -23,16 +23,16 @@ import { useEffect, useRef } from 'react';
 
 const NUM_LINES = 24;
 const SEGMENTS_PER_LINE = 40;
-const WAVE_AMPLITUDE = 38;   // px — base side-to-side travel
-const WAVE_FREQ_1 = 0.0085;  // primary sine, per pixel of Y
-const WAVE_FREQ_2 = 0.014;   // secondary sine for organic feel
+const WAVE_AMPLITUDE = 38; // px — base side-to-side travel
+const WAVE_FREQ_1 = 0.0085; // primary sine, per pixel of Y
+const WAVE_FREQ_2 = 0.014; // secondary sine for organic feel
 const TIME_SPEED_1 = 0.0012; // primary sine, per ms
 const TIME_SPEED_2 = 0.0008; // secondary sine, per ms
 const LINE_WIDTH = 1.5;
 const SHADOW_BLUR = 14;
 
-const BRAND_GREEN = '57, 255, 20';
-const ACCENT_CYAN = '57, 198, 255';
+const BRAND_GREEN = "57, 255, 20";
+const ACCENT_CYAN = "57, 198, 255";
 const ACCENT_LINES = new Set([7, 16]); // which lines get the cyan accent
 
 interface Props {
@@ -40,13 +40,13 @@ interface Props {
   opacity?: number;
 }
 
-export default function BendingLinesBackground({ opacity = 1 }: Props) {
+export default function BendingLinesBackground({ opacity = 0.5 }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     let raf: number;
@@ -66,7 +66,7 @@ export default function BendingLinesBackground({ opacity = 1 }: Props) {
       const t = now - start;
       ctx.clearRect(0, 0, W, H);
       ctx.lineWidth = LINE_WIDTH;
-      ctx.lineCap = 'round';
+      ctx.lineCap = "round";
 
       for (let i = 0; i < NUM_LINES; i++) {
         // Evenly space lines across the viewport with a margin so the edges
@@ -90,8 +90,11 @@ export default function BendingLinesBackground({ opacity = 1 }: Props) {
           const y = (j / SEGMENTS_PER_LINE) * H;
           // Two-sine combination so the curve looks organic, not screensaver.
           const wave =
-            WAVE_AMPLITUDE * Math.sin(t * TIME_SPEED_1 + y * WAVE_FREQ_1 + phase) +
-            WAVE_AMPLITUDE * 0.4 * Math.sin(t * TIME_SPEED_2 + y * WAVE_FREQ_2 + phase * 1.3);
+            WAVE_AMPLITUDE *
+              Math.sin(t * TIME_SPEED_1 + y * WAVE_FREQ_1 + phase) +
+            WAVE_AMPLITUDE *
+              0.4 *
+              Math.sin(t * TIME_SPEED_2 + y * WAVE_FREQ_2 + phase * 1.3);
           const x = baseX + wave;
           if (j === 0) ctx.moveTo(x, y);
           else ctx.lineTo(x, y);
@@ -105,12 +108,12 @@ export default function BendingLinesBackground({ opacity = 1 }: Props) {
       raf = requestAnimationFrame(draw);
     };
 
-    window.addEventListener('resize', resize);
+    window.addEventListener("resize", resize);
     raf = requestAnimationFrame(draw);
 
     return () => {
       cancelAnimationFrame(raf);
-      window.removeEventListener('resize', resize);
+      window.removeEventListener("resize", resize);
     };
   }, []);
 
@@ -121,7 +124,7 @@ export default function BendingLinesBackground({ opacity = 1 }: Props) {
       style={{
         zIndex: 0,
         opacity,
-        transition: 'opacity 0.6s ease-in-out',
+        transition: "opacity 0.6s ease-in-out",
       }}
       aria-hidden="true"
     />

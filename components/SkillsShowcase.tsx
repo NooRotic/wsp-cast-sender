@@ -139,7 +139,7 @@ export default function SkillsShowcase() {
         ref={(el) => {
           if (el) cardsRef.current[index] = el;
         }}
-        className="skill-card bg-black/40 backdrop-blur-sm border border-gray-700/50 hover:border-[#39FF14]/30 rounded-lg p-4 transition-all duration-300 hover:bg-black/60 group"
+        className="skill-card bg-black/80 backdrop-blur-sm border border-gray-700/50 hover:border-[#39FF14]/30 rounded-lg p-4 transition-all duration-300 hover:bg-black/60 group"
       >
         <h3 className="text-sm font-semibold text-[#39FF14] mb-3 group-hover:text-[#39FF14] transition-colors">
           {category.category}
