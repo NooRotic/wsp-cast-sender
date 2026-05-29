@@ -57,7 +57,7 @@ The middle option is what I do. The final tween's to-state includes `opacity: 1`
 
 ## animation-fill-mode for CSS-driven elements
 
-The hero's filter pills (the year-range chips below the hero text) are a CSS `@keyframes` animation, not GSAP. They cascade in with a stagger via a 2.5-second `animation-delay`. During that delay, they need to be invisible. The naive approach:
+The hero's filter pills (the year-range chips below the hero text) use a CSS `@keyframes` animation rather than GSAP. They cascade in with a stagger via a 2.5-second `animation-delay`. During that delay, they need to be invisible. The naive approach:
 
 ```css
 .pill {
