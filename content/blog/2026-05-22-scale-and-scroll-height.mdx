@@ -16,7 +16,7 @@ That is what `transform: scale()` does. It does not change layout.
 
 ## The visual / layout split
 
-CSS transforms are a paint-time operation. They affect what the GPU draws, not what the layout engine measures. The element keeps its original geometry for the purposes of scroll height, sibling layout, and any parent that derives its size from this child. When you scale to 0.5, you get a thing rendered at half size occupying its full original bounding box.
+CSS transforms are a paint-time operation. They affect what the GPU draws and leave the layout engine alone. The element keeps its original geometry for the purposes of scroll height, sibling layout, and any parent that derives its size from this child. When you scale to 0.5, you get a thing rendered at half size occupying its full original bounding box.
 
 This is by design. Transforms are cheap because they skip the layout pass. The browser does not need to re-run layout when you tween a scale or a translate, which is why GSAP can run sixty animations on the same page without dropping a frame. The tradeoff is that scaled content does not change the page's flow.
 
@@ -69,7 +69,7 @@ The deps list includes `filteredNodes` and `nodeSpacing` but deliberately not `t
 
 ## Why I tried the wrong thing first
 
-The wrong way was faster to type and looked plausible. Documentation for `transform: scale` does not emphasize the layout-bypass aspect because for most cases that is the feature. You read the spec, you build a slider, you bind a value, you ship. Then you scroll.
+The wrong way was faster to type and looked plausible. Documentation for `transform: scale` does not emphasize the layout-bypass aspect because for most cases that is the feature. You read the spec, you build a slider, you bind a value, you push it live. Then you scroll.
 
 This is a class of bug I see across CSS work, including in my own. The cheap-to-paint primitives leave a footprint somewhere else, and the cost shows up when you cross a boundary. Scale crosses the layout boundary. Position fixed crosses the stacking-context boundary. Filter crosses the compositing boundary. Each one is fine on its own. Each one breaks an adjacent system if you forget the rule.
 
