@@ -1,15 +1,14 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { usePathname } from 'next/navigation';
 
 // Site-wide animated background. Extracted from the StarfieldCanvas function
 // that originally lived inside components/TimelineView.tsx so /timeline could
 // have it. Now mounted at the layout level so every route shares the look.
 //
-// Intensity is pathname-aware: /timeline gets the full prominent treatment
-// (it's the page the canvas-starfield blog post points at), every other
-// route gets a subtle ~0.4 multiplier so the bg is present but not loud.
+// Pathname-aware routing lives in components/SiteBackground.tsx now. This
+// component just renders the canvas at the requested opacity; the switcher
+// decides what to mount where.
 //
 // Performance: 260 stars + 18 hero stars + 6 nebulae render in under 1ms
 // per frame on a mid-tier laptop. Canvas 2D, no shaders, no textures. The
@@ -17,14 +16,13 @@ import { usePathname } from 'next/navigation';
 // down on unmount; the canvas element itself is a sibling of the rest of
 // the layout tree so route changes do not remount it.
 
-const TIMELINE_OPACITY = 1.0;
-const SUBTLE_OPACITY = 0.4;
+interface Props {
+  /** CSS opacity applied to the whole canvas. 0..1. Default 1.0. */
+  opacity?: number;
+}
 
-export default function StarfieldBackground() {
+export default function StarfieldBackground({ opacity = 1 }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const pathname = usePathname();
-  const isTimeline = pathname?.startsWith('/timeline') ?? false;
-  const opacity = isTimeline ? TIMELINE_OPACITY : SUBTLE_OPACITY;
 
   useEffect(() => {
     const canvas = canvasRef.current;
