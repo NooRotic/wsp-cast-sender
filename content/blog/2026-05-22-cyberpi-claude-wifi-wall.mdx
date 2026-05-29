@@ -1,16 +1,22 @@
 ---
 title: "Same chip, two devices, two completely different worlds"
-description: "I wanted a handheld Claude Code approval device. The CyberPi had everything except a usable WiFi stack. Its sibling the HaloCode, on the same ESP32 family, had it for free. Notes from finding the wall, trying to write around it, and pivoting."
+description: "I found my daughter's old Makeblock CyberPi in a drawer and thought it would make a perfect handheld Claude Code approval device. The chip is fine. The firmware locks the radio away from user code. Notes from finding the wall and pivoting to its sibling the HaloCode."
 date: "2026-05-22"
 tags: ["hardware", "iot", "cyberpi", "makeblock", "esp32", "claude"]
 draft: true
 ---
 
-I have been deep in Claude Code for the past few months and one quiet annoyance kept compounding: every time the agent needs approval, I have to be at the terminal. "Run tests?" "Commit?" "Continue?" The work is async but the approval is not. I could not walk away from the keyboard without leaving the agent stalled.
+Many a year ago, my daughter hit the STEM part of her young school career. I was excited: this was my chance to bring her into the nerd light and all its tech glory. I picked up the Makeblock kit and we enjoyed it.
+
+Fast forward five or six years and it is sitting in my desk drawer.
+
+I noticed it again recently. I remembered it has a handheld module with a screen, a joystick, A/B buttons, a microphone, a speaker. The kind of compact device you do not get to design from scratch as a side project, because the industrial design alone would take a quarter. It got me thinking: maybe I can send and receive data from Claude through this thing.
+
+Because here is the quiet annoyance I had been wrestling with for months. I have been deep in Claude Code, and every time the agent needs approval, I have to be at the terminal. "Run tests?" "Commit?" "Continue?" The work is async but the approval is not. I could not walk away from the keyboard without leaving the agent stalled.
 
 The fix in my head was a handheld device. Screen, buttons, WiFi. When Claude needs a decision, the prompt appears on the device. I press a button, the answer goes back over MQTT, the agent continues. Approvals decoupled from the keyboard.
 
-I had a Makeblock CyberPi sitting in a drawer. Color screen, joystick, A/B buttons, microphone, gyroscope, speaker, battery. ESP32-WROVER-B inside with 8MB flash and 8MB PSRAM. WiFi and Bluetooth in silicon. On paper this was the perfect housing.
+The CyberPi looked perfect on paper. Color screen, joystick, A/B buttons, microphone, gyroscope, speaker, battery. ESP32-WROVER-B inside with 8MB flash and 8MB PSRAM. WiFi and Bluetooth in silicon.
 
 It was not.
 
@@ -24,13 +30,13 @@ The reason is not hard to guess. The CyberPi is sold into classrooms. Schools wa
 
 ## The custom-firmware attempt
 
-The CyberPi hardware can do this. The limitation is firmware, not silicon. Makeblock publishes an official Arduino SDK for the device. I scaffolded a PlatformIO project, set up four FreeRTOS tasks (MQTT, sensors, serial, UI) communicating over queues, and wrote the F3-protocol serial backwards-compat layer so the device would still work with stock mBlock connections. The build succeeded. The code is in `stem/cyberpi/firmware/` if you want to see it.
+The CyberPi hardware can do this. The wall is firmware. The silicon would let you. Makeblock publishes an official Arduino SDK for the device. I scaffolded a PlatformIO project, set up four FreeRTOS tasks (MQTT, sensors, serial, UI) communicating over queues, and wrote the F3-protocol serial backwards-compat layer so the device would still work with stock mBlock connections. The build succeeded. The code is in `stem/cyberpi/firmware/` if you want to see it.
 
 Then I tried to flash.
 
 The ESP32 enters download mode when GPIO0 is held LOW at reset. On a bare ESP32 dev board this is a button you press. On the CyberPi, GPIO0 is buried inside the case and not exposed on any external connector. There is no software way to put the chip into download mode through CyberOS. To flash custom firmware I would need to physically open the case, solder, and probably void any warranty I had left.
 
-I am not against soldering. But the project was supposed to be "build the approval device this weekend," not "open up consumer hardware to escape the vendor's firmware jail." The cost-benefit flipped.
+I am not against soldering. The project was supposed to be "build the approval device this weekend." It was turning into "open up consumer hardware to escape the vendor's firmware jail." The cost-benefit flipped.
 
 ## The pivot
 
@@ -46,6 +52,6 @@ My approval-device project moved to the HaloCode. I lose the screen and the joys
 
 Before evaluating any IoT device for an open-ended project, the question I will ask first is "does the advertised radio module have an open path from my user code, or is it gated by the vendor's bundled SDK and a managed cloud endpoint?" The data sheet will tell you the chip. It will not tell you whether you get to use it.
 
-The corollary: hardware specs and firmware access live on different invisible-axes. Two devices with the same chip can give you completely opposite developer experiences, and the only way to find out is to try. Engineering judgment cannot replace having the device in your hand and actually attempting to make a network call.
+The corollary: hardware specs and firmware access answer different questions. Two devices with the same chip can give you completely opposite developer experiences, and the only way to find out is to try. Engineering judgment cannot replace having the device in your hand and actually attempting to make a network call.
 
 I do not regret the CyberPi purchase. The device taught me something specific about how Makeblock builds, and the failed approval-device project produced the firmware repo at `stem/cyberpi/firmware/` which I will finish someday if a GPIO0 jig appears on Tindie. The pivot to HaloCode is the right call for the original goal. The handheld approval device is in progress on that hardware now. When it works I will write about that too.
