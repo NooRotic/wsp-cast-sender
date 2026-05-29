@@ -15,10 +15,12 @@ import BendingLinesBackground from './BendingLinesBackground';
 // assignment is "logical" but fixes the look in a way the original system
 // did not.
 //
-// /timeline is the one exception. The canvas-starfield blog post points at
-// /timeline as the showcase, so we always give it prominent opacity (1.0)
-// regardless of which variant got picked. Every other route gets the subtle
-// 0.4 variant.
+// /timeline is the one deterministic exception. The starfield's nebulae +
+// drifting stars + scroll parallax match the page's "scrolling through 25
+// years of space" frame better than the matrix or bending-line variants
+// would. The canvas-starfield blog post also points at /timeline as the
+// showcase, so the route is pinned to starfield at full opacity regardless
+// of which variant the random roll picked for the rest of the session.
 
 const VARIANTS = ['starfield', 'matrix', 'bending'] as const;
 type Variant = (typeof VARIANTS)[number];
@@ -39,12 +41,18 @@ export default function SiteBackground() {
     setVariant(VARIANTS[Math.floor(Math.random() * VARIANTS.length)]);
   }, []);
 
+  // /timeline is always the prominent starfield — deterministic, no random
+  // roll consulted. Renders on first paint with no null gap because the
+  // outcome doesn't depend on client-only state.
+  if (pathname.startsWith('/timeline')) {
+    return <StarfieldBackground opacity={PROMINENT_OPACITY} />;
+  }
+
+  // Everywhere else: render the rolled variant at subtle opacity once mount
+  // has chosen one. Same variant persists across in-app navigation because
+  // SiteBackground lives in the layout and useState survives route changes.
   if (!variant) return null;
-
-  const isTimeline = pathname.startsWith('/timeline');
-  const opacity = isTimeline ? PROMINENT_OPACITY : SUBTLE_OPACITY;
-
-  if (variant === 'matrix') return <MatrixRainBackground opacity={opacity} />;
-  if (variant === 'bending') return <BendingLinesBackground opacity={opacity} />;
-  return <StarfieldBackground opacity={opacity} />;
+  if (variant === 'matrix') return <MatrixRainBackground opacity={SUBTLE_OPACITY} />;
+  if (variant === 'bending') return <BendingLinesBackground opacity={SUBTLE_OPACITY} />;
+  return <StarfieldBackground opacity={SUBTLE_OPACITY} />;
 }
