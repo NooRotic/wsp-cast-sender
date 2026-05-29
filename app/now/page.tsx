@@ -3,7 +3,7 @@ import NowLastUpdated from '@/components/NowLastUpdated';
 
 // Walter — bump this whenever you edit the content below. The badge at the
 // top of the page reads from this constant.
-const LAST_UPDATED = '2026-05-21';
+const LAST_UPDATED = '2026-05-29';
 
 export const metadata: Metadata = {
   title: 'Now | Walter S. Pollard Jr.',
@@ -90,6 +90,34 @@ export default function NowPage() {
               <strong className="text-white">Daily agentic workflows</strong>:
               Claude Code as primary editor, chaining sub-agents for
               research, build, and review across these projects.
+            </li>
+          </ul>
+        </section>
+
+        <section className="mb-12">
+          <h2 className="text-2xl md:text-3xl font-semibold text-[#39FF14] mb-4">
+            Experimenting with
+          </h2>
+          <ul className="text-gray-200 space-y-3" style={{ listStyle: 'none', padding: 0 }}>
+            <li>
+              <strong className="text-white">Multi-machine memory sync</strong>:
+              figuring out a flow for sharing my Claude memory state
+              across workstations so a session started on one picks up
+              cleanly on another.
+            </li>
+            <li>
+              <strong className="text-white">ComfyUI as a Claude target</strong>:
+              testing how far an agent can actually drive multi-node
+              graph editing, custom node authoring, and image
+              generation pipelines. The ultimate Claude application as
+              far as I&apos;m concerned.
+            </li>
+            <li>
+              <strong className="text-white">Plan, draft, spec, handoff, implement, review</strong>:
+              shaping multi-agent flows around that sequence, with me
+              sitting between each step instead of letting the chain
+              run unattended. The friction points are usually at the
+              seams, not inside any one step.
             </li>
           </ul>
         </section>

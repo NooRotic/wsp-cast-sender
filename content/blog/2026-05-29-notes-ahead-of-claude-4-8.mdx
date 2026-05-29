@@ -1,0 +1,61 @@
+---
+title: "Notes from a 4.7-heavy day, ahead of 4.8"
+description: "I'm seeing the articles, I'm excited to test it. Here's what 4.7 actually looks like from inside a daily Claude Code loop, the friction I want 4.8 to address, and the work that would land if it does."
+date: "2026-05-29"
+tags: ["claude", "ai-native-dev", "tools"]
+draft: false
+---
+
+The articles are starting to release. My reader has half a dozen Claude 4.8 takes from this week. I have not gotten my hands on 4.8 yet, so this post is not a review and it is not insider commentary. It is the public list as I have read it so far, plus some thoughts from a few months of heavy 4.7 use about which friction I would most like to see go away.
+
+I am genuinely excited to test it. I am also writing this from the same vantage point as the people whose articles I have been reading: 4.7 in production, 4.8 on the horizon, no special access.
+
+## What 4.7 already does well
+
+Four things made my last week viable that would have been clunky a model generation ago:
+
+- **Subagent dispatch for parallel exploration.** Sent four `Explore` agents at four different parts of my projects directory in one message; they returned summaries that I synthesized into a single deep-dive doc. Cost: a few minutes. The same work serial would have been an hour.
+- **Memory recall on prompt submit.** A Hindsight-backed hook pulls relevant facts from April and May sessions into the top of each turn. The block is unobtrusive but the difference is real: I do not have to re-explain who recruiters are or what decisions got made last week.
+- **Cross-repo handoff docs as a first-class output.** Last week's work produced a brief at `ripthe-world/docs/vod-chat-fallback-handoff.md` aimed at a fresh session in a legacy sibling repo. The model treated the handoff doc as the deliverable, not as a step toward execution. That posture matters; it kept the legacy repo read-only during a migration window.
+- **Mid-session context summarization.** A five-hour brainstorm stayed coherent past the raw context window because the harness summarizes prior turns and rejoins. Not magical, but reliable enough to plan around.
+
+I am not writing this to complain. The friction below is visible because the loop has been unblocked enough that the edges show.
+
+## Three quirks I want 4.8 to address
+
+Concrete ones from this week, not vibes:
+
+**1. API responses that come back shaped like a schema get treated like data.** I probed Hindsight's `/recall` endpoint with `curl`; the body came back as `{detail: string}` instead of an actual value. The model accepted the schema fragment as the response and reported the API was "responding oddly." The fix is in the parser's heuristic: a JSON body that pattern-matches an OpenAPI schema fragment is documentation, not data. Flag and re-probe.
+
+**2. Wrapper-tool output pollution breaks JSON parsing.** I run a token-saving wrapper that prefixes every command with a one-line warning when its hook is not installed. Piped a `curl` into `python -c 'json.load(sys.stdin)'` and the parser hit the warning line first and threw `JSONDecodeError`. The recovery (write to a file, read the file) worked but cost a turn. 4.8 could ship with stronger heuristics for stripping known-noise prefixes before parsing, or at least flagging "this command's stdout includes a wrapper preface" as a hypothesis.
+
+**3. Path-casing drift on Windows.** I wrote a memory file to `C--Dev-projects-indeed-me/memory/` (capital D). Git tracks the same directory as `C--dev-projects-indeed-me/` (lowercase d). The initial `git add` silently dropped the staged change because the path I supplied did not match git's tracked name. Took a second commit to repair. Windows NTFS is case-insensitive; git is configurable. The model could normalize to git's tracked casing before staging.
+
+None of these are bugs. They are friction that compounds when the tool is in active use eight hours a day.
+
+## The daily loop, concretely
+
+A typical recent day, named:
+
+- Spawn three parallel Explore agents at three project clusters; synthesize their reports into one MD
+- Open two cross-repo handoff docs and write a third
+- Push two PRs to a private dot-claude repo, on feature branches, behind a pre-push hook that blocks direct main pushes
+- Update a project memory file plus the MEMORY.md router index that loads at every session start
+- Smoke test a SvelteKit dashboard's base-path routing fix on a public GitHub Pages deploy
+- Voice-scan four blog drafts against a documented standard
+
+That loop holds because the model accepts handoffs as output, parallel agents return useful summaries, and recall fires reliably. 4.8 could harden it in the three places above without changing the shape of how I work.
+
+## What 4.8 would unblock for me, named
+
+Three things on my immediate queue:
+
+- **RipTheStack Multi-Stream Pro, Phase 1.** Copilot session against my written Phase 1 plan in a feature branch of `rtmp-hub-spot/`. The Phase 1 brief is solid; 4.7 wrote it. 4.8 could pair-program against it without the path-casing recovery loop, which is roughly a third of the small friction in the current loop.
+- **VOD chat fallback in `twitch-chat-log-viber/`.** Twitch GraphQL chat fetcher to close a coverage gap on the RipTheChatter pipeline. The brief is written. ~2 days of work. If 4.8 cuts the schema-vs-data parsing friction, this lands faster because the fetcher's iterative refinement is mostly inspecting JSON shapes from Twitch's API.
+- **RipTheLeetBot license-gate brief.** A 1-hour brief in the Electron repo's fresh session. The work where a generation improvement shows is plan-writing: better acceptance criteria, fewer revision loops later.
+
+## What I am not writing about
+
+What 4.8 will actually feel like. I do not know yet. Most of what I have read this week leans on benchmark extrapolation, which is a reasonable thing to write before the model is available but is not the part that matters when the day involves four subagents, three handoff docs, and a Windows case-folded git repo.
+
+I will write a follow-up after a real day on 4.8 with the same structure: what worked, what did not, what unblocked. Until then this is anticipation from a 4.7 chair, not a 4.8 preview. The follow-up is the one worth waiting for.
