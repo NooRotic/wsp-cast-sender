@@ -25,20 +25,34 @@ import BendingLinesBackground from './BendingLinesBackground';
 const VARIANTS = ['starfield', 'matrix', 'bending'] as const;
 type Variant = (typeof VARIANTS)[number];
 
-const SUBTLE_OPACITY = 0.4;
-const PROMINENT_OPACITY = 1.0;
+const SUBTLE_OPACITY = 0.2;
+const PROMINENT_OPACITY = 0.7;
 
 export default function SiteBackground() {
   const pathname = usePathname() ?? '/';
   const [variant, setVariant] = useState<Variant | null>(null);
 
   useEffect(() => {
-    // Pick the random variant on client mount. Doing this during render
-    // would diverge between SSR and the first client paint and trigger a
-    // hydration mismatch warning, so we render null on first paint and let
-    // the canvas drop in once the variant is chosen. With opacity 0.4 the
-    // sub-100ms gap is imperceptible against the html background.
-    setVariant(VARIANTS[Math.floor(Math.random() * VARIANTS.length)]);
+    // On client mount: check for a ?bg= override in the URL first, then fall
+    // back to random selection. Doing this during render would diverge
+    // between SSR and the first client paint and trigger a hydration
+    // mismatch warning, so we render null on first paint and let the canvas
+    // drop in once the variant is chosen. Sub-100ms gap is imperceptible.
+    //
+    // ?bg=starfield | ?bg=matrix | ?bg=bending forces a specific variant.
+    // Useful for tuning opacity / parameters on each one without depending
+    // on the random roll. Reading window.location.search directly instead
+    // of useSearchParams() so static export (output: 'export') keeps
+    // prerendering the routes that use this component.
+    let chosen: Variant | undefined;
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const forced = params.get('bg');
+      if (forced && (VARIANTS as readonly string[]).includes(forced)) {
+        chosen = forced as Variant;
+      }
+    }
+    setVariant(chosen ?? VARIANTS[Math.floor(Math.random() * VARIANTS.length)]);
   }, []);
 
   // /timeline is always the prominent starfield — deterministic, no random
