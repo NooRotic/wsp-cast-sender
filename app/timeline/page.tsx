@@ -7,7 +7,7 @@ export const metadata = {
 
 export default function TimelinePage() {
   return (
-    <main className="bg-black min-h-screen">
+    <main className="min-h-screen">
       <TimelineView />
     </main>
   );
