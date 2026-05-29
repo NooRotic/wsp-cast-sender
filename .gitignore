@@ -133,3 +133,6 @@ jspm_packages/
 
 # Claude Code local settings
 .claude/
+
+# Social media copy (personal, not for repo)
+docs/social_media.md
