@@ -15,10 +15,24 @@ import { useEffect, useRef } from 'react';
 // the starfield.
 
 const GLYPHS = 'アァカサタナハマヤラワABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()';
-const FONT_SIZE = 14;
-const FADE_ALPHA = 0.05;      // lower = longer trails
+const FONT_SIZE = 12;
+const FADE_ALPHA = 0.04;      // lower = longer trails
 const SPAWN_RESET_CHANCE = 0.975; // higher = columns reset more rarely
 const BRIGHT_HEAD = true;     // render the leading character in near-white
+
+// Per-column fall speed range, in rows per frame at 60 fps. Uniform 1.0
+// felt mechanical (all columns sliding in lockstep) and too fast (60 rows/s
+// = ~720 px/s rip). Varied 0.2-0.6 reads closer to the original Wachowski
+// cadence: faster columns are eye-catchers while slower ones build
+// atmospheric depth in the background.
+const SPEED_MIN = 0.2;
+const SPEED_RANGE = 0.4;
+
+// Internal alphas calibrated so the field reads cleanly at the
+// SiteBackground SUBTLE_OPACITY multiplier (0.4 at time of writing):
+//   body 0.92 * 0.4 = ~0.37 rendered, head 1.0 * 0.4 = 0.4 rendered.
+const BODY_ALPHA = 0.92;
+const HEAD_ALPHA = 1.0;
 
 interface Props {
   /** CSS opacity applied to the whole canvas. 0..1. Default 1.0. */
@@ -38,8 +52,15 @@ export default function MatrixRainBackground({ opacity = 1 }: Props) {
     let W = window.innerWidth;
     let H = window.innerHeight;
     let columns = Math.floor(W / FONT_SIZE);
-    // Each entry is the current Y position (in character rows) of that column's head.
-    let drops: number[] = Array(columns).fill(0).map(() => Math.random() * -50);
+    // Each entry tracks y (row position, float for subpixel travel) and
+    // speed (rows per frame). Per-column speed variance is what makes the
+    // field feel alive instead of mechanically uniform.
+    type Drop = { y: number; speed: number };
+    const newDrop = (): Drop => ({
+      y: Math.random() * -50,
+      speed: SPEED_MIN + Math.random() * SPEED_RANGE,
+    });
+    let drops: Drop[] = Array(columns).fill(0).map(newDrop);
 
     const resize = () => {
       W = window.innerWidth;
@@ -48,9 +69,9 @@ export default function MatrixRainBackground({ opacity = 1 }: Props) {
       canvas.height = H;
       columns = Math.floor(W / FONT_SIZE);
       // Preserve existing drops where possible; extend or trim.
-      const next: number[] = Array(columns);
+      const next: Drop[] = Array(columns);
       for (let i = 0; i < columns; i++) {
-        next[i] = drops[i] ?? Math.random() * -50;
+        next[i] = drops[i] ?? newDrop();
       }
       drops = next;
     };
@@ -68,24 +89,25 @@ export default function MatrixRainBackground({ opacity = 1 }: Props) {
       for (let i = 0; i < drops.length; i++) {
         const char = GLYPHS.charAt(Math.floor(Math.random() * GLYPHS.length));
         const x = i * FONT_SIZE;
-        const y = drops[i] * FONT_SIZE;
+        const y = drops[i].y * FONT_SIZE;
 
-        // Body glyph: brand neon green at modest alpha (the trail).
-        ctx.fillStyle = 'rgba(57, 255, 20, 0.7)';
+        // Body glyph: brand neon green at the calibrated body alpha so
+        // characters stay readable through the SiteBackground multiplier.
+        ctx.fillStyle = `rgba(57, 255, 20, ${BODY_ALPHA})`;
         ctx.fillText(char, x, y);
 
         // Bright leading glyph: near-white, just above the body.
-        if (BRIGHT_HEAD && drops[i] > 0) {
-          ctx.fillStyle = 'rgba(220, 255, 220, 0.9)';
+        if (BRIGHT_HEAD && drops[i].y > 0) {
+          ctx.fillStyle = `rgba(220, 255, 220, ${HEAD_ALPHA})`;
           ctx.fillText(char, x, y - FONT_SIZE);
         }
 
         // Reset column to top when it scrolls off the bottom, but only
         // probabilistically so columns don't all reset in unison.
         if (y > H && Math.random() > SPAWN_RESET_CHANCE) {
-          drops[i] = 0;
+          drops[i].y = 0;
         }
-        drops[i] += 1;
+        drops[i].y += drops[i].speed;
       }
 
       raf = requestAnimationFrame(draw);
