@@ -13,9 +13,8 @@ const SkillsShowcase = dynamic(() => import('@/components/SkillsShowcase'));
 const ProjectsSection = dynamic(() => import('@/components/ProjectsSection'));
 const ContactSection = dynamic(() => import('@/components/ContactSection'));
 
-// Browser-only widgets — kept ssr:false because they depend on window APIs
-// (Cast SDK state) or are currently unused dead code.
-const ParticleBackground = dynamic(() => import('@/components/ParticleBackground'), { ssr: false, loading: () => null });
+// Browser-only widget — kept ssr:false because it depends on Cast SDK state
+// which only initializes in the browser.
 const CastConnectButton = dynamic(() => import('@/components/CastConnectButton'), { ssr: false, loading: () => null });
 
 export default function Home() {
