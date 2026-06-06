@@ -41,7 +41,13 @@ ANALYZE=true npm run build
 - **Development** (`npm run dev`): Standard Next.js dynamic mode with HMR and source maps. No static export.
 - **Production** (`npm run build:production`): `output: 'export'` generates a fully static `/out` directory. After export, `js/build/fix-absolute-paths.js` rewrites absolute `/_next/` asset paths to relative paths so files work on subdirectory-hosted static servers.
 
-Deployment is manual SFTP upload of `/out` contents to the web host.
+Deployment is handled by GitHub Actions (`.github/workflows/`), not manual upload:
+
+- **`ci.yml`** — lint + test + build on every PR and push (the required green check before merge).
+- **`deploy-staging.yml`** — auto-deploys on push to the `staging` branch (also manual via `workflow_dispatch`).
+- **`deploy-ssh.yml`** — "Deploy to Production", **`workflow_dispatch` only** (manual trigger, never auto on push).
+
+Both the staging and production jobs run `npm run deploy:build`, so `fix-absolute-paths.js` runs as part of every deploy. Typical flow: branch → PR → merge to `main` → push `staging` (QA) → manually dispatch the production workflow. The `deploy:static` script is a legacy manual-SFTP fallback and is not the normal path.
 
 ### Provider / Context Tree
 
