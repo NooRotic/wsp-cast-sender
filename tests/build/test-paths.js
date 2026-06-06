@@ -28,6 +28,11 @@ function testPathFixes() {
       file: path.join(outDir, '404', 'index.html'),
       expectedPattern: /href="\.\.\/\_next\//,
       description: '404 subdirectory should use ../_next/'
+    },
+    {
+      file: path.join(outDir, 'blog', '2026-05-21-hello-blog', 'index.html'),
+      expectedPattern: /href="\.\.\/\.\.\/\_next\//,
+      description: 'Blog detail pages (two levels deep) should use ../../_next/'
     }
   ];
 
