@@ -90,15 +90,8 @@ export default function RootLayout({
               13 years at Comcast on the Xfinity Stream video player. This
               portfolio uses JavaScript for its interactive features.
             </p>
-            <p style={{ marginBottom: '1rem' }}>
-              For a static view of my background:
-              <br />
-              <a href="/resume/WalterSPollardJrResume.pdf" style={{ color: '#39FF14', textDecoration: 'underline' }}>
-                Download Resume (PDF)
-              </a>
-            </p>
             <p>
-              Or contact me directly:{' '}
+              Contact me directly:{' '}
               <a href="mailto:walter@pollardjr.com" style={{ color: '#39FF14', textDecoration: 'underline' }}>
                 walter@pollardjr.com
               </a>
