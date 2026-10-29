@@ -3,7 +3,7 @@ import NowLastUpdated from '@/components/NowLastUpdated';
 
 // Walter — bump this whenever you edit the content below. The badge at the
 // top of the page reads from this constant.
-const LAST_UPDATED = '2026-05-29';
+const LAST_UPDATED = '2026-10-29';
 
 export const metadata: Metadata = {
   title: 'Now | Walter S. Pollard Jr.',
@@ -51,10 +51,9 @@ export default function NowPage() {
             Job search
           </h2>
           <p className="text-gray-200 mb-4">
-            Open to senior software engineer roles in streaming video,
-            AI-native development, and Chromecast / CAF work. Currently
-            exploring contract engagements alongside full-time
-            opportunities. Remote.
+            Open to all types of roles. W2 preferred. Most of my
+            experience is in streaming video, and lately in AI-native
+            development and Chromecast.
           </p>
           <p className="text-gray-200">
             If you&apos;re reading this and the shape sounds right, reach
@@ -85,6 +84,13 @@ export default function NowPage() {
               <strong className="text-white">RipTheAI</strong>: a Twitch
               chatbot with dual AI personalities and contextual response
               routing. Side project; learning ground for agentic patterns.
+            </li>
+            <li>
+              <strong className="text-white">A video editing engine, finished in DaVinci Resolve</strong>:
+              tooling that finds the beats and word times in the audio
+              and lays out frame-exact cuts, then hands the edit to
+              DaVinci Resolve for the finishing pass. The aim is one
+              engine that works on any footage.
             </li>
             <li>
               <strong className="text-white">Daily agentic workflows</strong>:

@@ -8,6 +8,9 @@ import Link from "next/link";
 import ResumeDownloadButton from "@/components/ResumeDownloadButton";
 import { useAnimation } from "@/contexts/AnimationContext";
 
+// Where the trimmed menu on /blog, its posts and /now sends visitors.
+const NEW_SITE_URL = "https://portfolio.pollardjr.com/";
+
 export default function Navigation() {
   const { heroAnimationsComplete, userHasScrolled, setUserHasScrolled } = useAnimation();
   const pathname = usePathname() ?? '/';
@@ -23,6 +26,9 @@ export default function Navigation() {
   const isHomePath = pathname === '/' || pathname === '';
   const isNowPath = pathname === '/now' || pathname === '/now/';
   const isBlogPath = pathname === '/blog' || pathname === '/blog/' || pathname.startsWith('/blog/');
+  // On these pages the menu is cut down to Now, Blog and a link to the new
+  // portfolio: no Resume button, Cast buttons or links into the rest of the site.
+  const isTrimmedPath = isNowPath || isBlogPath;
   const isTimelinePath = pathname === '/timeline' || pathname === '/timeline/';
   const isCastDemoPath = pathname === '/cast-demo' || pathname === '/cast-demo/';
   const isMediaDemoPath = pathname === '/media-demo' || pathname === '/media-demo/';
@@ -114,6 +120,44 @@ export default function Navigation() {
     }
     setIsOpen(false);
   };
+
+  if (isTrimmedPath) {
+    return (
+      <nav
+        aria-label="Blog and Now"
+        className={`nav-background transition-all duration-500 ease-in-out ${
+          scrolled ? "nav-background-scrolled" : "nav-background-transparent"
+        } ${
+          shouldShowNav
+            ? "opacity-100 translate-y-0"
+            : "opacity-0 -translate-y-full pointer-events-none"
+        }`}
+      >
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex items-center h-16 gap-4">
+            <Link
+              href="/now"
+              className="nav-menu-item"
+              aria-current={isNowPath ? 'page' : undefined}
+            >
+              Now
+            </Link>
+            <Link
+              href="/blog"
+              className="nav-menu-item"
+              aria-current={isBlogPath ? 'page' : undefined}
+            >
+              Blog
+            </Link>
+            <div className="flex-1" />
+            <a href={NEW_SITE_URL} className="nav-menu-item">
+              Portfolio
+            </a>
+          </div>
+        </div>
+      </nav>
+    );
+  }
 
   return (
     <nav
