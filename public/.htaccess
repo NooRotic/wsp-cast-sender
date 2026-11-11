@@ -1,3 +1,13 @@
+# BEGIN wsp-portfolio-redirects
+RewriteEngine On
+RewriteCond %{HTTP_HOST} ^(www\.)?pollardjr\.com$ [NC]
+RewriteRule ^$ https://portfolio.pollardjr.com/ [R=301,L]
+RewriteCond %{HTTP_HOST} ^(www\.)?pollardjr\.com$ [NC]
+RewriteRule ^timeline/?$ https://walter.pollardjr.com/timeline/ [R=301,L]
+RewriteCond %{HTTP_HOST} ^(www\.)?pollardjr\.com$ [NC]
+RewriteRule ^blog(/.*)?$ https://walter.pollardjr.com/blog$1 [R=301,L]
+# END wsp-portfolio-redirects
+
 # IONOS shared hosting (Apache) — MIME type overrides for extension-less files.
 # Next.js's app/opengraph-image.tsx outputs out/opengraph-image with no .png
 # extension, so without this directive Apache defaults to text/plain and
